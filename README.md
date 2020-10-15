@@ -1,6 +1,6 @@
-# RABuff
+# RABuffs
 
-Improved version of RABuff. 
+Improved version of RABuffs. 
 
 Orignal by: dagochen (https://github.com/dagochen/RABuff)
 Modified by: Killersmath
