@@ -61,6 +61,9 @@ RAB_ClassShort = {
 RAB_CastLog = {}; -- Spell targets out of LoS. [unit] = expires;
 RAB_CurrentGroupStatus = -1;
 
+local RestorSelfAutoCastTimeOut = 1;
+local RestorSelfAutoCast = false;
+
 
 ptr = CreateFrame("Frame","RAB_CoreDummy", UIParent);
 ptr.subscribers = {};
@@ -76,6 +79,13 @@ ptr:SetScript("OnEvent", function ()
   end
  end);
 ptr:SetScript("OnUpdate", function ()
+  if (RestorSelfAutoCast) then
+    RestorSelfAutoCastTimeOut = RestorSelfAutoCastTimeOut - arg1;
+    if (RestorSelfAutoCastTimeOut < 0) then
+      RestorSelfAutoCast = false;
+      SetCVar("autoSelfCast", "1");
+    end
+  end		
   if (this.timerNext ~= nil and this.timers ~= nil and this.timerNext < GetTime()) then
    local key, val, nt;
    nt = GetTime()+86400;
@@ -339,6 +349,12 @@ function RAB_CastSpell_Start(spellkey, muteobvious, mute)
 
  if (not RAB_CastSpell_IsCastable(spellkey, muteobvious, mute)) then
   return false;
+ end
+	
+ RestorSelfAutoCastTimeOut = 1;
+ if (GetCVar("autoSelfCast") == "1") then
+    RestorSelfAutoCast = true;
+    SetCVar("autoSelfCast", "0");
  end
 
  RAB_SpellCast_ShouldRetarget = UnitExists("target");
