@@ -489,7 +489,7 @@ function RABui_BarDetail_BarClasses_UpdateText()
  end
 
  for key, val in RAB_ClassShort do
-  if ((val ~= "s" or UnitFactionGroup("player") == "Horde") and (val ~= "a" or UnitFactionGroup("player") == "Alliance")) then
+  --if ((val ~= "s" or UnitFactionGroup("player") == "Horde") and (val ~= "a" or UnitFactionGroup("player") == "Alliance")) then
    if (string.find(ignoreString,val) == nil) then
     fgc = fgc + 1;
     if (RAB_BarDetail_SelectedClasses[val]) then
@@ -497,7 +497,7 @@ function RABui_BarDetail_BarClasses_UpdateText()
      gc = gc + 1;
     end
    end
-  end
+  --end
  end
  if (gc == fgc or gc == 0) then
   UIDropDownMenu_SetText(sRAB_Settings_BarDetail_ClassesAll, RAB_BarDetail_Classes);
@@ -514,11 +514,11 @@ end
 function RABui_BarDetail_BarClasses_Initialize()
  local key, val;
  for key, val in RAB_ClassShort do
-  if ((val ~= "s" or UnitFactionGroup("player") == "Horde") and (val ~= "a" or UnitFactionGroup("player") == "Alliance")) then
+  --if ((val ~= "s" or UnitFactionGroup("player") == "Horde") and (val ~= "a" or UnitFactionGroup("player") == "Alliance")) then
    if (RAB_BarDetail_SelectedType == "" or RAB_BarDetail_SelectedType == nil or RAB_Buffs[RAB_BarDetail_SelectedType] == nil or RAB_Buffs[RAB_BarDetail_SelectedType].ignoreClass == nil or string.find(RAB_Buffs[RAB_BarDetail_SelectedType].ignoreClass,val) == nil) then
     UIDropDownMenu_AddButton({text=key .. "s",value=val,checked=(RAB_BarDetail_SelectedClasses[val]==true),func=RABui_BarDetail_BarClasses_ToggleClass,keepShownOnClick=1,justifyH="CENTER"});
    end
-  end
+  --end
  end
  DropDownList1.maxWidth = 170;
  UIDropDownMenu_AddButton({text=sRAB_AddBar_ToggleAll,func=RABui_BarDetail_BarClasses_ToggleAll,notCheckable=1,justifyH="CENTER"});

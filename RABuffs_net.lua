@@ -1,6 +1,6 @@
 -- RABuffs_net.lua
 --  Networking bridge, parsing of incoming chat/addon messages, sending available information.
--- Version 0.10.2
+-- Version 0.10.3
 
 RAB_gSync_Version = "RABV %s %s";
 RAB_gSync_VersionMask = "RABV ([%w.]+) (%d+)[.,](%d+)";

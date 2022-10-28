@@ -1,8 +1,8 @@
 -- RABuffs_strings.lua
 --  Non-code storage for various code/title strings. Do not localize this file.
--- Version 0.10.2
+-- Version 0.10.3
 
-sRAB_DownloadURL = "http://www.curse-gaming.com/";
+sRAB_DownloadURL = "https://github.com/Lexiebean/Rabuffs/";
 
 sRAB_Settings_UIHeader = "RABuffs";
 sRAB_Settings_ReleaseNotes = "<h2 align=\"left\">Release notes</h2><p>- Issue: GoTW is mis-identified as MoTW on non-enUS clients.</p><p>- Issue: Failed casting of resurrection spells bans the target from further attempts for 70 seconds.</p><br/><br/>";
@@ -10,12 +10,10 @@ sRAB_Settings_ReleaseNotes = "<h2 align=\"left\">Release notes</h2><p>- Issue: G
 sRAB_LOCALIZATION, sRAB_Localization_UI, sRAB_Localization_Output, sRAB_Localization_SpellLayer = {}, "", "", "|c00ff9922Automatic spellbook|r";
 
 sRAB_ChangeLog2 =     [[<html><body>
-			<h1 align="center">RABuffs Version 0.10.2</h1>
+			<h1 align="center">RABuffs Version 0.10.3</h1>
 			<h2>General</h2>
-			<p> - Flagged as 1.12 compatible.</p>
-			<p> - Experimental Battleground support.</p>
-			<h2>Fixed Issues</h2>
-			<p> - [1.12] RAB_Versions table initialized after savedvariables load (SVs are now explicitly declared nil if nil at exit).</p>
+			<p> - Better cross-faction / TurtleWoW support.</p>
+			<p> - Auto-Selfcast support.</p>
 			<br/><br/></body></html>]];
 
 sRAB_SpellNames = {};
