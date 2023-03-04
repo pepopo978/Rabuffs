@@ -681,6 +681,7 @@ function RAB_UseItem(mode, query)
     local _,_, cmd = string.find(query,"^(%a+)");
     local itemId = RAB_Buffs[cmd].itemId
     local itemName = RAB_Buffs[cmd].name
+    local itemUseOn = RAB_Buffs[cmd].useOn
     local count, bag, slot = RAB_CountItems(itemId,true);
     -- RAB_Print(string.format('count %s bag %s slot %s', count, bag, slot))
     if count == 0 and mode == 'tip' then
@@ -705,7 +706,28 @@ function RAB_UseItem(mode, query)
     -- RAB_Print(string.format('buffed %s', tostring(buffed)))
     if buffed > 0 then return false end
 
+
+    --[[
+
+    if (itemUseOn == 'player' and AutoBar_Category_Info[category].targetted == "WEAPON" and SpellIsTargeting()) then
+    elseif (AutoBar_Category_Info[category] and AutoBar_Category_Info[category].targetted and AutoBar_Config[AutoBar_Player].smartselfcast and AutoBar_Config[AutoBar_Player].smartselfcast[category] and SpellIsTargeting()) then
+        SpellTargetUnit("player");
+
+    --]]
     UseContainerItem(bag, slot);
+    local shouldRetarget = UnitExists("target");
+
+    if itemUseOn == 'player' then
+        ClearTarget();
+        if (not SpellIsTargeting()) then RAB_Print(sRAB_CastingLayer_NoSession,"warn") return false; end
+        SpellTargetUnit('player');
+        if (shouldRetarget) then TargetLastTarget(); end
+    elseif itemUseOn == 'weapon' then
+        ClearTarget();
+        if (not SpellIsTargeting()) then RAB_Print(sRAB_CastingLayer_NoSession,"warn") return false; end
+        PickupInventoryItem(GetInventorySlotInfo("MainHandSlot"));
+        if (shouldRetarget) then TargetLastTarget(); end
+    end
 
 end
 
@@ -1153,7 +1175,7 @@ RAB_Buffs = 	{
 			shamanres={name="Ancestral Spirit",type="dummy",textures={"Spell_Nature_Regenerate"},castClass="Shaman"},
 
             selfbattleshout={name="Battle Shout",textures={"Ability_Warrior_BattleShout"},type="selfbuffonly", queryFunc=RAB_ConsumeQueryHandler},
-            selfmongoose={name='Elixir of the Mongoose', textures={'INV_potion_32'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=13452},
+            selfmongoose={name='Elixir of the Mongoose', textures={'INV_potion_32', 'INV_Potion_93'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=13452},
             selfmageblood={name='Mageblood Potion', textures={'INV_Potion_45'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=20007},  --  tooltipname='Mana Regeneration',
             selfnightfinsoup={name='Nightfin Soup', textures={'Spell_Nature_ManaRegenTotem', 'Spell_Misc_Food'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=13931}, --  tooltipname='Mana Regeneration'
             selfsagefish={name='Sagefish Delight', tooltipname='Well Fed', textures={'Spell_Misc_Food'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=21217},
@@ -1167,16 +1189,16 @@ RAB_Buffs = 	{
             selfelixirfortitude={name='Elixir of Fortitude', textures={'INV_Potion_44'}, type='selfbuffonly', buffFunc=RAB_UseItem, itemId=3825},
             selfstoneshield={name='Greater Stoneshield Potion', textures={'INV_Potion_69'}, type='selfbuffonly', buffFunc=RAB_UseItem, itemId=13455},
             selfsupdef={name='Elixir of Superior Defence', textures={'INV_Potion_86'}, type='selfbuffonly', buffFunc=RAB_UseItem, itemId=13445},
-            selfagility={name='Elixir of Greater Agility', textures={'INV_Potion_93'},type='selfbuffonly', buffFunc=RAB_UseItem, itemId=9187},
+            selfagility={name='Elixir of Greater Agility', textures={'INV_Potion_93', 'INV_potion_32'},type='selfbuffonly', buffFunc=RAB_UseItem, itemId=9187},
             selffirewater={name='Winterfall Firewater', textures={'INV_Potion_92'}, type='selfbuffonly', buffFunc=RAB_UseItem, itemId=12820},
 
             selfgiftarthas={name='Gift of Arthas', textures={'Spell_Shadow_FingerOfDeath'}, type='selfbuffonly', buffFunc=RAB_UseItem, itemId=9088},
-
+            selfjujupower={name='Juju Power', textures={'INV_Misc_MonsterScales_11'}, type='selfbuffonly', buffFunc=RAB_UseItem, itemId=12451, useOn='player'},
+            selfjujumight={name='Juju Might', textures={'INV_Misc_MonsterScales_07'}, type='selfbuffonly', buffFunc=RAB_UseItem, itemId=12460, useOn='player'},
             --[[
 
-            selfjujupower={name='Juju Power', textures={'INV_Misc_MonsterScales_11'}, type='selfbuffonly', buffFunc=RAB_UseItem, itemId=12451},
-            selfjujumight={name='Juju Might', textures={'INV_Misc_MonsterScales_07'}, type='selfbuffonly', buffFunc=RAB_UseItem, itemId=12460},
-
+            selfbrillmanaoil={name='Brilliant Mana Oil', textures=
+            lesser mana oil
             brill mana oil
 
             ]]
