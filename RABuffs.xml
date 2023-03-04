@@ -220,6 +220,13 @@
 
 	<GameTooltip name="RAB_Tooltip" frameStrata="TOOLTIP" hidden="true" inherits="GameTooltipTemplate" parent="UIParent"/>
 	<GameTooltip name="RAB_Spelltip" frameStrata="TOOLTIP" hidden="true" inherits="GameTooltipTemplate" parent="UIParent"/>
+	<GameTooltip name="RAB_TooltipScanner" hidden="true" inherits="GameTooltipTemplate">
+		<Scripts>
+			<OnLoad>
+				this:SetOwner(this, "ANCHOR_NONE");
+			</OnLoad>
+		</Scripts>
+	</GameTooltip>
 	<Frame name="RABFrame" toplevel="true" movable="true" enableMouse="true" parent="UIParent" frameStrata="LOW" clampedToScreen="true">
 		<Size>
 			<AbsDimension x="130" y="150" />

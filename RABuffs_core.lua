@@ -330,10 +330,14 @@ function RAB_CallRaidBuffCheck(msg, needraw, needtxt) -- Check query, return res
 end
 
 function RAB_IsEligible(u,cmd)
-	if (UnitIsConnected(u) and not RAB_UnitIsDead(u)) then
-  		if ((RAB_Buffs[cmd].ignoreMTs == nil or not RAB_CTRA_IsMT(UnitName(u))) and
+ if (UnitIsConnected(u) and not RAB_UnitIsDead(u)) then
+  if (RAB_Buffs[cmd].type == 'selfbuffonly') then
+      return UnitIsUnit(u, 'player')
+  end
+
+  if ((RAB_Buffs[cmd].ignoreMTs == nil or not RAB_CTRA_IsMT(UnitName(u))) and
       	(RAB_Buffs[cmd].type ~= "self" or RAB_Buffs[cmd].castClass == "Item" or RAB_UnitClass(u) == RAB_Buffs[cmd].castClass) and
-      	(RAB_Buffs[cmd].ignoreClass == nil or string.find(RAB_Buffs[cmd].ignoreClass, RAB_ClassShort[RAB_UnitClass(u)]) == nil)) then
+      (RAB_Buffs[cmd].ignoreClass == nil or string.find(RAB_Buffs[cmd].ignoreClass, RAB_ClassShort[RAB_UnitClass(u)]) == nil)) then
    return true;
   end
  end
@@ -359,6 +363,7 @@ function RAB_CastSpell_Start(spellkey, muteobvious, mute)
 
  RAB_SpellCast_ShouldRetarget = UnitExists("target");
  ClearTarget();
+ 
  local ok, reason = pcall(CastSpellByName,sName);
  if (not ok) then
   if (not mute) then RAB_Print(string.format(sRAB_CastingLayer_NoSpell,sRAB_SpellNames[spellkey]),"warn"); end
@@ -479,7 +484,6 @@ function RAB_UnitIsDead(unit) -- Still hopelessly bugged.
  return (UnitIsDeadOrGhost(unit) and not isUnitBuffUp(unit,"Ability_Rogue_FeignDeath"));
 end
 function isUnitBuffUp(unit, buff)
-	
 	if (unit == nil or not UnitExists(unit) or buff == nil) then
   		return false;
  	end

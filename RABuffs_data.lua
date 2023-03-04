@@ -53,6 +53,78 @@ end
 
 
 -- BLOCK 1: Query functions
+
+function RAB_CollectUnitBuffs(unit)
+    local results = {}
+
+    local morebuffs = true
+    local buffIter = 0
+    local buffindex = 0
+    local MAXBUFFS = 32
+    while buffIter < MAXBUFFS do
+        buffindex = GetPlayerBuff(buffIter, "HELPFUL")
+        if buffindex < 0 then break end
+        local texture = GetPlayerBuffTexture(buffindex)
+        if (strsub(texture,1,16) == "Interface\\Icons\\") then
+            texture = strsub(texture, 17);
+        end
+        -- RAB_Print(texture)
+
+        RAB_TooltipScanner:ClearLines()
+        RAB_TooltipScanner:SetPlayerBuff(buffindex)
+        local name = RAB_TooltipScannerTextLeft1:GetText()
+        if not name then
+            RAB_Print(string.format("warning no name for %s", texture))
+        end
+        results[name] = {name=name, texture=texture}
+        --[[
+
+        VCB_Tooltip:SetOwner(UIParent)
+        VCB_Tooltip:ClearLines()
+        VCB_Tooltip:SetPlayerBuff(GetPlayerBuff(child.buffIndex, "HELPFUL"))
+        local name = VCB_TooltipTextLeft1:GetText()
+        VCB_Tooltip:Hide()
+        ]]
+        buffIter = buffIter + 1
+    end
+    return results
+end
+
+function RAB_ConsumeIsBuffed(unitbuffs, querybuff)
+    local buffed = 0
+    for name, buff in pairs(unitbuffs) do
+        if name == querybuff.name or (querybuff.tooltipname and name == querybuff.tooltipname) then
+            buffed = 1
+            break
+        end
+        for i, querytexture in ipairs(querybuff.textures) do
+            -- RAB_Print(string.format('buff.texture %s querytexture %s', buff.texture, querytexture))
+            if buff.texture == querytexture then
+                buffed = 1
+                break
+            end
+        end
+    end
+    return buffed
+end
+
+function RAB_ConsumeQueryHandler(msg, needraw, needtxt)
+    -- RAB_Print(string.format('msg %s needraw %s needtxt %s', msg, tostring(needraw), tostring(needtxt)));
+    local _,_,cmd = string.find(msg,"(%a+)");
+
+    local buffed, fading, total, misc, txthead, hashead, txt, hastxt, invert, raw, rawsort, rawgroup = 0, 0,0, "", "", "", "","", (RAB_Buffs[cmd].invert ~= nil);
+    if (needraw or needtxt) then
+        raw = {}; rawsort = "group"; rawgroup = sRAB_Core_GroupFormat;
+        -- TODO fixme
+    end
+
+    local querybuff = RAB_Buffs[cmd]
+    local buffs = RAB_CollectUnitBuffs("player");
+    buffed = RAB_ConsumeIsBuffed(buffs, querybuff)
+    -- RAB_Print(string.format('%s buffed %s', cmd, buffed))
+    return buffed, fading, total, misc, txthead, hashead, txt, hastxt, invert, raw, rawsort, rawgroup
+end
+
 function RAB_DefaultQueryHandler(query, cmd, needraw, needtxt)
 	local buffed, fading, total, misc, txthead, hashead, txt, hastxt, invert, raw, rawsort, rawgroup = 0,0,0, "", "", "", "","", (RAB_Buffs[cmd].invert ~= nil);
  	local buffname = RAB_Buffs[cmd].name;
@@ -605,6 +677,38 @@ end
 
 -- BLOCK 2: Casting functions
 
+function RAB_UseItem(mode, query)
+    local _,_, cmd = string.find(query,"^(%a+)");
+    local itemId = RAB_Buffs[cmd].itemId
+    local itemName = RAB_Buffs[cmd].name
+    local count, bag, slot = RAB_CountItems(itemId,true);
+    -- RAB_Print(string.format('count %s bag %s slot %s', count, bag, slot))
+    if count == 0 and mode == 'tip' then
+        return string.format(sRAB_Tooltip_CastFail_NoItem, itemName)
+    end
+    if mode == 'tip' then return string.format(sRAB_Tooltip_ClickToUse, itemName) end
+
+
+    if (GetContainerItemCooldown(bag, slot) ~= 0) then
+        if (mode == "cast") then
+            RAB_Print(string.format(sRAB_CastingLayer_Cooldown, itemName),"warn");
+            return false;
+        else
+            local start, duration = GetContainerItemCooldown(bag, slot);
+            return string.format(sRAB_Tooltip_CastFail_Cooldown,start+duration-GetTime());
+        end
+    end
+
+    local buffs = RAB_CollectUnitBuffs("player");
+    local buffed = RAB_ConsumeIsBuffed(buffs, RAB_Buffs[cmd])
+
+    -- RAB_Print(string.format('buffed %s', tostring(buffed)))
+    if buffed > 0 then return false end
+
+    UseContainerItem(bag, slot);
+
+end
+
 function RAB_DefaultCastingHandler(mode, query)
  local _,_, cmd = string.find(query,"^(%a+)");
  local clicktocast = sRAB_Tooltip_ClickToCast;
@@ -919,9 +1023,9 @@ RAB_Buffs = 	{
 			frostarmor={name="Frost Armor",textures={"Spell_Frost_FrostArmor02"},castClass="Mage",type="self",recast=5},
 			water={name="Water",type="special",textures={"INV_Drink_18"},castClass="Mage",queryFunc=RAB_QueryWater,buffFunc=RAB_CastWater,description="H2O data as reported by RABuffs.",ignoreClass="rw"},
 
-			pwf={name="Power Word: Fortitude",bigsort="group",bigthreshold=3,bigcast="pof",textures={"Spell_Holy_WordFortitude", "Spell_Holy_PrayerOfFortitude"},castClass="Priest",ctraid=1,recast=5},
-			sprot={name="Shadow Protection",bigsort="group",bigthreshold=3,bigcast="posprot",textures={"Spell_Shadow_AntiShadow","Spell_Holy_PrayerofShadowProtection"},castClass="Priest",ctraid=5,recast=3},
-			ds={name="Divine Spirit",bigsort="group",bigthreshold=3,bigcast="pos",textures={"Spell_Holy_DivineSpirit","Spell_Holy_PrayerofSpirit"},ignoreClass="wr",castClass="Priest",priority={priest=0.5,druid=0.3,mage=0.4,paladin=0.3},ctraid=8,recast=5},
+			pwf={name="Power Word: Fortitude",bigsort="group",bigthreshold=2,bigcast="pof",textures={"Spell_Holy_WordFortitude", "Spell_Holy_PrayerOfFortitude"},castClass="Priest",ctraid=1,recast=5},
+			sprot={name="Shadow Protection",bigsort="group",bigthreshold=2,bigcast="posprot",textures={"Spell_Shadow_AntiShadow","Spell_Holy_PrayerofShadowProtection"},castClass="Priest",ctraid=5,recast=3},
+			ds={name="Divine Spirit",bigsort="group",bigthreshold=2,bigcast="pos",textures={"Spell_Holy_DivineSpirit","Spell_Holy_PrayerofSpirit"},ignoreClass="wr",castClass="Priest",priority={priest=0.5,druid=0.3,mage=0.4,paladin=0.3},ctraid=8,recast=5},
 			pws={name="Power Word: Shield",textures={"Spell_Holy_PowerWordShield"},castClass="Priest",invert=true,ctraid=6},
 			fearward={name="Fear Ward",textures={"Spell_Holy_Excorcism"},castClass="Priest",invert=true,ctraid=10,recast=3},
 			innerfire={name="Inner Fire",textures={"Spell_Holy_InnerFire"},castClass="Priest",type="self",recast=3},
@@ -1046,5 +1150,35 @@ RAB_Buffs = 	{
 
 			priestres={name="Resurrection",type="dummy",textures={"Spell_Holy_Resurrection"},castClass="Priest"},
 			paladinres={name="Redemption",type="dummy",textures={"Spell_Holy_Resurrection"},castClass="Paladin"},
-			shamanres={name="Ancestral Spirit",type="dummy",textures={"Spell_Nature_Regenerate"},castClass="Shaman"}
+			shamanres={name="Ancestral Spirit",type="dummy",textures={"Spell_Nature_Regenerate"},castClass="Shaman"},
+
+            selfbattleshout={name="Battle Shout",textures={"Ability_Warrior_BattleShout"},type="selfbuffonly", queryFunc=RAB_ConsumeQueryHandler},
+            selfmongoose={name='Elixir of the Mongoose', textures={'INV_potion_32'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=13452},
+            selfmageblood={name='Mageblood Potion', textures={'INV_Potion_45'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=20007},  --  tooltipname='Mana Regeneration',
+            selfnightfinsoup={name='Nightfin Soup', textures={'Spell_Nature_ManaRegenTotem', 'Spell_Misc_Food'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=13931}, --  tooltipname='Mana Regeneration'
+            selfsagefish={name='Sagefish Delight', tooltipname='Well Fed', textures={'Spell_Misc_Food'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=21217},
+            selfspiritzanza={name='Spirit of Zanza', textures={'INV_Potion_25'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=20079},
+            selfmushroomstam={name='Magic Mushroom (stam)', tooltipname='Increased Stamina', textures={'INV_Boots_Plate_03', 'Spell_Misc_Food'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=51717},
+            selfmushroomstr={name='Magic Mushroom (str)', tooltipname='Well Fed', textures={'Spell_Misc_Food'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=51720},
+            selfdesertdumpling={name='Smoked Desert Dumpling', tooltipname='Well Fed', textures={'Spell_Misc_Food'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=20452},
+
+
+            selfrumseyrum={name="Rumsey Rum Black Label", textures={"INV_Drink_04"},type='selfbuffonly', buffFunc=RAB_UseItem, itemId=21151},
+            selfelixirfortitude={name='Elixir of Fortitude', textures={'INV_Potion_44'}, type='selfbuffonly', buffFunc=RAB_UseItem, itemId=3825},
+            selfstoneshield={name='Greater Stoneshield Potion', textures={'INV_Potion_69'}, type='selfbuffonly', buffFunc=RAB_UseItem, itemId=13455},
+            selfsupdef={name='Elixir of Superior Defence', textures={'INV_Potion_86'}, type='selfbuffonly', buffFunc=RAB_UseItem, itemId=13445},
+            selfagility={name='Elixir of Greater Agility', textures={'INV_Potion_93'},type='selfbuffonly', buffFunc=RAB_UseItem, itemId=9187},
+            selffirewater={name='Winterfall Firewater', textures={'INV_Potion_92'}, type='selfbuffonly', buffFunc=RAB_UseItem, itemId=12820},
+
+            selfgiftarthas={name='Gift of Arthas', textures={'Spell_Shadow_FingerOfDeath'}, type='selfbuffonly', buffFunc=RAB_UseItem, itemId=9088},
+
+            --[[
+
+            selfjujupower={name='Juju Power', textures={'INV_Misc_MonsterScales_11'}, type='selfbuffonly', buffFunc=RAB_UseItem, itemId=12451},
+            selfjujumight={name='Juju Might', textures={'INV_Misc_MonsterScales_07'}, type='selfbuffonly', buffFunc=RAB_UseItem, itemId=12460},
+
+            brill mana oil
+
+            ]]
+
 		};
