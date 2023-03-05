@@ -54,8 +54,33 @@ end
 
 -- BLOCK 1: Query functions
 
-function RAB_CollectUnitBuffs(unit)
+function RAB_CollectUnitBuffs(unit, querybuff)
     local results = {}
+
+    -- if it's for a weapon, no need to scan everything
+    if querybuff.useOn == 'weapon' then
+        -- TODO some stuff can be applied on offhands
+
+        -- there can be 0 1 2 weapons
+        for i, slotName in {'MainHandSlot', 'SecondaryHandSlot'} do
+            local slotId = GetInventorySlotInfo(slotName);
+            local itemLink = GetInventoryItemLink('player', slotId);
+            if itemLink then
+                results[slotName] = {name=slotName, texture='nomatch1234', buffed=0}
+            end
+        end
+
+        local mh, mhtime, mhcharge, oh, ohtime, ohcharge = GetWeaponEnchantInfo()
+        -- RAB_Print(string.format("%s %s %s %s %s %s", tostring(mh), tostring(mhtime), tostring(mhcharge), tostring(oh), tostring(ohtime), tostring(ohcharge)))
+        if mh and results['MainHandSlot'] then
+            results['MainHandSlot']['buffed'] = 1
+        end
+        if oh and results['SecondaryHandSlot'] then
+            results['SecondaryHandSlot']['buffed'] = 1
+        end
+
+        return results
+    end
 
     local morebuffs = true
     local buffIter = 0
@@ -77,14 +102,6 @@ function RAB_CollectUnitBuffs(unit)
             RAB_Print(string.format("warning no name for %s", texture))
         end
         results[name] = {name=name, texture=texture}
-        --[[
-
-        VCB_Tooltip:SetOwner(UIParent)
-        VCB_Tooltip:ClearLines()
-        VCB_Tooltip:SetPlayerBuff(GetPlayerBuff(child.buffIndex, "HELPFUL"))
-        local name = VCB_TooltipTextLeft1:GetText()
-        VCB_Tooltip:Hide()
-        ]]
         buffIter = buffIter + 1
     end
     return results
@@ -92,6 +109,15 @@ end
 
 function RAB_ConsumeIsBuffed(unitbuffs, querybuff)
     local buffed = 0
+
+    if querybuff.useOn == 'weapon' then
+        local buffed = 1
+        local slotName = 'MainHandSlot'
+        if unitbuffs[slotName] == nil then buffed = 0 end -- no wep, thus not buffed
+        if unitbuffs[slotName] ~= nil and unitbuffs[slotName]['buffed'] == 0 then buffed = 0 end -- wep with no buff on it
+        return buffed
+    end
+
     for name, buff in pairs(unitbuffs) do
         if name == querybuff.name or (querybuff.tooltipname and name == querybuff.tooltipname) then
             buffed = 1
@@ -119,7 +145,7 @@ function RAB_ConsumeQueryHandler(msg, needraw, needtxt)
     end
 
     local querybuff = RAB_Buffs[cmd]
-    local buffs = RAB_CollectUnitBuffs("player");
+    local buffs = RAB_CollectUnitBuffs("player", querybuff);
     buffed = RAB_ConsumeIsBuffed(buffs, querybuff)
     -- RAB_Print(string.format('%s buffed %s', cmd, buffed))
     return buffed, fading, total, misc, txthead, hashead, txt, hastxt, invert, raw, rawsort, rawgroup
@@ -700,35 +726,45 @@ function RAB_UseItem(mode, query)
         end
     end
 
-    local buffs = RAB_CollectUnitBuffs("player");
-    local buffed = RAB_ConsumeIsBuffed(buffs, RAB_Buffs[cmd])
+    local querybuff = RAB_Buffs[cmd]
+    local buffs = RAB_CollectUnitBuffs("player", querybuff);
+    local buffed = RAB_ConsumeIsBuffed(buffs, querybuff)
 
     -- RAB_Print(string.format('buffed %s', tostring(buffed)))
     if buffed > 0 then return false end
 
 
-    --[[
-
-    if (itemUseOn == 'player' and AutoBar_Category_Info[category].targetted == "WEAPON" and SpellIsTargeting()) then
-    elseif (AutoBar_Category_Info[category] and AutoBar_Category_Info[category].targetted and AutoBar_Config[AutoBar_Player].smartselfcast and AutoBar_Config[AutoBar_Player].smartselfcast[category] and SpellIsTargeting()) then
-        SpellTargetUnit("player");
-
-    --]]
-    UseContainerItem(bag, slot);
-    local shouldRetarget = UnitExists("target");
-
-    if itemUseOn == 'player' then
-        ClearTarget();
-        if (not SpellIsTargeting()) then RAB_Print(sRAB_CastingLayer_NoSession,"warn") return false; end
-        SpellTargetUnit('player');
-        if (shouldRetarget) then TargetLastTarget(); end
-    elseif itemUseOn == 'weapon' then
-        ClearTarget();
-        if (not SpellIsTargeting()) then RAB_Print(sRAB_CastingLayer_NoSession,"warn") return false; end
-        PickupInventoryItem(GetInventorySlotInfo("MainHandSlot"));
-        if (shouldRetarget) then TargetLastTarget(); end
+    if itemUseOn then
+        if itemUseOn == 'player' then
+            -- spell scroll
+            UseContainerItem(bag, slot);
+            ClearTarget();
+            local shouldRetarget = UnitExists("target");
+            if (not SpellIsTargeting()) then RAB_Print(sRAB_CastingLayer_NoSession,"warn") return false; end
+            SpellTargetUnit('player');
+            if (shouldRetarget) then TargetLastTarget(); end
+        elseif itemUseOn == 'weapon' then
+            -- weapon enchant
+            local slotName = 'MainHandSlot'
+            if buffs[slotName] == nil then
+                RAB_Print(string.format('[RABuffs] no weapon equipped'), "warn")
+            else
+                if buffs[slotName] ~= nil and buffs[slotName]['buffed'] == 0 then
+                    UseContainerItem(bag, slot);
+                    ClearTarget();
+                    local shouldRetarget = UnitExists("target");
+                    if (not SpellIsTargeting()) then RAB_Print(sRAB_CastingLayer_NoSession,"warn") return false; end
+                    PickupInventoryItem(GetInventorySlotInfo(slotName));
+                    if (shouldRetarget) then TargetLastTarget(); end
+                end
+            end
+        else
+            RAB_Print(string.format('unknown useOn %s', itemUseOn), "warn")
+        end
+    else
+        -- basic potion
+        UseContainerItem(bag, slot);
     end
-
 end
 
 function RAB_DefaultCastingHandler(mode, query)
@@ -1185,21 +1221,22 @@ RAB_Buffs = 	{
             selfdesertdumpling={name='Smoked Desert Dumpling', tooltipname='Well Fed', textures={'Spell_Misc_Food'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=20452},
 
 
-            selfrumseyrum={name="Rumsey Rum Black Label", textures={"INV_Drink_04"},type='selfbuffonly', buffFunc=RAB_UseItem, itemId=21151},
-            selfelixirfortitude={name='Elixir of Fortitude', textures={'INV_Potion_44'}, type='selfbuffonly', buffFunc=RAB_UseItem, itemId=3825},
-            selfstoneshield={name='Greater Stoneshield Potion', textures={'INV_Potion_69'}, type='selfbuffonly', buffFunc=RAB_UseItem, itemId=13455},
-            selfsupdef={name='Elixir of Superior Defence', textures={'INV_Potion_86'}, type='selfbuffonly', buffFunc=RAB_UseItem, itemId=13445},
-            selfagility={name='Elixir of Greater Agility', textures={'INV_Potion_93', 'INV_potion_32'},type='selfbuffonly', buffFunc=RAB_UseItem, itemId=9187},
-            selffirewater={name='Winterfall Firewater', textures={'INV_Potion_92'}, type='selfbuffonly', buffFunc=RAB_UseItem, itemId=12820},
+            selfrumseyrum={name="Rumsey Rum Black Label", textures={"INV_Drink_04"},type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=21151},
+            selfelixirfortitude={name='Elixir of Fortitude', textures={'INV_Potion_44'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=3825},
+            selfstoneshield={name='Greater Stoneshield Potion', textures={'INV_Potion_69'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=13455},
+            selfsupdef={name='Elixir of Superior Defence', textures={'INV_Potion_86'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=13445},
+            selfagility={name='Elixir of Greater Agility', textures={'INV_Potion_93', 'INV_potion_32'},type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=9187},
+            selffirewater={name='Winterfall Firewater', textures={'INV_Potion_92'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=12820},
 
-            selfgiftarthas={name='Gift of Arthas', textures={'Spell_Shadow_FingerOfDeath'}, type='selfbuffonly', buffFunc=RAB_UseItem, itemId=9088},
-            selfjujupower={name='Juju Power', textures={'INV_Misc_MonsterScales_11'}, type='selfbuffonly', buffFunc=RAB_UseItem, itemId=12451, useOn='player'},
-            selfjujumight={name='Juju Might', textures={'INV_Misc_MonsterScales_07'}, type='selfbuffonly', buffFunc=RAB_UseItem, itemId=12460, useOn='player'},
+            selfgiftarthas={name='Gift of Arthas', textures={'Spell_Shadow_FingerOfDeath'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=9088},
+            selfjujupower={name='Juju Power', textures={'INV_Misc_MonsterScales_11'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=12451, useOn='player'},
+            selfjujumight={name='Juju Might', textures={'INV_Misc_MonsterScales_07'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=12460, useOn='player'},
+
+            selfbrillmanaoil={name='Brilliant Mana Oil', textures={}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=20748, useOn='weapon'},
+            selflessermanaoil={name='Lesser Mana Oil', textures={}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=20747, useOn='weapon'},
+
             --[[
 
-            selfbrillmanaoil={name='Brilliant Mana Oil', textures=
-            lesser mana oil
-            brill mana oil
 
             ]]
 
