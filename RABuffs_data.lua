@@ -1227,11 +1227,15 @@ RAB_Buffs = 	{
             selfsupdef={name='Elixir of Superior Defence', textures={'INV_Potion_86'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=13445},
             selfagility={name='Elixir of Greater Agility', textures={'INV_Potion_93', 'INV_potion_32'},type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=9187},
             selffirewater={name='Winterfall Firewater', textures={'INV_Potion_92'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=12820},
-
             selfgiftarthas={name='Gift of Arthas', textures={'Spell_Shadow_FingerOfDeath'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=9088},
+
+            -- bl buffs
+            selfroids={name='R.O.I.D.S.', tooltipname='Rage of Ages', textures={'Spell_Nature_Strength', 'Spell_Nature_Purge'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=8410},
+            selflungjuice={name='Lung Juice Cocktail', tooltipname='Spirit of Boar', textures={'Spell_Nature_Purge', 'Spell_Nature_Strength'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=8411},
+
+            -- targeted buffs
             selfjujupower={name='Juju Power', textures={'INV_Misc_MonsterScales_11'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=12451, useOn='player'},
             selfjujumight={name='Juju Might', textures={'INV_Misc_MonsterScales_07'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=12460, useOn='player'},
-
             selfbrillmanaoil={name='Brilliant Mana Oil', textures={}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=20748, useOn='weapon'},
             selflessermanaoil={name='Lesser Mana Oil', textures={}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=20747, useOn='weapon'},
 
