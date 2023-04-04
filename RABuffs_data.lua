@@ -1150,7 +1150,7 @@ RAB_Buffs = 	{
             firewater={name="Winterfell Firewater", textures={"INV_Potion_92"},castClass="Item",type="self"},
             jujupower={name="Juju Power", textures={"INV_Misc_MonsterScales_11"},castClass="Item",type="self"},
             jujumight={name="Juju Might", textures={"INV_Misc_MonsterScales_07"},castClass="Item",type="self"},
-            jujumight={name="Juju Chill", textures={"INV_Misc_MonsterScales_09"},castClass="Item",type="self"},
+            jujuchill={name="Juju Chill", textures={"INV_Misc_MonsterScales_09"},castClass="Item",type="self"},
 
         jujumightfirewater={name="Juju Might/FireWater", textures={"INV_Misc_MonsterScales_07", "INV_Potion_92"},castClass="Item",type="self"},
         jujupowergiants={name="Juju Power/Elixir of the Giants", textures={"INV_Misc_MonsterScales_11", "INV_Potion_61"},castClass="Item",type="self"},
@@ -1236,6 +1236,7 @@ RAB_Buffs = 	{
             -- targeted buffs
             selfjujupower={name='Juju Power', textures={'INV_Misc_MonsterScales_11'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=12451, useOn='player'},
             selfjujumight={name='Juju Might', textures={'INV_Misc_MonsterScales_07'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=12460, useOn='player'},
+            selfjujuguile={name="Juju Guile", textures={"INV_Misc_MonsterScales_13"}, type="selfbuffonly", queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=12458, useOn='player'},
             selfbrillmanaoil={name='Brilliant Mana Oil', textures={}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=20748, useOn='weapon'},
             selflessermanaoil={name='Lesser Mana Oil', textures={}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=20747, useOn='weapon'},
 
