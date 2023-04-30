@@ -1143,7 +1143,7 @@ RAB_Buffs = 	{
 			regen={name="Regenerating",textures={"INV_Drink_18","INV_Drink_07","INV_Misc_Fork&Knife"},castClass="Item",invert=true,havebuff="Regenerating",missbuff="Not Regenerating",type="self"},
 			hat={name="Admiral's Hat",textures={"INV_Misc_Horn_03"},castClass="Item",type="aura"},
 
-			giants={name="Elixir of the Giants",textures={"INV_Potion_61"},castClass="Item",type="self"},
+			giants={name="Elixir of Giants",textures={"INV_Potion_61"},castClass="Item",type="self"},
 			greaterarcane={name="Greater Arcane Elixir",textures={"INV_Potion_25"},castClass="Item",type="self"},
 			mongoose={name="Elixir of the Mongoose",textures={"INV_Potion_32"},castClass="Item",type="self"},
 			mageblood={name="Mageblood Potion", textures={"INV_Potion_45"},castClass="Item",type="self"},
@@ -1153,7 +1153,7 @@ RAB_Buffs = 	{
             jujuchill={name="Juju Chill", textures={"INV_Misc_MonsterScales_09"},castClass="Item",type="self"},
 
         jujumightfirewater={name="Juju Might/FireWater", textures={"INV_Misc_MonsterScales_07", "INV_Potion_92"},castClass="Item",type="self"},
-        jujupowergiants={name="Juju Power/Elixir of the Giants", textures={"INV_Misc_MonsterScales_11", "INV_Potion_61"},castClass="Item",type="self"},
+        jujupowergiants={name="Juju Power/Elixir of Giants", textures={"INV_Misc_MonsterScales_11", "INV_Potion_61"},castClass="Item",type="self"},
         
             rum={name="Any Rum", textures={"INV_Drink_04", "INV_Drink_03", "INV_Drink_08"},castClass="Item",type="self"},
 			trollblood={name="Major Trollblood Potion",textures={"INV_Potion_80"}, castClass="Item", type="self"},
@@ -1211,7 +1211,9 @@ RAB_Buffs = 	{
 			shamanres={name="Ancestral Spirit",type="dummy",textures={"Spell_Nature_Regenerate"},castClass="Shaman"},
 
             selfbattleshout={name="Battle Shout",textures={"Ability_Warrior_BattleShout"},type="selfbuffonly", queryFunc=RAB_ConsumeQueryHandler},
-            selfmongoose={name='Elixir of the Mongoose', textures={'INV_potion_32', 'INV_Potion_93'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=13452},
+            selfmongoose={name='Elixir of the Mongoose', textures={'INV_Potion_32', 'INV_Potion_93'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=13452},
+            selfgiants={name="Elixir of Giants", textures={"INV_Potion_61", 'INV_Misc_MonsterScales_11'},type="selfbuffonly", queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=9206},
+
             selfmageblood={name='Mageblood Potion', textures={'INV_Potion_45'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=20007},  --  tooltipname='Mana Regeneration',
             selfnightfinsoup={name='Nightfin Soup', textures={'Spell_Nature_ManaRegenTotem', 'Spell_Misc_Food'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=13931}, --  tooltipname='Mana Regeneration'
             selfsagefish={name='Sagefish Delight', tooltipname='Well Fed', textures={'Spell_Misc_Food'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=21217},
@@ -1225,8 +1227,8 @@ RAB_Buffs = 	{
             selfelixirfortitude={name='Elixir of Fortitude', textures={'INV_Potion_44'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=3825},
             selfstoneshield={name='Greater Stoneshield Potion', textures={'INV_Potion_69'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=13455},
             selfsupdef={name='Elixir of Superior Defence', textures={'INV_Potion_86'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=13445},
-            selfagility={name='Elixir of Greater Agility', textures={'INV_Potion_93', 'INV_potion_32'},type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=9187},
-            selffirewater={name='Winterfall Firewater', textures={'INV_Potion_92'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=12820},
+            selfagility={name='Elixir of Greater Agility', textures={'INV_Potion_93', 'INV_Potion_32'},type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=9187},
+            selffirewater={name='Winterfall Firewater', textures={'INV_Potion_92', 'INV_Misc_MonsterScales_07'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=12820},
             selfgiftarthas={name='Gift of Arthas', textures={'Spell_Shadow_FingerOfDeath'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=9088},
 
             -- bl buffs
@@ -1234,8 +1236,8 @@ RAB_Buffs = 	{
             selflungjuice={name='Lung Juice Cocktail', tooltipname='Spirit of Boar', textures={'Spell_Nature_Purge', 'Spell_Nature_Strength'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=8411},
 
             -- targeted buffs
-            selfjujupower={name='Juju Power', textures={'INV_Misc_MonsterScales_11'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=12451, useOn='player'},
-            selfjujumight={name='Juju Might', textures={'INV_Misc_MonsterScales_07'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=12460, useOn='player'},
+            selfjujupower={name='Juju Power', textures={'INV_Misc_MonsterScales_11', 'INV_Potion_61'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=12451, useOn='player'},
+            selfjujumight={name='Juju Might', textures={'INV_Misc_MonsterScales_07', 'INV_Potion_92'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=12460, useOn='player'},
             selfjujuguile={name="Juju Guile", textures={"INV_Misc_MonsterScales_13"}, type="selfbuffonly", queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=12458, useOn='player'},
             selfbrillmanaoil={name='Brilliant Mana Oil', textures={}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=20748, useOn='weapon'},
             selflessermanaoil={name='Lesser Mana Oil', textures={}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=20747, useOn='weapon'},
