@@ -330,7 +330,8 @@ function RAB_CallRaidBuffCheck(msg, needraw, needtxt) -- Check query, return res
 end
 
 function RAB_IsEligible(u,cmd)
- if (UnitIsConnected(u) and not RAB_UnitIsDead(u)) then
+ if not UnitIsConnected(u) then return false; end
+ if cmd ~= 'pvp' and RAB_UnitIsDead(u) then return false; end
   if (RAB_Buffs[cmd].type == 'selfbuffonly') then
       return UnitIsUnit(u, 'player')
   end
@@ -340,7 +341,6 @@ function RAB_IsEligible(u,cmd)
       (RAB_Buffs[cmd].ignoreClass == nil or string.find(RAB_Buffs[cmd].ignoreClass, RAB_ClassShort[RAB_UnitClass(u)]) == nil)) then
    return true;
   end
- end
  return false;
 end
 function RAB_IsSanePvP(target)
