@@ -737,8 +737,8 @@ function RAB_UseItem(mode, query)
     if itemUseOn then
         if itemUseOn == 'player' then
             -- spell scroll
-            UseContainerItem(bag, slot);
             ClearTarget();
+            UseContainerItem(bag, slot);
             local shouldRetarget = UnitExists("target");
             if (not SpellIsTargeting()) then RAB_Print(sRAB_CastingLayer_NoSession,"warn") return false; end
             SpellTargetUnit('player');
@@ -750,8 +750,8 @@ function RAB_UseItem(mode, query)
                 RAB_Print(string.format('[RABuffs] no weapon equipped'), "warn")
             else
                 if buffs[slotName] ~= nil and buffs[slotName]['buffed'] == 0 then
-                    UseContainerItem(bag, slot);
                     ClearTarget();
+                    UseContainerItem(bag, slot);
                     local shouldRetarget = UnitExists("target");
                     if (not SpellIsTargeting()) then RAB_Print(sRAB_CastingLayer_NoSession,"warn") return false; end
                     PickupInventoryItem(GetInventorySlotInfo(slotName));
