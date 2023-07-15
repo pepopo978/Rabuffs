@@ -1234,6 +1234,7 @@ RAB_Buffs = 	{
             -- bl buffs
             selfroids={name='R.O.I.D.S.', tooltipname='Rage of Ages', textures={'Spell_Nature_Strength', 'Spell_Nature_Purge'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=8410},
             selflungjuice={name='Lung Juice Cocktail', tooltipname='Spirit of Boar', textures={'Spell_Nature_Purge', 'Spell_Nature_Strength'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=8411},
+            selfscorpok={name='Ground Scorpok Assay', tooltipname='Strike of the Scorpok', textures={'Spell_Nature_ForceOfNature'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=8412},
 
             -- targeted buffs
             selfjujupower={name='Juju Power', textures={'INV_Misc_MonsterScales_11', 'INV_Potion_61'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=12451, useOn='player'},
