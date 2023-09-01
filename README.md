@@ -1,17 +1,11 @@
 # RABuffs
 
-Improved version of RABuffs.
+An addon to track raid wide and your personal buffs.
 
-Orignal by: dagochen (https://github.com/dagochen/RABuff)
-Modified by: Killersmath
+It provides a panel of clickable buttons that light up when a buff is found.
 
-## Done
+You can click on the panel to buff up, which saves space from your action bars.
 
+A lot of the functionality is also available in macros via the /rab and /rabq commands.
 
-* Made it possible to track only your own buffs for some consumables.
-* Added Frost Prot Potion
-* Added Arcane Prot Potion
-* Added Juju Chill
-* Added Mix Queries
-  * Juju Might + Fire Water
-  * Juju Power + Elixir of the Giants
+![screenshot](ss.png?raw=true "screenshot")
