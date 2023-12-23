@@ -593,7 +593,7 @@ function RABui_AddFrameDropDown_Prepare()
 				buffs[id].tooltitle = val.name;
 			elseif (val.type == "debuff") then
 				buffs[id].castby = "Debuff";
-            elseif (val.type == 'selfbuffonly') then
+            elseif (val.type == 'selfbuffonly' and val.castClass == nil) then
                 buffs[id].castby = 'Self Buff'
 			end
 			id = id + 1;
@@ -605,7 +605,7 @@ function RABui_AddFrameDropDown_Prepare()
 	for key,val in buffs do
 		if (RAB_ADFDD_Cats[val.castby] == nil) then
 			cb = val.castby;
-			if (cb == "Miscellaneous" or cb == "Debuff" or cb == "Item" or cb == 'Self Buff') then
+			if (cb == "Miscellaneous" or cb == "Debuff" or cb == "Item" or cb == 'Self Buff' or cb == 'Self Wep Enchant') then
 				cb = "z" .. cb;
 			end
 			tinsert(RAB_ADFDD_Cats,cb);

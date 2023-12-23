@@ -58,9 +58,7 @@ function RAB_CollectUnitBuffs(unit, querybuff)
     local results = {}
 
     -- if it's for a weapon, no need to scan everything
-    if querybuff.useOn == 'weapon' then
-        -- TODO some stuff can be applied on offhands
-
+    if querybuff.useOn == 'weapon' or querybuff.useOn == 'weaponOH' then
         -- there can be 0 1 2 weapons
         for i, slotName in {'MainHandSlot', 'SecondaryHandSlot'} do
             local slotId = GetInventorySlotInfo(slotName);
@@ -117,6 +115,14 @@ function RAB_ConsumeIsBuffed(unitbuffs, querybuff)
         if unitbuffs[slotName] ~= nil and unitbuffs[slotName]['buffed'] == 0 then buffed = 0 end -- wep with no buff on it
         return buffed
     end
+    if querybuff.useOn == 'weaponOH' then
+        local buffed = 1
+        local slotName = 'SecondaryHandSlot'
+        if unitbuffs[slotName] == nil then buffed = 0 end -- no wep, thus not buffed
+        if unitbuffs[slotName] ~= nil and unitbuffs[slotName]['buffed'] == 0 then buffed = 0 end -- wep with no buff on it
+        return buffed
+    end
+
 
     for name, buff in pairs(unitbuffs) do
         if name == querybuff.name or (querybuff.tooltipname and name == querybuff.tooltipname) then
@@ -758,6 +764,20 @@ function RAB_UseItem(mode, query)
                     if (shouldRetarget) then TargetLastTarget(); end
                 end
             end
+        elseif itemUseOn == 'weaponOH' then
+            local slotName = 'SecondaryHandSlot'
+            if buffs[slotName] == nil then
+                RAB_Print(string.format('[RABuffs] no offhand weapon equipped'), "warn")
+            else
+                if buffs[slotName] ~= nil and buffs[slotName]['buffed'] == 0 then
+                    ClearTarget();
+                    UseContainerItem(bag, slot);
+                    local shouldRetarget = UnitExists("target");
+                    if (not SpellIsTargeting()) then RAB_Print(sRAB_CastingLayer_NoSession,"warn") return false; end
+                    PickupInventoryItem(GetInventorySlotInfo(slotName));
+                    if (shouldRetarget) then TargetLastTarget(); end
+                end
+            end
         else
             RAB_Print(string.format('unknown useOn %s', itemUseOn), "warn")
         end
@@ -1232,20 +1252,47 @@ RAB_Buffs = 	{
             selfgiftarthas={name='Gift of Arthas', textures={'Spell_Shadow_FingerOfDeath'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=9088},
 
             -- bl buffs
-            selfroids={name='R.O.I.D.S.', tooltipname='Rage of Ages', textures={'Spell_Nature_Strength', 'Spell_Nature_Purge'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=8410},
-            selflungjuice={name='Lung Juice Cocktail', tooltipname='Spirit of Boar', textures={'Spell_Nature_Purge', 'Spell_Nature_Strength'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=8411},
-            selfscorpok={name='Ground Scorpok Assay', tooltipname='Strike of the Scorpok', textures={'Spell_Nature_ForceOfNature'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=8412},
+            selfroids={name='R.O.I.D.S.', tooltipname='Rage of Ages', textures={'Spell_Nature_ForceOfNature', 'Spell_Nature_Strength', 'Spell_Nature_Purge'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=8410},
+            selflungjuice={name='Lung Juice Cocktail', tooltipname='Spirit of Boar', textures={'Spell_Nature_ForceOfNature', 'Spell_Nature_Purge', 'Spell_Nature_Strength'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=8411},
+            selfscorpok={name='Ground Scorpok Assay', tooltipname='Strike of the Scorpok', textures={'Spell_Nature_ForceOfNature', 'Spell_Nature_Purge', 'Spell_Nature_Strength'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=8412},
 
             -- targeted buffs
             selfjujupower={name='Juju Power', textures={'INV_Misc_MonsterScales_11', 'INV_Potion_61'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=12451, useOn='player'},
             selfjujumight={name='Juju Might', textures={'INV_Misc_MonsterScales_07', 'INV_Potion_92'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=12460, useOn='player'},
             selfjujuguile={name="Juju Guile", textures={"INV_Misc_MonsterScales_13"}, type="selfbuffonly", queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=12458, useOn='player'},
-            selfbrillmanaoil={name='Brilliant Mana Oil', textures={}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=20748, useOn='weapon'},
-            selflessermanaoil={name='Lesser Mana Oil', textures={}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=20747, useOn='weapon'},
 
-            --[[
+            -- wep enchants
+            selfbrillmanaoil={name='Brilliant Mana Oil', textures={}, type='selfbuffonly', castClass='Self Wep Enchant', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=20748, useOn='weapon'},
+            selfbrillmanaoiloh={name='Brilliant Mana Oil (offhand)', textures={}, type='selfbuffonly', castClass='Self Wep Enchant', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=20748, useOn='weaponOH'},
+
+            selflessermanaoil={name='Lesser Mana Oil', textures={}, type='selfbuffonly', castClass='Self Wep Enchant', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=20747, useOn='weapon'},
+            selflessermanaoiloh={name='Lesser Mana Oil (offhand)', textures={}, type='selfbuffonly', castClass='Self Wep Enchant', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=20747, useOn='weaponOH'},
+
+            selfblessedwizardoil={name='Blessed Wizard Oil', textures={}, type='selfbuffonly', castClass='Self Wep Enchant', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=23123, useOn='weapon'},
+            selfblessedwizardoiloh={name='Blessed Wizard Oil (offhand)', textures={}, type='selfbuffonly', castClass='Self Wep Enchant', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=23123, useOn='weaponOH'},
+
+            selfbrilliantwizardoil={name='Brilliant Wizard Oil', textures={}, type='selfbuffonly', castClass='Self Wep Enchant', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=20749, useOn='weapon'},
+            selfbrilliantwizardoiloh={name='Brilliant Wizard Oil (offhand)', textures={}, type='selfbuffonly', castClass='Self Wep Enchant', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=20749, useOn='weaponOH'},
+
+            selfshadowoil={name='Shadow Oil', textures={}, type='selfbuffonly', castClass='Self Wep Enchant', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=3824, useOn='weapon'},
+            selfshadowoiloh={name='Shadow Oil (offhand)', textures={}, type='selfbuffonly', castClass='Self Wep Enchant', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=3824, useOn='weaponOH'},
+
+            selfconsecratedstone={name='Consecrated Sharpening Stone', textures={}, type='selfbuffonly', castClass='Self Wep Enchant', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=23122, useOn='weapon'},
+            selfconsecratedstoneoh={name='Consecrated Sharpening Stone (offhand)', textures={}, type='selfbuffonly', castClass='Self Wep Enchant', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=23122, useOn='weaponOH'},
+
+            selfdenseweightstone={name='Dense Weightstone', textures={}, type='selfbuffonly', castClass='Self Wep Enchant', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=12643, useOn='weapon'},
+            selfdenseweightstoneoh={name='Dense Weightstone (offhand)', textures={}, type='selfbuffonly', castClass='Self Wep Enchant', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=12643, useOn='weaponOH'},
+
+            selfdensesharpeningstone={name='Dense Sharpening Stone', textures={}, type='selfbuffonly', castClass='Self Wep Enchant', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=12404, useOn='weapon'},
+            selfdensesharpeningstoneoh={name='Dense Sharpening Stone (offhand)', textures={}, type='selfbuffonly', castClass='Self Wep Enchant', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=12404, useOn='weaponOH'},
+
+            selfelementalsharpeningstone={name='Elemental Sharpening Stone', textures={}, type='selfbuffonly', castClass='Self Wep Enchant', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=18262, useOn='weapon'},
+            selfelementalsharpeningstoneoh={name='Elemental Sharpening Stone (offhand)', textures={}, type='selfbuffonly', castClass='Self Wep Enchant', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=18262, useOn='weaponOH'},
 
 
-            ]]
 
+
+
+            -- frost oil?
+            -- wf just for indicator?
 		};
