@@ -1274,6 +1274,9 @@ RAB_Buffs = 	{
             selfbrilliantwizardoil={name='Brilliant Wizard Oil', textures={}, type='selfbuffonly', castClass='Self Wep Enchant', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=20749, useOn='weapon'},
             selfbrilliantwizardoiloh={name='Brilliant Wizard Oil (offhand)', textures={}, type='selfbuffonly', castClass='Self Wep Enchant', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=20749, useOn='weaponOH'},
 
+            selfwizardoil={name='Wizard Oil', textures={}, type='selfbuffonly', castClass='Self Wep Enchant', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=20750, useOn='weapon'},
+            selfwizardoiloh={name='Wizard Oil (offhand)', textures={}, type='selfbuffonly', castClass='Self Wep Enchant', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=20750, useOn='weaponOH'},
+
             selfshadowoil={name='Shadow Oil', textures={}, type='selfbuffonly', castClass='Self Wep Enchant', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=3824, useOn='weapon'},
             selfshadowoiloh={name='Shadow Oil (offhand)', textures={}, type='selfbuffonly', castClass='Self Wep Enchant', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=3824, useOn='weaponOH'},
 
