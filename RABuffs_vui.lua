@@ -605,7 +605,7 @@ function RABui_AddFrameDropDown_Prepare()
 	for key,val in buffs do
 		if (RAB_ADFDD_Cats[val.castby] == nil) then
 			cb = val.castby;
-			if (cb == "Miscellaneous" or cb == "Debuff" or cb == "Item" or cb == 'Self Buff' or cb == 'Self Wep Enchant') then
+			if (cb == "Miscellaneous" or cb == "Debuff" or cb == "Item" or cb == 'Item Tooltip' or cb == 'Self Buff' or cb == 'Self Wep Enchant') then
 				cb = "z" .. cb;
 			end
 			tinsert(RAB_ADFDD_Cats,cb);

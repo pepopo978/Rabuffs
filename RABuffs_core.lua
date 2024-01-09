@@ -337,7 +337,10 @@ function RAB_IsEligible(u,cmd)
   end
 
   if ((RAB_Buffs[cmd].ignoreMTs == nil or not RAB_CTRA_IsMT(UnitName(u))) and
-      	(RAB_Buffs[cmd].type ~= "self" or RAB_Buffs[cmd].castClass == "Item" or RAB_UnitClass(u) == RAB_Buffs[cmd].castClass) and
+      	(RAB_Buffs[cmd].type ~= "self" 
+        or RAB_Buffs[cmd].castClass == "Item" 
+        or RAB_Buffs[cmd].castClass == "Item Tooltip"
+        or RAB_UnitClass(u) == RAB_Buffs[cmd].castClass) and
       (RAB_Buffs[cmd].ignoreClass == nil or string.find(RAB_Buffs[cmd].ignoreClass, RAB_ClassShort[RAB_UnitClass(u)]) == nil)) then
    return true;
   end
@@ -510,6 +513,22 @@ function isUnitDebuffUp(unit, buff)
   i = i + 1;
  end
  return false;
+end
+function isUnitBuffTooltipUp(unit, tooltipname)
+	if (unit == nil or not UnitExists(unit) or tooltipname == nil) then
+  		return false;
+ 	end
+    local i = 1
+    while (UnitBuff(unit, i)) do
+        RAB_TooltipScanner:ClearLines()
+        RAB_TooltipScanner:SetUnitBuff(unit, i)
+        bufftooltip = RAB_TooltipScannerTextLeft1:GetText()
+        if (string.find(bufftooltip, tooltipname)) then
+            return true
+        end
+        i = i + 1;
+    end
+    return false;
 end
 
 function strrpos(str,chr)

@@ -54,7 +54,7 @@ end
 
 -- BLOCK 1: Query functions
 
-function RAB_CollectUnitBuffs(unit, querybuff)
+function RAB_CollectPlayerBuffs(querybuff)
     local results = {}
 
     -- if it's for a weapon, no need to scan everything
@@ -151,7 +151,7 @@ function RAB_ConsumeQueryHandler(msg, needraw, needtxt)
     end
 
     local querybuff = RAB_Buffs[cmd]
-    local buffs = RAB_CollectUnitBuffs("player", querybuff);
+    local buffs = RAB_CollectPlayerBuffs(querybuff);
     buffed = RAB_ConsumeIsBuffed(buffs, querybuff)
     -- RAB_Print(string.format('%s buffed %s', cmd, buffed))
     return buffed, fading, total, misc, txthead, hashead, txt, hastxt, invert, raw, rawsort, rawgroup
@@ -190,6 +190,10 @@ function RAB_DefaultQueryHandler(query, cmd, needraw, needtxt)
 				end
 			elseif (sfuncmodel == 2 and sfunc(u)) then
 				isbuffed = true;
+            elseif (sfuncmodel == 3) then
+                if (sfunc(u, RAB_Buffs[cmd].tooltipname)) then
+                    isbuffed = true;
+                end
 			end
 			
 			isFading, fadetime = RAB_ShouldRecast(u, cmd, isbuffed);
@@ -733,7 +737,7 @@ function RAB_UseItem(mode, query)
     end
 
     local querybuff = RAB_Buffs[cmd]
-    local buffs = RAB_CollectUnitBuffs("player", querybuff);
+    local buffs = RAB_CollectPlayerBuffs(querybuff);
     local buffed = RAB_ConsumeIsBuffed(buffs, querybuff)
 
     -- RAB_Print(string.format('buffed %s', tostring(buffed)))
@@ -1193,6 +1197,10 @@ RAB_Buffs = 	{
             shadowpot={name="Greater Shadow Protection Potion",textures={"Spell_Shadow_RagingScream"},castClass="Item",type="self"},
 			firepot={name="Greater Fire Protection Potion",textures={"Spell_Fire_FireArmor"},castClass="Item",type="self"},
 			frostpot={name="Greater Frost Protection Potion",textures={"Spell_Frost_FrostArmor02"},castClass="Item",type="self"},
+
+            bstooltip={name="Battle Shout Tooltip", sfunc=isUnitBuffTooltipUp, sfuncmodel=3, tooltipname='Battle Shout', textures={},castClass="Item Tooltip",type="self"},
+			dreamshardelixirtooltip={name="Dreamshard Elixir", sfunc=isUnitBuffTooltipUp, sfuncmodel=3, tooltipname='Dreamshard Elixir', textures={},castClass="Item Tooltip",type="self"},
+			dreamtonictoolip={name="Dreamtonic", sfunc=isUnitBuffTooltipUp, sfuncmodel=3, tooltipname='Dreamtonic', textures={},castClass="Item Tooltip",type="self"},
             
             spelldmg={name="Flask of Supreme Power",textures={"INV_Potion_41"},castClass="Item",type="self"},
             wisdom={name="Flask of Distilled Wisdom",textures={"INV_Potion_97"},castClass="Item",type="self"},
