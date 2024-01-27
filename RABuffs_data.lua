@@ -1256,6 +1256,7 @@ RAB_Buffs = 	{
             selfstoneshield={name='Greater Stoneshield Potion', textures={'INV_Potion_69'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=13455},
             selfsupdef={name='Elixir of Superior Defence', textures={'INV_Potion_86'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=13445},
             selfagility={name='Elixir of Greater Agility', textures={'INV_Potion_93', 'INV_Potion_32'},type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=9187},
+            selfagility={name='Elixir of Greater Firepower', textures={'INV_Potion_60'},type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=21546},
             selffirewater={name='Winterfall Firewater', textures={'INV_Potion_92', 'INV_Misc_MonsterScales_07'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=12820},
             selfgiftarthas={name='Gift of Arthas', textures={'Spell_Shadow_FingerOfDeath'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=9088},
 
