@@ -1238,6 +1238,10 @@ RAB_Buffs = 	{
 			paladinres={name="Redemption",type="dummy",textures={"Spell_Holy_Resurrection"},castClass="Paladin"},
 			shamanres={name="Ancestral Spirit",type="dummy",textures={"Spell_Nature_Regenerate"},castClass="Shaman"},
 
+	    selfgreaterarcane={name="Greater Arcane Elixir",textures={"INV_Potion_25"},type="selfbuffonly", queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=13454},
+	    selfdreamshard={name="Dreamshard Elixir",textures={"INV_Potion_12"},type="selfbuffonly", queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=61224},
+	    selfdreamtonic={name="Dreamtonic",textures={"INV_Potion_10"},type="selfbuffonly", queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=61423},
+
             selfbattleshout={name="Battle Shout",textures={"Ability_Warrior_BattleShout"},type="selfbuffonly", queryFunc=RAB_ConsumeQueryHandler},
             selfmongoose={name='Elixir of the Mongoose', textures={'INV_Potion_32', 'INV_Potion_93'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=13452},
             selfgiants={name="Elixir of Giants", textures={"INV_Potion_61", 'INV_Misc_MonsterScales_11'},type="selfbuffonly", queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=9206},
@@ -1250,6 +1254,7 @@ RAB_Buffs = 	{
             selfmushroomstr={name='Magic Mushroom (str)', tooltipname='Well Fed', textures={'Spell_Misc_Food'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=51720},
             selfdesertdumpling={name='Smoked Desert Dumpling', tooltipname='Well Fed', textures={'Spell_Misc_Food'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=20452},
             selfwolfsteak={name='Tender Wolf Steak', tooltipname='Well Fed', textures={'Spell_Misc_Food'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=18045},
+            selftelabimmedley={name="Danonzo's Tel'Abim Medley", tooltipname='Well Fed', textures={'Spell_Misc_Food'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=60978},
 
             selfrumseyrum={name="Rumsey Rum Black Label", textures={"INV_Drink_04"},type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=21151},
             selfelixirfortitude={name='Elixir of Fortitude', textures={'INV_Potion_44'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=3825},
