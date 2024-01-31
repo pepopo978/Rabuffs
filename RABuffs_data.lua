@@ -1241,6 +1241,8 @@ RAB_Buffs = 	{
 	    selfgreaterarcane={name="Greater Arcane Elixir",textures={"INV_Potion_25"},type="selfbuffonly", queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=13454},
 	    selfdreamshard={name="Dreamshard Elixir",textures={"INV_Potion_12"},type="selfbuffonly", queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=61224},
 	    selfdreamtonic={name="Dreamtonic",textures={"INV_Potion_10"},type="selfbuffonly", queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=61423},
+            selfspiritzanza={name='Spirit of Zanza', textures={'INV_Potion_30'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=20079},
+            selfgreaterfirepower={name='Elixir of Greater Firepower', textures={'INV_Potion_60'},type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=21546},
 
             selfbattleshout={name="Battle Shout",textures={"Ability_Warrior_BattleShout"},type="selfbuffonly", queryFunc=RAB_ConsumeQueryHandler},
             selfmongoose={name='Elixir of the Mongoose', textures={'INV_Potion_32', 'INV_Potion_93'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=13452},
@@ -1249,7 +1251,6 @@ RAB_Buffs = 	{
             selfmageblood={name='Mageblood Potion', textures={'INV_Potion_45'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=20007},  --  tooltipname='Mana Regeneration',
             selfnightfinsoup={name='Nightfin Soup', textures={'Spell_Nature_ManaRegenTotem', 'Spell_Misc_Food'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=13931}, --  tooltipname='Mana Regeneration'
             selfsagefish={name='Sagefish Delight', tooltipname='Well Fed', textures={'Spell_Misc_Food'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=21217},
-            selfspiritzanza={name='Spirit of Zanza', textures={'INV_Potion_25'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=20079},
             selfmushroomstam={name='Magic Mushroom (stam)', tooltipname='Increased Stamina', textures={'INV_Boots_Plate_03', 'Spell_Misc_Food'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=51717},
             selfmushroomstr={name='Magic Mushroom (str)', tooltipname='Well Fed', textures={'Spell_Misc_Food'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=51720},
             selfdesertdumpling={name='Smoked Desert Dumpling', tooltipname='Well Fed', textures={'Spell_Misc_Food'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=20452},
@@ -1261,7 +1262,6 @@ RAB_Buffs = 	{
             selfstoneshield={name='Greater Stoneshield Potion', textures={'INV_Potion_69'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=13455},
             selfsupdef={name='Elixir of Superior Defence', textures={'INV_Potion_86'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=13445},
             selfagility={name='Elixir of Greater Agility', textures={'INV_Potion_93', 'INV_Potion_32'},type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=9187},
-            selfgreaterfirepower={name='Elixir of Greater Firepower', textures={'INV_Potion_60'},type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=21546},
             selffirewater={name='Winterfall Firewater', textures={'INV_Potion_92', 'INV_Misc_MonsterScales_07'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=12820},
             selfgiftarthas={name='Gift of Arthas', textures={'Spell_Shadow_FingerOfDeath'}, type='selfbuffonly', queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=9088},
 
