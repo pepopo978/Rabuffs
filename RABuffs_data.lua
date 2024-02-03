@@ -1238,6 +1238,7 @@ RAB_Buffs = 	{
 			paladinres={name="Redemption",type="dummy",textures={"Spell_Holy_Resurrection"},castClass="Paladin"},
 			shamanres={name="Ancestral Spirit",type="dummy",textures={"Spell_Nature_Regenerate"},castClass="Shaman"},
 
+	    selfflask={name="Flask of Supreme Power",textures={"INV_Potion_41"},type="selfbuffonly", queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=13512},
 	    selfgreaterarcane={name="Greater Arcane Elixir",textures={"INV_Potion_25"},type="selfbuffonly", queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=13454},
 	    selfdreamshard={name="Dreamshard Elixir",textures={"INV_Potion_12"},type="selfbuffonly", queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=61224},
 	    selfdreamtonic={name="Dreamtonic",textures={"INV_Potion_10"},type="selfbuffonly", queryFunc=RAB_ConsumeQueryHandler, buffFunc=RAB_UseItem, itemId=61423},
