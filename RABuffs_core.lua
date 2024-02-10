@@ -352,7 +352,7 @@ end
 function RAB_IsEligible(u, cmd, excludeNames)
     if not UnitIsConnected(u) then return false; end
     if cmd ~= 'pvp' and RAB_UnitIsDead(u) then return false; end
-    if (RAB_Buffs[cmd].type == 'selfbuffonly') then
+    if (RAB_Buffs[cmd].type == 'selfbuffonly' or RAB_Buffs[cmd].type == 'wepbuffonly') then
         return UnitIsUnit(u, 'player')
     end
 
@@ -367,6 +367,7 @@ function RAB_IsEligible(u, cmd, excludeNames)
     if ((RAB_Buffs[cmd].ignoreMTs == nil or not RAB_CTRA_IsMT(unitName)) and
             (RAB_Buffs[cmd].type ~= "self"
                 or RAB_Buffs[cmd].castClass == "Item"
+                or RAB_Buffs[cmd].castClass == "Item2"
                 or RAB_Buffs[cmd].castClass == "Item Tooltip"
                 or RAB_UnitClass(u) == RAB_Buffs[cmd].castClass) and
             (RAB_Buffs[cmd].ignoreClass == nil or string.find(RAB_Buffs[cmd].ignoreClass, RAB_ClassShort[RAB_UnitClass(u)]) == nil)) then
@@ -470,16 +471,24 @@ function RAB_RaidMemberInfo(name) -- Is "Marvin" in raid?
     return false, "", -1;
 end
 
-function RAB_TextureToBuff(text) -- Convert texture shotname to buff key, if known.
-    if (strsub(text, 1, 16) == "Interface\\Icons\\") then
-        text = strsub(text, 17);
+function RAB_SanitizeTexture(texture) -- Santize texture by removing path prefix
+    if (strsub(texture, 1, 16) == "Interface\\Icons\\") then
+        return strsub(texture, 17);
     end
-    local key, val, key2, val2;
-    for key, val in RAB_Buffs do
-        if (val.textures ~= nil) then
-            for key2, val2 in val.textures do
-                if (val2 == text) then
-                    return key;
+    return texture;
+end
+
+function RAB_TextureToBuff(texture) -- Convert texture to buff key, if known.
+    texture = RAB_SanitizeTexture(texture);
+
+    for buffKey, buffData in RAB_Buffs do
+        -- check for missing identifiers
+        if (buffData.identifiers == nil) then
+            RAB_Print("Buff " .. buffKey .. " has no identifiers!", "warn")
+        else
+            for _, identifier in ipairs(buffData.identifiers) do
+                if (texture == identifier.texture) then
+                    return buffKey;
                 end
             end
         end
@@ -492,15 +501,15 @@ function RAB_IsBuffUp(unit, bkey) -- Resolve and check a buff based on its key [
     if (RAB_Buffs[bkey].sfuncmodel == 2) then
         return RAB_Buffs[bkey].sfunc(unit);
     elseif (RAB_Buffs[bkey].sfuncmodel == 1) then
-        for key, val in RAB_Buffs[bkey].textures do
-            if (RAB_Buffs[bkey].sfunc(unit, val)) then
+        for _, identifier in ipairs(RAB_Buffs[bkey].identifiers) do
+            if (RAB_Buffs[bkey].sfunc(unit, identifier.texture)) then
                 return true;
             end
         end
         return false;
     elseif (RAB_Buffs[bkey].type == "debuff") then
-        for key, val in RAB_Buffs[bkey].textures do
-            if (isUnitDebuffUp(unit, val)) then
+        for _, identifier in ipairs(RAB_Buffs[bkey].identifiers) do
+            if (isUnitDebuffUp(unit, identifier.texture)) then
                 return true;
             end
         end
@@ -508,8 +517,8 @@ function RAB_IsBuffUp(unit, bkey) -- Resolve and check a buff based on its key [
     elseif (RAB_Buffs[bkey].type == "special") then
         return nil;
     else
-        for key, val in RAB_Buffs[bkey].textures do
-            if (isUnitBuffUp(unit, val)) then
+        for _, identifier in ipairs(RAB_Buffs[bkey].identifiers) do
+            if (isUnitBuffUp(unit, identifier.texture)) then
                 return true;
             end
         end

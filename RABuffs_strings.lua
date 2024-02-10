@@ -68,24 +68,19 @@ function sRAB_PseudoLocalize(forceful)
             sManaCost[sTex] = mana;
         end
     end
-    local key, val, mc, key2, val2;
-    mc = RAB_UnitClass("player");
-    for key, val in RAB_Buffs do
-        if (val.castClass == mc and val.textures ~= nil) then
+    local mc = RAB_UnitClass("player");
+    for buffKey, buffData in RAB_Buffs do
+        if (buffData.castClass == mc and buffData.identifiers ~= nil) then
             sName = GetSpellName(i, BOOKTYPE_SPELL);
-            if (sArr[val.textures[1]] ~= nil) then
-                if (forceful or sRAB_SpellNames[key] == nil) then
-                    sRAB_SpellNames[key] = GetSpellName(
-                        sArr[val.textures[1]], BOOKTYPE_SPELL);
+            -- loop through textures
+            for _, identifier in ipairs(RAB_Buffs[buffKey].identifiers) do
+                if (sArr[identifier.texture] ~= nil) then
+                    if (forceful or sRAB_SpellNames[buffKey] == nil) then
+                        sRAB_SpellNames[buffKey] = GetSpellName(
+                            sArr[identifier.texture], BOOKTYPE_SPELL);
+                    end
+                    sRAB_SpellIDs[buffKey] = sArr[identifier.texture], sManaCost[identifier.texture];
                 end
-                sRAB_SpellIDs[key] = sArr[val.textures[1]], sManaCost[val.textures[1]];
-            end
-            if (sArr[val.textures[2]] ~= nil and val.bigcast ~= nil) then
-                if (forceful or sRAB_SpellNames[val.bigcast] == nil) then
-                    sRAB_SpellNames[val.bigcast] = GetSpellName(
-                        sArr[val.textures[2]], BOOKTYPE_SPELL);
-                end
-                sRAB_SpellIDs[val.bigcast] = sArr[val.textures[2]], sManaCost[val.textures[2]];
             end
         end
     end

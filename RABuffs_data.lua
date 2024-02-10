@@ -52,7 +52,6 @@ function RAB_ResetRecastTimer(unit, cmd, castType)
 end
 
 -- BLOCK 1: Query functions
-
 function RAB_CollectPlayerBuffs(querybuff)
     local results = {}
 
@@ -79,58 +78,76 @@ function RAB_CollectPlayerBuffs(querybuff)
         return results
     end
 
-    local morebuffs = true
     local buffIter = 0
     local buffindex = 0
     local MAXBUFFS = 32
     while buffIter < MAXBUFFS do
         buffindex = GetPlayerBuff(buffIter, "HELPFUL")
         if buffindex < 0 then break end
-        local texture = GetPlayerBuffTexture(buffindex)
-        if (strsub(texture, 1, 16) == "Interface\\Icons\\") then
-            texture = strsub(texture, 17);
-        end
-        -- RAB_Print(texture)
+        local texture = RAB_SanitizeTexture(GetPlayerBuffTexture(buffindex))
 
         RAB_TooltipScanner:ClearLines()
         RAB_TooltipScanner:SetPlayerBuff(buffindex)
-        local name = RAB_TooltipScannerTextLeft1:GetText()
-        if not name then
-            RAB_Print(string.format("warning no name for %s", texture))
+        local tooltip = RAB_TooltipScannerTextLeft1:GetText()
+        local key = ""
+        if tooltip then
+            key = tooltip
         end
-        results[name] = { name = name, texture = texture }
+        if texture then
+            key = key .. texture
+        end
+
+        -- check for empty string key
+        if key == "" then
+            RAB_Print("Unable to identify buff at index " .. buffindex)
+        else
+            results[key] = { tooltip = tooltip, texture = texture }
+        end
+
         buffIter = buffIter + 1
     end
     return results
 end
 
+-- Uses either the buff name or a combination of the tooltip and texture to identify the buff
+function RAB_GetBuffKeys(querybuff)
+    local keys = {}
+    -- if there are identifiers, use those
+    if querybuff.identifiers then
+        for _, identifier in ipairs(querybuff.identifiers) do
+            table.insert(keys, identifier.tooltip .. identifier.texture)
+        end
+    else
+        -- otherwise use name
+        table.insert(keys, querybuff.name)
+    end
+
+    return keys
+end
+
 function RAB_ConsumeIsBuffed(unitbuffs, querybuff)
     local buffed = 0
 
+    -- custom handling for weapon enchants
     if querybuff.useOn == 'weapon' then
-        local buffed = 1
+        buffed = 1
         local slotName = 'MainHandSlot'
         if unitbuffs[slotName] == nil then buffed = 0 end                                        -- no wep, thus not buffed
         if unitbuffs[slotName] ~= nil and unitbuffs[slotName]['buffed'] == 0 then buffed = 0 end -- wep with no buff on it
         return buffed
     end
     if querybuff.useOn == 'weaponOH' then
-        local buffed = 1
+        buffed = 1
         local slotName = 'SecondaryHandSlot'
         if unitbuffs[slotName] == nil then buffed = 0 end                                        -- no wep, thus not buffed
         if unitbuffs[slotName] ~= nil and unitbuffs[slotName]['buffed'] == 0 then buffed = 0 end -- wep with no buff on it
         return buffed
     end
 
-
-    for name, buff in pairs(unitbuffs) do
-        if name == querybuff.name or (querybuff.tooltipname and name == querybuff.tooltipname) then
-            buffed = 1
-            break
-        end
-        for i, querytexture in ipairs(querybuff.textures) do
-            -- RAB_Print(string.format('buff.texture %s querytexture %s', buff.texture, querytexture))
-            if buff.texture == querytexture then
+    local queryBuffKeys = RAB_GetBuffKeys(querybuff)
+    for buffKey, buffData in pairs(unitbuffs) do
+        for _, queryBuffKey in ipairs(queryBuffKeys) do
+            if queryBuffKey == buffKey then
                 buffed = 1
                 break
             end
@@ -140,7 +157,7 @@ function RAB_ConsumeIsBuffed(unitbuffs, querybuff)
 end
 
 function RAB_ConsumeQueryHandler(msg, needraw, needtxt)
-    -- RAB_Print(string.format('msg %s needraw %s needtxt %s', msg, tostring(needraw), tostring(needtxt)));
+    --RAB_Print(string.format('msg %s needraw %s needtxt %s', msg, tostring(needraw), tostring(needtxt)));
     local _, _, cmd = string.find(msg, "(%a+)");
 
     local buffed, fading, total, misc, txthead, hashead, txt, hastxt, invert, raw, rawsort, rawgroup = 0, 0, 0, "", "",
@@ -153,7 +170,6 @@ function RAB_ConsumeQueryHandler(msg, needraw, needtxt)
     local querybuff = RAB_Buffs[cmd]
     local buffs = RAB_CollectPlayerBuffs(querybuff);
     buffed = RAB_ConsumeIsBuffed(buffs, querybuff)
-    -- RAB_Print(string.format('%s buffed %s', cmd, buffed))
     return buffed, fading, total, misc, txthead, hashead, txt, hastxt, invert, raw, rawsort, rawgroup
 end
 
@@ -182,18 +198,20 @@ function RAB_DefaultQueryHandler(query, cmd, needraw, needtxt, excludeNames)
             isbuffed = false;
 
             if (sfuncmodel == 1) then
-                for key, val in RAB_Buffs[cmd].textures do
-                    if (sfunc(u, val)) then
+                for _, identifier in ipairs(RAB_Buffs[cmd].identifiers) do
+                    if (sfunc(u, identifier.texture)) then
                         isbuffed = true
-                        _, appl = sfunc(u, val);
+                        _, appl = sfunc(u, identifier.texture);
                         break;
                     end
                 end
             elseif (sfuncmodel == 2 and sfunc(u)) then
                 isbuffed = true;
             elseif (sfuncmodel == 3) then
-                if (sfunc(u, RAB_Buffs[cmd].tooltipname)) then
-                    isbuffed = true;
+                for _, identifier in ipairs(RAB_Buffs[cmd].identifiers) do
+                    if (sfunc(u, identifier.tooltip)) then
+                        isbuffed = true;
+                    end
                 end
             end
 
@@ -343,13 +361,12 @@ function RAB_QueryBlank()
 end
 
 function RAB_QueryBuffInfo()
-    local buffs, debuffs, i, b, bn = "", "", 1;
+    local buffs, debuffs, i, buff, bn = "", "", 1;
     if (not UnitExists("target")) then
         return 0, 0, 0, "", "", "", sRAB_BuffOutput_BuffInfo_NoTarget, sRAB_BuffOutput_BuffInfo_NoTarget, false;
     end
     while (UnitBuff("target", i)) do
-        b = string.sub(UnitBuff("target", i), 17);
-        bn = RAB_TextureToBuff(b);
+        buff = RAB_TextureToBuff(UnitBuff("target", i));
         if (bn ~= nil) then
             b = "[" .. RAB_Buffs[bn].name .. "]";
         end
@@ -500,16 +517,16 @@ end
 function RAB_ScanRaid(msg)
     local _, _, bkey = string.find(msg, "(%a+)");
     local scanwhat = RAB_Buffs[bkey].ext;
-    local out, oc, key, val = "", {};
+    local out, oc, buff, texture = "", {};
     for i, u, group in RAB_GroupMembers(msg) do
         local j = 1;
         while (UnitBuff(u, j)) do
-            b = RAB_TextureToBuff(string.sub(UnitBuff(u, j), 17));
-            if (b ~= nil and scanwhat == "known") then
-                oc[b] = (oc[b] ~= nil and oc[b] or 0) + 1;
-            elseif (b == nil and scanwhat == "unknown") then
-                b = string.sub(UnitBuff(u, j), 17);
-                oc[b] = (oc[b] ~= nil and oc[b] or 0) + 1;
+            buff = RAB_TextureToBuff(UnitBuff(u, j));
+            if (buff ~= nil and scanwhat == "known") then
+                oc[buff] = (oc[buff] ~= nil and oc[buff] or 0) + 1;
+            elseif (buff == nil and scanwhat == "unknown") then
+                texture = RAB_SanitizeTexture(UnitBuff(u, j));
+                oc[texture] = (oc[texture] ~= nil and oc[texture] or 0) + 1;
             end
             j = j + 1;
         end
@@ -862,7 +879,6 @@ function RAB_UseItem(mode, query)
     end
     if mode == 'tip' then return string.format(sRAB_Tooltip_ClickToUse, itemName) end
 
-
     if (GetContainerItemCooldown(bag, slot) ~= 0) then
         if (mode == "cast") then
             RAB_Print(string.format(sRAB_CastingLayer_Cooldown, itemName), "warn");
@@ -877,9 +893,7 @@ function RAB_UseItem(mode, query)
     local buffs = RAB_CollectPlayerBuffs(querybuff);
     local buffed = RAB_ConsumeIsBuffed(buffs, querybuff)
 
-    -- RAB_Print(string.format('buffed %s', tostring(buffed)))
     if buffed > 0 then return false end
-
 
     if itemUseOn then
         if itemUseOn == 'player' then
@@ -1269,221 +1283,216 @@ end
 
 -- BLOCK 3: Query definitions
 RAB_Buffs = {
-    ai = { name = "Arcane Intellect", bigcast = "ab", bigsort = "group", bigthreshold = 3, textures = { "Spell_Holy_MagicalSentry", "Spell_Holy_ArcaneIntellect" }, ignoreClass = "wr", castClass = "Mage", priority = { priest = 0.5, druid = 0.5, paladin = 0.4, shaman = 0.4, warlock = 0.3 }, ctraid = 3, recast = 5 },
-    dampen = { name = "Dampen Magic", textures = { "Spell_Nature_AbolishMagic" }, castClass = "Mage", ctraid = 21, recast = 3 },
-    amplify = { name = "Amplify Magic", textures = { "Spell_Holy_FlashHeal" }, castClass = "Mage", ctraid = 20, recast = 3 },
-    barrier = { name = "Ice Barrier", textures = { "Spell_Ice_Lament" }, castClass = "Mage", type = "self", invert = true },
-    block = { name = "Ice Block", textures = { "Spell_Frost_Frost" }, castClass = "Mage", type = "self", invert = true },
-    magearmor = { name = "Mage Armor", textures = { "Spell_MageArmor" }, castClass = "Mage", type = "self", recast = 5 },
-    frostarmor = { name = "Frost Armor", textures = { "Spell_Frost_FrostArmor02" }, castClass = "Mage", type = "self", recast = 5 },
-    water = { name = "Water", type = "special", textures = { "INV_Drink_18" }, castClass = "Mage", queryFunc = RAB_QueryWater, buffFunc = RAB_CastWater, description = "H2O data as reported by RABuffs.", ignoreClass = "rw" },
+    -- Special queries that aren't really buffs
+    health             = { name = "Health", identifiers = {}, type = "special", queryFunc = RAB_QueryHealth, ext = "hp", buffFunc = RAB_CastResurrect, description = "Sum of health versus sum of max health." },
+    alive              = { name = "Alive", identifiers = {}, type = "special", queryFunc = RAB_QueryHealth, ext = "alive", buffFunc = RAB_CastResurrect, description = "Number of people alive versus total headcount." },
+    mana               = { name = "Mana", identifiers = {}, type = "special", queryFunc = RAB_QueryMana, description = "Sum of current mana vs sum of max mana.", ignoreClass = "rw" },
+    status             = { name = "Status", identifiers = {}, type = "special", queryFunc = RAB_QueryStatus, description = "Displays buff sumary for PW:F, AI, MotW, BoK, BoS, BoW and Soulstones.", noUI = true },
+    scanunknown        = { name = "Unknown Buff Scan", identifiers = {}, type = "special", queryFunc = RAB_ScanRaid, ext = "unknown", description = "Scans raid for unknown buff textures.", noUI = true },
+    scanraid           = { name = "Raid Scan", identifiers = {}, type = "special", queryFunc = RAB_ScanRaid, ext = "known", description = "Scans raid and displays a report of all known buffs.", noUI = true },
+    ishere             = { name = "Is Here", identifiers = {}, type = "special", queryFunc = RAB_QueryHere, description = "Displays people currently afk, offline or invisible." },
+    ctra               = { name = "CTRA Version", identifiers = {}, type = "special", queryFunc = RAB_QueryCTRAVersion, description = "Displays people whose CTRA is out of date." },
+    blank              = { name = "Blank", identifiers = {}, type = "special", queryFunc = RAB_QueryBlank, description = "Displays a blank bar - use as a header if you wish." },
+    onycloak           = { name = "Onyxia Cloak", identifiers = {}, type = "special", queryFunc = RAB_QueryInventoryItem, ext = "15:15138", buffFunc = RAB_CastInventoryItem, description = "Checks that people are wearing their Onyxia Cloak." },
+    info               = { name = "Target's (De)Buffs", identifiers = {}, type = "special", queryFunc = RAB_QueryBuffInfo, description = "Outputs buff names / textures for buffs and debuffs on your current target.", noUI = true },
 
-    pwf = { name = "Power Word: Fortitude", bigsort = "group", bigthreshold = 2, bigcast = "pof", textures = { "Spell_Holy_WordFortitude", "Spell_Holy_PrayerOfFortitude" }, castClass = "Priest", ctraid = 1, recast = 5 },
-    sprot = { name = "Shadow Protection", bigsort = "group", bigthreshold = 2, bigcast = "posprot", textures = { "Spell_Shadow_AntiShadow", "Spell_Holy_PrayerofShadowProtection" }, castClass = "Priest", ctraid = 5, recast = 3 },
-    ds = { name = "Divine Spirit", bigsort = "group", bigthreshold = 2, bigcast = "pos", textures = { "Spell_Holy_DivineSpirit", "Spell_Holy_PrayerofSpirit" }, ignoreClass = "wr", castClass = "Priest", priority = { priest = 0.5, druid = 0.3, mage = 0.4, paladin = 0.3 }, ctraid = 8, recast = 5 },
-    pws = { name = "Power Word: Shield", textures = { "Spell_Holy_PowerWordShield" }, castClass = "Priest", invert = true, ctraid = 6 },
-    fearward = { name = "Fear Ward", textures = { "Spell_Holy_Excorcism" }, castClass = "Priest", invert = true, ctraid = 10, recast = 3 },
-    innerfire = { name = "Inner Fire", textures = { "Spell_Holy_InnerFire" }, castClass = "Priest", type = "self", recast = 3 },
-    pi = { name = "Power Infusion", textures = { "Spell_Holy_PowerInfusion" }, castClass = "Priest", ignoreClass = "wrh", priority = { priest = 0.2, druid = 0.2, mage = 0.5, warlock = 0.5 }, selfPriority = 0 },
+    -- Buffs
+    ai                 = { name = "Arcane Intellect", identifiers = { { tooltip = "Arcane Intellect", texture = "Spell_Holy_ArcaneIntellect" }, { tooltip = "Arcane Brilliance", texture = "Spell_Holy_MagicalSentry" } }, bigcast = "ab", bigsort = "group", bigthreshold = 3, ignoreClass = "wr", castClass = "Mage", priority = { priest = 0.5, druid = 0.5, paladin = 0.4, shaman = 0.4, warlock = 0.3 }, ctraid = 3, recast = 5 },
 
-    motw = { name = "Mark of the Wild", bigcast = "gotw", bigsort = "group", bigthreshold = 3, textures = { "Spell_Nature_Regeneration", "Spell_Nature_Regeneration" }, castClass = "Druid", ctraid = 2, recast = 5 },
-    thorns = { name = "Thorns", textures = { "Spell_Nature_Thorns" }, castClass = "Druid", ctraid = 9, recast = 3 },
-    clarity = { name = "Omen of Clarity", textures = { "Spell_Nature_CrystalBall" }, castClass = "Druid", type = "self", recast = 2 },
-    druidshift = { name = "Shapeshifted", textures = { "Ability_Druid_TravelForm", "Ability_Racial_BearForm", "Ability_Druid_CatForm", "Ability_Druid_AquaticForm" }, type = "dummy", castClass = "Druid" },
+    dampen             = { name = "Dampen Magic", identifiers = { { tooltip = "Dampen Magic", texture = "Spell_Nature_AbolishMagic" } }, castClass = "Mage", ctraid = 21, recast = 3 },
+    amplify            = { name = "Amplify Magic", identifiers = { { tooltip = "Amplify Magic", texture = "Spell_Holy_FlashHeal" } }, castClass = "Mage", ctraid = 20, recast = 3 },
+    barrier            = { name = "Ice Barrier", identifiers = { { tooltip = "Ice Barrier", texture = "Spell_Ice_Lament" } }, castClass = "Mage", type = "self", invert = true },
+    block              = { name = "Ice Block", identifiers = { { tooltip = "Ice Block", texture = "Spell_Frost_Frost" } }, castClass = "Mage", type = "self", invert = true },
+    magearmor          = { name = "Mage Armor", identifiers = { { tooltip = "Mage Armor", texture = "Spell_MageArmor" } }, castClass = "Mage", type = "self", recast = 5 },
+    frostarmor         = { name = "Frost Armor", identifiers = { { tooltip = "Frost Armor", texture = "Spell_Frost_FrostArmor02" } }, castClass = "Mage", type = "self", recast = 5 },
+    water              = { name = "Water", identifiers = { { tooltip = "Water", texture = "INV_Drink_18" } }, castClass = "Mage", queryFunc = RAB_QueryWater, buffFunc = RAB_CastWater, description = "H2O data as reported by RABuffs.", ignoreClass = "rw" },
+    water              = { name = "Water", identifiers = {}, type = "special", textures = { "INV_Drink_18" }, castClass = "Mage", queryFunc = RAB_QueryWater, buffFunc = RAB_CastWater, description = "H2O data as reported by RABuffs.", ignoreClass = "rw" },
 
-    bos = { name = "Blessing of Salvation", bigcast = "gbos", bigsort = "class", bigthreshold = 3, textures = { "Spell_Holy_SealOfSalvation", "Spell_Holy_GreaterBlessingofSalvation" }, ignoreMTs = true, castClass = "Paladin", priority = { priest = 0.5, druid = 0.5, mage = 0.4, warlock = 0.4, paladin = 0.4 }, sort = "class", ctraid = 14, recast = 3 },
-    bow = { name = "Blessing of Wisdom", bigcast = "gbow", bigsort = "class", bigthreshold = 3, textures = { "Spell_Holy_SealOfWisdom", "Spell_Holy_GreaterBlessingofWisdom" }, ignoreClass = "wr", castClass = "Paladin", priority = { priest = 0.5, druid = 0.5, mage = 0.4, warlock = 0.4, paladin = 0.4 }, sort = "class", ctraid = 12, recast = 3 },
-    bok = { name = "Blessing of Kings", bigcast = "gbok", bigsort = "class", bigthreshold = 3, textures = { "Spell_Magic_MageArmor", "Spell_Magic_GreaterBlessingofKings" }, castClass = "Paladin", sort = "class", ctraid = 13, recast = 3 },
-    bol = { name = "Blessing of Light", bigcast = "gbol", bigsort = "class", bigthreshold = 3, textures = { "Spell_Holy_PrayerOfHealing02", "Spell_Holy_GreaterBlessingofLight" }, castClass = "Paladin", sort = "class", ctraid = 15, recast = 3 },
-    bom = { name = "Blessing of Might", bigcast = "gbom", bigsort = "class", bigthreshold = 3, textures = { "Spell_Holy_FistOfJustice", "Spell_Holy_GreaterBlessingofKings" }, ignoreClass = "mplh", castClass = "Paladin", sort = "class", ctraid = 11, recast = 3 },
-    bosanc = { name = "Blessing of Sanctuary", bigcast = "gbosanc", bigsort = "class", bigthreshold = 3, textures = { "Spell_Nature_LightningShield", "Spell_Holy_GreaterBlessingofSanctuary" }, castClass = "Paladin", sort = "class", ctraid = 16, recast = 3 },
-    bop = { name = "Blessing of Protection", textures = { "Spell_Holy_SealOfProtection" }, castClass = "Paladin", unique = true },
-    command = { name = "Seal of Command", textures = { "Ability_Warrior_InnerRage" }, castClass = "Paladin", type = "self" },
-    devotion = { name = "Devotion Aura", textures = { "Spell_Holy_DevotionAura" }, castClass = "Paladin", type = "aura" },
-    concentration = { name = "Concentration Aura", textures = { "Spell_Holy_MindSooth" }, castClass = "Paladin", type = "aura" },
-    fireaura = { name = "Fire Resistance Aura", textures = { "Spell_Fire_SealOfFire" }, castClass = "Paladin", type = "aura" },
-    shadowaura = { name = "Shadow Resistance Aura", textures = { "Spell_Shadow_SealOfKings" }, castClass = "Paladin", type = "aura" },
-    retribution = { name = "Retribution Aura", textures = { "Spell_Holy_AuraOfLight" }, castClass = "Paladin", type = "aura" },
-    frostaura = { name = "Frost Resistance Aura", textures = { "Spell_Frost_WizardMark" }, castClass = "Paladin", type = "aura" },
-    di = { name = "Divine Intervention", textures = { "Spell_Nature_TimeStop" }, castClass = "Paladin", priority = { priest = 2, paladin = 2, druid = 1, mage = 0.5 }, selfPriority = -10 },
+    pwf                = { name = "Fortitude", identifiers = { { tooltip = "Power Word: Fortitude", texture = "Spell_Holy_WordFortitude" }, { tooltip = "Prayer of Fortitude", texture = "Spell_Holy_PrayerOfFortitude" } }, bigcast = "pof", bigsort = "group", bigthreshold = 2, bigcast = "pof", castClass = "Priest", ctraid = 1, recast = 5 },
+    sprot              = { name = "Shadow Protection", identifiers = { { tooltip = "Shadow Protection", texture = "Spell_Shadow_AntiShadow" }, { tooltip = "Prayer of Shadow Protection", texture = "Spell_Holy_PrayerofShadowProtection" } }, bigcast = "posprot", bigsort = "group", bigthreshold = 2, bigcast = "posprot", castClass = "Priest", ctraid = 5, recast = 3 },
+    ds                 = { name = "Divine Spirit", identifiers = { { tooltip = "Divine Spirit", texture = "Spell_Holy_DivineSpirit" }, { tooltip = "Prayer of Spirit", texture = "Spell_Holy_PrayerofSpirit" } }, bigcast = "pos", bigsort = "group", bigthreshold = 2, bigcast = "pos", castClass = "Priest", ctraid = 8, recast = 5 },
+    pws                = { name = "Power Word: Shield", identifiers = { { tooltip = "Power Word: Shield", texture = "Spell_Holy_PowerWordShield" } }, castClass = "Priest", invert = true, ctraid = 6, recast = 3 },
+    fearward           = { name = "Fear Ward", identifiers = { { tooltip = "Fear Ward", texture = "Spell_Holy_Excorcism" } }, castClass = "Priest", invert = true, ctraid = 10, recast = 3 },
+    innerfire          = { name = "Inner Fire", identifiers = { { tooltip = "Inner Fire", texture = "Spell_Holy_InnerFire" } }, castClass = "Priest", type = "self", recast = 3 },
+    pi                 = { name = "Power Infusion", identifiers = { { tooltip = "Power Infusion", texture = "Spell_Holy_PowerInfusion" } }, castClass = "Priest", ignoreClass = "wrh", priority = { priest = 0.2, druid = 0.2, mage = 0.5, warlock = 0.5 }, selfPriority = 0 },
 
-    ss = { name = "Soulstone", textures = { "Spell_Shadow_SoulGem" }, castClass = "Warlock", buffFunc = RAB_CastSoulstone, priority = { priest = 2, paladin = 2, shaman = 2, druid = 1 }, selfPriority = 1.2, invert = true, unique = true, ctraid = 7, recast = 5 },
-    ub = { name = "Unending Breath", textures = { "Spell_Shadow_DemonBreath" }, castClass = "Warlock", recast = 3 },
-    detectinvisibility = { name = "Detect Invisibility", textures = { "Spell_Shadow_DetectInvisibility", "Spell_Shadow_DetectLesserInvisibility" }, castClass = "Warlock", recast = 3 },
-    demonarmor = { name = "Demon Armor", textures = { "Spell_Shadow_RagingScream" }, castClass = "Warlock", type = "self", recast = 5 },
-    bloodpact = { name = "Blood Pact", textures = { "Spell_Shadow_BloodBoil" }, castClass = "Warlock", type = "aura" },
-    paranoia = { name = "Paranoia", textures = { "Spell_Shadow_AuraOfDarkness" }, castClass = "Warlock", invert = true, type = "aura" },
+    motw               = { name = "Mark of the Wild", identifiers = { { tooltip = "Mark of the Wild", texture = "Spell_Nature_Regeneration" }, { tooltip = "Gift of the Wild", texture = "Spell_Nature_Regeneration" } }, bigcast = "gotw", bigsort = "group", bigthreshold = 3, castClass = "Druid", ctraid = 2, recast = 5 },
+    thorns             = { name = "Thorns", identifiers = { { tooltip = "Thorns", texture = "Spell_Nature_Thorns" } }, castClass = "Druid", ctraid = 9, recast = 3 },
+    clarity            = { name = "Omen of Clarity", identifiers = { { tooltip = "Omen of Clarity", texture = "Spell_Nature_CrystalBall" } }, castClass = "Druid", type = "self", recast = 2 },
+    druidshift         = {
+        name = "Shapeshifted",
+        identifiers = {
+            { tooltip = "Shapeshifted", texture = "Ability_Druid_TravelForm" },
+            { tooltip = "Bear Form",    texture = "Ability_Racial_BearForm" },
+            { tooltip = "Cat Form",     texture = "Ability_Druid_CatForm" },
+            { tooltip = "Aquatic Form", texture = "Ability_Druid_AquaticForm" }
+        },
+        castClass = "Druid",
+        type = "dummy"
+    },
+    --
+    bos                = { name = "Blessing of Salvation", identifiers = { { tooltip = "Blessing of Salvation", texture = "Spell_Holy_SealOfSalvation" }, { tooltip = "Greater Blessing of Salvation", texture = "Spell_Holy_GreaterBlessingofSalvation" } }, bigcast = "gbos", bigsort = "class", bigthreshold = 3, castClass = "Paladin", textures = { "Spell_Holy_SealOfSalvation", "Spell_Holy_GreaterBlessingofSalvation" }, ignoreMTs = true, priority = { priest = 0.5, druid = 0.5, mage = 0.4, warlock = 0.4, paladin = 0.4 }, sort = "class", ctraid = 14, recast = 3 },
+    bow                = { name = "Blessing of Wisdom", identifiers = { { tooltip = "Blessing of Wisdom", texture = "Spell_Holy_SealOfWisdom" }, { tooltip = "Greater Blessing of Wisdom", texture = "Spell_Holy_GreaterBlessingofWisdom" } }, bigcast = "gbow", bigsort = "class", bigthreshold = 3, castClass = "Paladin", textures = { "Spell_Holy_SealOfWisdom", "Spell_Holy_GreaterBlessingofWisdom" }, ignoreClass = "wr", priority = { priest = 0.5, druid = 0.5, mage = 0.4, warlock = 0.4, paladin = 0.4 }, sort = "class", ctraid = 12, recast = 3 },
+    bok                = { name = "Blessing of Kings", identifiers = { { tooltip = "Blessing of Kings", texture = "Spell_Magic_MageArmor" }, { tooltip = "Greater Blessing of Kings", texture = "Spell_Magic_GreaterBlessingofKings" } }, bigcast = "gbok", bigsort = "class", bigthreshold = 3, castClass = "Paladin", textures = { "Spell_Magic_MageArmor", "Spell_Magic_GreaterBlessingofKings" }, sort = "class", ctraid = 13, recast = 3 },
+    bol                = { name = "Blessing of Light", identifiers = { { tooltip = "Blessing of Light", texture = "Spell_Holy_PrayerOfHealing02" }, { tooltip = "Greater Blessing of Light", texture = "Spell_Holy_GreaterBlessingofLight" } }, bigcast = "gbol", bigsort = "class", bigthreshold = 3, castClass = "Paladin", textures = { "Spell_Holy_PrayerOfHealing02", "Spell_Holy_GreaterBlessingofLight" }, sort = "class", ctraid = 15, recast = 3 },
+    bom                = { name = "Blessing of Might", identifiers = { { tooltip = "Blessing of Might", texture = "Spell_Holy_FistOfJustice" }, { tooltip = "Greater Blessing of Might", texture = "Spell_Holy_GreaterBlessingofKings" } }, bigcast = "gbom", bigsort = "class", bigthreshold = 3, castClass = "Paladin", textures = { "Spell_Holy_FistOfJustice", "Spell_Holy_GreaterBlessingofKings" }, ignoreClass = "mplh", sort = "class", ctraid = 11, recast = 3 },
+    bosanc             = { name = "Blessing of Sanctuary", identifiers = { { tooltip = "Blessing of Sanctuary", texture = "Spell_Nature_LightningShield" }, { tooltip = "Greater Blessing of Sanctuary", texture = "Spell_Holy_GreaterBlessingofSanctuary" } }, bigcast = "gbosanc", bigsort = "class", bigthreshold = 3, castClass = "Paladin", textures = { "Spell_Nature_LightningShield", "Spell_Holy_GreaterBlessingofSanctuary" }, sort = "class", ctraid = 16, recast = 3 },
+    bop                = { name = "Blessing of Protection", identifiers = { { tooltip = "Blessing of Protection", texture = "Spell_Holy_SealOfProtection" } }, castClass = "Paladin", unique = true },
+    command            = { name = "Seal of Command", identifiers = { { tooltip = "Seal of Command", texture = "Ability_Warrior_InnerRage" } }, castClass = "Paladin", type = "self" },
+    devotion           = { name = "Devotion Aura", identifiers = { { tooltip = "Devotion Aura", texture = "Spell_Holy_DevotionAura" } }, castClass = "Paladin", type = "aura" },
+    concentration      = { name = "Concentration Aura", identifiers = { { tooltip = "Concentration Aura", texture = "Spell_Holy_MindSooth" } }, castClass = "Paladin", type = "aura" },
+    fireaura           = { name = "Fire Resistance Aura", identifiers = { { tooltip = "Fire Resistance Aura", texture = "Spell_Fire_SealOfFire" } }, castClass = "Paladin", type = "aura" },
+    shadowaura         = { name = "Shadow Resistance Aura", identifiers = { { tooltip = "Shadow Resistance Aura", texture = "Spell_Shadow_SealOfKings" } }, castClass = "Paladin", type = "aura" },
+    retribution        = { name = "Retribution Aura", identifiers = { { tooltip = "Retribution Aura", texture = "Spell_Holy_AuraOfLight" } }, castClass = "Paladin", type = "aura" },
+    frostaura          = { name = "Frost Resistance Aura", identifiers = { { tooltip = "Frost Resistance Aura", texture = "Spell_Frost_WizardMark" } }, castClass = "Paladin", type = "aura" },
+    di                 = { name = "Divine Intervention", identifiers = { { tooltip = "Divine Intervention", texture = "Spell_Nature_TimeStop" } }, castClass = "Paladin", priority = { priest = 2, paladin = 2, druid = 1, mage = 0.5 }, selfPriority = -10 },
 
-    hawk = { name = "Aspect of the Hawk", textures = { "Spell_Nature_RavenForm" }, castClass = "Hunter", type = "self" },
-    cheetah = { name = "Aspect of the Cheetah", textures = { "Ability_Mount_JungleTiger" }, castClass = "Hunter", type = "self" },
-    beast = { name = "Aspect of the Beast", textures = { "Ability_Mount_PinkTiger" }, castClass = "Hunter", type = "self" },
-    aspectwild = { name = "Aspect of the Wild", textures = { "Spell_Nature_ProtectionformNature" }, castClass = "Hunter", type = "aura" },
-    pack = { name = "Aspect of the Pack", textures = { "Ability_Mount_WhiteTiger" }, castClass = "Hunter", type = "aura" },
-    monkey = { name = "Aspect of the Monkey", textures = { "Ability_Hunter_AspectOfTheMonkey" }, castClass = "Hunter", type = "self" },
-    trueshot = { name = "True Shot Aura", textures = { "Ability_TrueShot" }, castClass = "Hunter", type = "aura" },
+    ss                 = { name = "Soulstone", identifiers = { { tooltip = "Soulstone", texture = "Spell_Shadow_SoulGem" } }, castClass = "Warlock", buffFunc = RAB_CastSoulstone, priority = { priest = 2, paladin = 2, shaman = 2, druid = 1 }, selfPriority = 1.2, invert = true, unique = true, ctraid = 7, recast = 5 },
+    ub                 = { name = "Unending Breath", identifiers = { { tooltip = "Unending Breath", texture = "Spell_Shadow_DemonBreath" } }, castClass = "Warlock", recast = 3 },
+    detectinvisibility = { name = "Detect Invisibility", identifiers = { { tooltip = "Detect Invisibility", texture = "Spell_Shadow_DetectInvisibility" }, { tooltip = "Detect Lesser Invisibility", texture = "Spell_Shadow_DetectLesserInvisibility" } }, castClass = "Warlock", recast = 3 },
+    demonarmor         = { name = "Demon Armor", identifiers = { { tooltip = "Demon Armor", texture = "Spell_Shadow_RagingScream" } }, castClass = "Warlock", type = "self", recast = 5 },
+    bloodpact          = { name = "Blood Pact", identifiers = { { tooltip = "Blood Pact", texture = "Spell_Shadow_BloodBoil" } }, castClass = "Warlock", type = "aura" },
+    paranoia           = { name = "Paranoia", identifiers = { { tooltip = "Paranoia", texture = "Spell_Shadow_AuraOfDarkness" } }, castClass = "Warlock", invert = true, type = "aura" },
 
-    battleshout = { name = "Battle Shout", textures = { "Ability_Warrior_BattleShout" }, castClass = "Warrior", type = "aura" },
+    hawk               = { name = "Aspect of the Hawk", identifiers = { { tooltip = "Aspect of the Hawk", texture = "Spell_Nature_RavenForm" } }, castClass = "Hunter", type = "self", recast = 5 },
+    cheetah            = { name = "Aspect of the Cheetah", identifiers = { { tooltip = "Aspect of the Cheetah", texture = "Ability_Mount_JungleTiger" } }, castClass = "Hunter", type = "self", recast = 5 },
+    beast              = { name = "Aspect of the Beast", identifiers = { { tooltip = "Aspect of the Beast", texture = "Ability_Mount_PinkTiger" } }, castClass = "Hunter", type = "self", recast = 5 },
+    aspectwild         = { name = "Aspect of the Wild", identifiers = { { tooltip = "Aspect of the Wild", texture = "Spell_Nature_ProtectionformNature" } }, castClass = "Hunter", type = "aura", recast = 5 },
+    pack               = { name = "Aspect of the Pack", identifiers = { { tooltip = "Aspect of the Pack", texture = "Ability_Mount_WhiteTiger" } }, castClass = "Hunter", type = "aura", recast = 5 },
+    monkey             = { name = "Aspect of the Monkey", identifiers = { { tooltip = "Aspect of the Monkey", texture = "Ability_Hunter_AspectOfTheMonkey" } }, castClass = "Hunter", type = "self", recast = 5 },
+    trueshot           = { name = "True Shot Aura", identifiers = { { tooltip = "True Shot Aura", texture = "Ability_TrueShot" } }, castClass = "Hunter", type = "aura", recast = 5 },
+    battleshout        = { name = "Battle Shout", identifiers = { { tooltip = "Battle Shout", texture = "Ability_Warrior_BattleShout" } }, castClass = "Warrior", type = "aura", recast = 5 },
 
-    incombat = { name = "In Combat", sfunc = UnitAffectingCombat, sfuncmodel = 2, havebuff = "In Combat", missbuff = "Out of combat", invert = true },
-    pvp = { name = "PvP Enabled", sfunc = UnitIsPVP, sfuncmodel = 2, invert = true, havebuff = "PvP Enabled", missbuff = "Not PvP Enabled" },
+    incombat           = { name = "In Combat", identifiers = { { tooltip = "In Combat", texture = "Spell_Shadow_DeathPact" } }, castClass = "Warrior", type = "self", invert = true },
+    pvp                = { name = "PvP Enabled", identifiers = { { tooltip = "PvP Enabled", texture = "Spell_Shadow_DeathPact" } }, castClass = "Warrior", type = "self", invert = true },
+    flag               = { name = "WSG Flag", identifiers = { { tooltip = "WSG Flag", texture = "INV_BannerPVP_01" }, { tooltip = "WSG Flag", texture = "INV_BannerPVP_02" } }, castClass = "Item2", invert = true, havebuff = "Carrying Flag", missbuff = "No Flag" },
+    battlestandard     = { name = "Battle Standard", identifiers = { { tooltip = "Battle Standard", texture = "INV_Banner_02" }, { tooltip = "Battle Standard", texture = "INV_Banner_01" } }, castClass = "Item2", invert = true, type = "aura" },
 
+    zandalarbuff       = { name = "Spirit of Zandalar", identifiers = { { tooltip = "Spirit of Zandalar", texture = "Ability_Creature_Poison_05" } }, castClass = "Item2", type = "special" },
+    dragonslayer       = { name = "Rallying Cry of the Dragonslayer", identifiers = { { tooltip = "Rallying Cry of the Dragonslayer", texture = "INV_Misc_Head_Dragon_01" } }, castClass = "Item2", type = "special" },
+    fengus             = { name = "Fengus' Ferocity", identifiers = { { tooltip = "Fengus' Ferocity (DM-N Tribute)", texture = "Spell_Nature_UndyingStrength" } }, castClass = "Item2", type = "special" },
+    slipkik            = { name = "Slip'kik's Savvy", identifiers = { { tooltip = "Slip'kik's Savvy (DM-N Tribute)", texture = "Spell_Holy_LesserHeal02" } }, castClass = "Item2", type = "special" },
+    moldar             = { name = "Mol'dar's Moxie", identifiers = { { tooltip = "Mol'dar's Moxie (DM-N Tribute)", texture = "Spell_Nature_MassTeleport" } }, castClass = "Item2", type = "special" },
 
-    flag = { name = "WSG Flag", textures = { "INV_BannerPVP_01", "INV_BannerPVP_02" }, invert = true, havebuff = "Carrying Flag", missbuff = "No Flag" },
-    battlestandard = { name = "Battle Standard", textures = { "INV_Banner_02", "INV_Banner_01" }, castClass = "Item", invert = true, type = "aura" },
+    regen              = { name = "Regenerating", identifiers = { { tooltip = "Regenerating", texture = "INV_Drink_18" }, { tooltip = "Regenerating", texture = "INV_Drink_07" }, { tooltip = "Regenerating", texture = "INV_Misc_Fork&Knife" } }, castClass = "Item2", invert = true, havebuff = "Regenerating", missbuff = "Not Regenerating", type = "self" },
+    hat                = { name = "Admiral's Hat", identifiers = { { tooltip = "Admiral's Hat", texture = "INV_Misc_Horn_03" } }, castClass = "Item2", type = "aura" },
 
-    zandalarbuff = { name = "Spirit of Zandalar", textures = { "Ability_Creature_Poison_05" }, type = "special" },
-    dragonslayer = { name = "Rallying Cry of the Dragonslayer", textures = { "INV_Misc_Head_Dragon_01" }, type = "special" },
-    fengus = { name = "Fengus' Ferocity (DM-N Tribute)", textures = { "Spell_Nature_UndyingStrength" }, type = "special" },
-    slipkik = { name = "Slip'kik's Savvy (DM-N Tribute)", textures = { "Spell_Holy_LesserHeal02" }, type = "special" },
-    moldar = { name = "Mol'dar's Moxie (DM-N Tribute)", textures = { "Spell_Nature_MassTeleport" }, type = "special" },
+    giants             = { name = "Elixir of Giants", identifiers = { { tooltip = "Elixir of Giants", texture = "INV_Potion_61" } }, castClass = "Item", type = "self" },
+    greaterarcane      = { name = "Greater Arcane Elixir", identifiers = { { tooltip = "Greater Arcane Elixir", texture = "INV_Potion_25" } }, castClass = "Item", type = "self" },
+    mongoose           = { name = "Elixir of the Mongoose", identifiers = { { tooltip = "Elixir of the Mongoose", texture = "INV_Potion_32" } }, castClass = "Item", type = "self" },
+    mageblood          = { name = "Mageblood Potion", identifiers = { { tooltip = "Mageblood Potion", texture = "INV_Potion_45" } }, castClass = "Item", type = "self" },
+    firewater          = { name = "Winterfell Firewater", identifiers = { { tooltip = "Winterfell Firewater", texture = "INV_Potion_92" } }, castClass = "Item", type = "self" },
+    jujupower          = { name = "Juju Power", identifiers = { { tooltip = "Juju Power", texture = "INV_Misc_MonsterScales_11" } }, castClass = "Item", type = "self" },
+    jujumight          = { name = "Juju Might", identifiers = { { tooltip = "Juju Might", texture = "INV_Misc_MonsterScales_07" } }, castClass = "Item", type = "self" },
+    jujuchill          = { name = "Juju Chill", identifiers = { { tooltip = "Juju Chill", texture = "INV_Misc_MonsterScales_09" } }, castClass = "Item", type = "self" },
+    jujumightfirewater = { name = "Juju Might + Firewater", identifiers = { { tooltip = "Juju Might", texture = "INV_Misc_MonsterScales_07" }, { tooltip = "Winterfell Firewater", texture = "INV_Potion_92" } }, castClass = "Item", type = "self" },
+    jujupowergiants    = { name = "Juju Power + Elixir of Giants", identifiers = { { tooltip = "Juju Power", texture = "INV_Misc_MonsterScales_11" }, { tooltip = "Elixir of Giants", texture = "INV_Potion_61" } }, castClass = "Item", type = "self" },
 
-    regen = { name = "Regenerating", textures = { "INV_Drink_18", "INV_Drink_07", "INV_Misc_Fork&Knife" }, castClass = "Item", invert = true, havebuff = "Regenerating", missbuff = "Not Regenerating", type = "self" },
-    hat = { name = "Admiral's Hat", textures = { "INV_Misc_Horn_03" }, castClass = "Item", type = "aura" },
+    trollblood         = { name = "Major Trollblood Potion", identifiers = { { tooltip = "Major Trollblood Potion", texture = "INV_Potion_80" } }, castClass = "Item", type = "self" },
+    fortitude          = { name = "Elixir of Fortitude", identifiers = { { tooltip = "Elixir of Fortitude", texture = "INV_Potion_44" } }, castClass = "Item", type = "self" },
+    shadowpower        = { name = "Elixir of Shadow Power", identifiers = { { tooltip = "Elixir of Shadow Power", texture = "INV_Potion_46" } }, castClass = "Item", type = "self" },
+    firepower          = { name = "Elixir of Fire Power", identifiers = { { tooltip = "Elixir of Fire Power", texture = "INV_Potion_60" } }, castClass = "Item", type = "self" },
+    frostpower         = { name = "Elixir of Frost Power", identifiers = { { tooltip = "Elixir of Frost Power", texture = "INV_Potion_03" } }, castClass = "Item", type = "self" },
 
-    giants = { name = "Elixir of Giants", textures = { "INV_Potion_61" }, castClass = "Item", type = "self" },
-    greaterarcane = { name = "Greater Arcane Elixir", textures = { "INV_Potion_25" }, castClass = "Item", type = "self" },
-    mongoose = { name = "Elixir of the Mongoose", textures = { "INV_Potion_32" }, castClass = "Item", type = "self" },
-    mageblood = { name = "Mageblood Potion", textures = { "INV_Potion_45" }, castClass = "Item", type = "self" },
-    firewater = { name = "Winterfell Firewater", textures = { "INV_Potion_92" }, castClass = "Item", type = "self" },
-    jujupower = { name = "Juju Power", textures = { "INV_Misc_MonsterScales_11" }, castClass = "Item", type = "self" },
-    jujumight = { name = "Juju Might", textures = { "INV_Misc_MonsterScales_07" }, castClass = "Item", type = "self" },
-    jujuchill = { name = "Juju Chill", textures = { "INV_Misc_MonsterScales_09" }, castClass = "Item", type = "self" },
+    wellfed            = { name = "Well Fed", identifiers = { { tooltip = "Well Fed", texture = "Spell_Misc_Food" } }, castClass = "Item", type = "self" },
+    tuber              = { name = "Runn Tum Tuber Surprise", identifiers = { { tooltip = "Runn Tum Tuber Surprise", texture = "INV_Misc_Organ_03" } }, castClass = "Item", type = "self" },
+    squid              = { name = "Winter Squid", identifiers = { { tooltip = "Winter Squid", texture = "INV_Gauntlets_19" } }, castClass = "Item", type = "self" },
+    nightfin           = { name = "Nightfin Soup", identifiers = { { tooltip = "Nightfin Soup", texture = "Spell_Nature_ManaRegenTotem" } }, castClass = "Item", type = "self" },
+    arcanepot          = { name = "Greater Arcane Protection Potion", identifiers = { { tooltip = "Greater Arcane Protection Potion", texture = "Spell_Holy_PrayerOfHealing02" } }, castClass = "Item", type = "self" },
+    naturepot          = { name = "Greater Nature Protection Potion", identifiers = { { tooltip = "Greater Nature Protection Potion", texture = "Spell_Nature_SpiritArmor" } }, castClass = "Item", type = "self" },
+    shadowpot          = { name = "Greater Shadow Protection Potion", identifiers = { { tooltip = "Greater Shadow Protection Potion", texture = "Spell_Shadow_RagingScream" } }, castClass = "Item", type = "self" },
+    firepot            = { name = "Greater Fire Protection Potion", identifiers = { { tooltip = "Greater Fire Protection Potion", texture = "Spell_Fire_FireArmor" } }, castClass = "Item", type = "self" },
+    frostpot           = { name = "Greater Frost Protection Potion", identifiers = { { tooltip = "Greater Frost Protection Potion", texture = "Spell_Frost_FrostArmor02" } }, castClass = "Item", type = "self" },
 
-    jujumightfirewater = { name = "Juju Might/FireWater", textures = { "INV_Misc_MonsterScales_07", "INV_Potion_92" }, castClass = "Item", type = "self" },
-    jujupowergiants = { name = "Juju Power/Elixir of Giants", textures = { "INV_Misc_MonsterScales_11", "INV_Potion_61" }, castClass = "Item", type = "self" },
+    spelldmg           = { name = "Flask of Supreme Power", identifiers = { { tooltip = "Flask of Supreme Power", texture = "INV_Potion_41" } }, castClass = "Item", type = "self" },
+    wisdom             = { name = "Flask of Distilled Wisdom", identifiers = { { tooltip = "Flask of Distilled Wisdom", texture = "INV_Potion_97" } }, castClass = "Item", type = "self" },
+    titans             = { name = "Flask of the Titans", identifiers = { { tooltip = "Flask of the Titans", texture = "INV_Potion_62" } }, castClass = "Item", type = "self" },
 
-    rum = { name = "Any Rum", textures = { "INV_Drink_04", "INV_Drink_03", "INV_Drink_08" }, castClass = "Item", type = "self" },
-    trollblood = { name = "Major Trollblood Potion", textures = { "INV_Potion_80" }, castClass = "Item", type = "self" },
-    fortitude = { name = "Elixir of Fortitude", textures = { "INV_Potion_44" }, castClass = "Item", type = "self" },
+    spiritofzanza      = { name = "Spirit of Zanza", identifiers = { { tooltip = "Spirit of Zanza", texture = "INV_Potion_30" } }, castClass = "Item", type = "self" },
+    sheenofzanza       = { name = "Sheen of Zanza", identifiers = { { tooltip = "Sheen of Zanza", texture = "INV_Potion_29" } }, castClass = "Item", type = "self" },
+    swiftnessofzanza   = { name = "Swiftness of Zanza", identifiers = { { tooltip = "Swiftness of Zanza", texture = "INV_Potion_31" } }, castClass = "Item", type = "self" },
 
-    shadowpower = { name = "Elixir of Shadow Power", textures = { "INV_Potion_46" }, castClass = "Item", type = "self" },
-    firepower = { name = "Elixir of Fire Power", textures = { "INV_Potion_60" }, castClass = "Item", type = "self" },
-    frostpower = { name = "Elixir of Frost Power", textures = { "INV_Potion_03" }, castClass = "Item", type = "self" },
+    frostmark          = { name = "Mark of Frost", identifiers = { { tooltip = "Mark of Frost", texture = "Spell_Frost_ChainsOfIce" } }, type = "debuff" },
+    naturemark         = { name = "Mark of Nature", identifiers = { { tooltip = "Mark of Nature", texture = "Spell_Nature_SpiritArmor" } }, type = "debuff" },
+    shazz              = { name = "Amplify Magic [Shazzrah]", identifiers = { { tooltip = "Amplify Magic [Shazzrah]", texture = "Spell_Arcane_StarFire" } }, type = "debuff" },
+    cthun              = { name = "Digestive Acid [C'Thun]", identifiers = { { tooltip = "Digestive Acid [C'Thun]", texture = "Ability_Creature_Disease_02" } }, type = "debuff" },
+    drunk              = { name = "Drunk [ZG]", identifiers = { { tooltip = "Drunk [ZG]", texture = "Ability_Creature_Poison_01" } }, type = "debuff" },
+    dcurse             = { name = "Type: Curse", identifiers = { { tooltip = "Type: Curse", texture = "Spell_Shadow_AntiShadow" }, { tooltip = "Type: Curse", texture = "Spell_Shadow_CurseOfAchimonde" } }, type = "debuff" },
+    dmagic             = { name = "Type: Magic", identifiers = { { tooltip = "Type: Magic", texture = "Spell_Shadow_AntiShadow" }, { tooltip = "Type: Magic", texture = "Spell_Shadow_CurseOfAchimonde" } }, type = "debuff" },
+    ddisease           = { name = "Type: Disease", identifiers = { { tooltip = "Type: Disease", texture = "Spell_Shadow_AntiShadow" }, { tooltip = "Type: Disease", texture = "Spell_Shadow_CurseOfAchimonde" } }, type = "debuff" },
+    dpoison            = { name = "Type: Poison", identifiers = { { tooltip = "Type: Poison", texture = "Spell_Shadow_AntiShadow" }, { tooltip = "Type: Poison", texture = "Spell_Shadow_CurseOfAchimonde" } }, type = "debuff" },
+    dtypeless          = { name = "Type: Typeless", identifiers = { { tooltip = "Type: Typeless", texture = "Spell_Shadow_AntiShadow" }, { tooltip = "Type: Typeless", texture = "Spell_Shadow_CurseOfAchimonde" } }, type = "debuff" },
+    dicanremove        = { name = "Type: You can remove", identifiers = { { tooltip = "Type: You can remove", texture = "Spell_Shadow_AntiShadow" }, { tooltip = "Type: You can remove", texture = "Spell_Shadow_CurseOfAchimonde" } }, type = "debuff" },
 
-    wellfed = { name = "Well Fed", textures = { "Spell_Misc_Food" }, castClass = "Item", type = "self" },
-    tuber = { name = "Runn Tum Tuber Surprise", textures = { "INV_Misc_Organ_03" }, castClass = "Item", type = "self" },
-    squid = { name = "Winter Squid", textures = { "INV_Gauntlets_19" }, castClass = "Item", type = "self" },
-    nightfin = { name = "Nightfin Soup", textures = { "Spell_Nature_ManaRegenTotem" }, castClass = "Item", type = "self" },
-
-    arcanepot = { name = "Greater Arcane Protection Potion", textures = { "Spell_Holy_PrayerOfHealing02" }, castClass = "Item", type = "self" },
-    naturepot = { name = "Greater Nature Protection Potion", textures = { "Spell_Nature_SpiritArmor" }, castClass = "Item", type = "self" },
-    shadowpot = { name = "Greater Shadow Protection Potion", textures = { "Spell_Shadow_RagingScream" }, castClass = "Item", type = "self" },
-    firepot = { name = "Greater Fire Protection Potion", textures = { "Spell_Fire_FireArmor" }, castClass = "Item", type = "self" },
-    frostpot = { name = "Greater Frost Protection Potion", textures = { "Spell_Frost_FrostArmor02" }, castClass = "Item", type = "self" },
-
-    bstooltip = { name = "Battle Shout Tooltip", sfunc = isUnitBuffTooltipUp, sfuncmodel = 3, tooltipname = 'Battle Shout', textures = {}, castClass = "Item Tooltip", type = "self" },
-    dreamshardelixirtooltip = { name = "Dreamshard Elixir", sfunc = isUnitBuffTooltipUp, sfuncmodel = 3, tooltipname = 'Dreamshard Elixir', textures = {}, castClass = "Item Tooltip", type = "self" },
-    dreamtonictoolip = { name = "Dreamtonic", sfunc = isUnitBuffTooltipUp, sfuncmodel = 3, tooltipname = 'Dreamtonic', textures = {}, castClass = "Item Tooltip", type = "self" },
-
-    spelldmg = { name = "Flask of Supreme Power", textures = { "INV_Potion_41" }, castClass = "Item", type = "self" },
-    wisdom = { name = "Flask of Distilled Wisdom", textures = { "INV_Potion_97" }, castClass = "Item", type = "self" },
-    titans = { name = "Flask of the Titans", textures = { "INV_Potion_62" }, castClass = "Item", type = "self" },
-
-    spiritofzanza = { name = "Spirit of Zanza", textures = { "INV_Potion_30" }, castClass = "Item", type = "self" },
-    sheenofzanza = { name = "Sheen of Zanza", textures = { "INV_Potion_29" }, castClass = "Item", type = "self" },
-    swiftnessofzanza = { name = "Swiftness of Zanza", textures = { "INV_Potion_31" }, castClass = "Item", type = "self" },
-
-    frostmark = { name = "Mark of Frost", textures = { "Spell_Frost_ChainsOfIce" }, invert = true, type = "debuff" },
-    naturemark = { name = "Mark of Nature", textures = { "Spell_Nature_SpiritArmor" }, invert = true, type = "debuff" },
-    shazz = { name = "Amplify Magic [Shazzrah]", textures = { "Spell_Arcane_StarFire" }, type = "debuff" },
-    cthun = { name = "Digestive Acid [C'Thun]", textures = { "Ability_Creature_Disease_02" }, type = "debuff", invert = true },
-    drunk = { name = "Drunk [ZG]", textures = { "Ability_Creature_Poison_01" }, type = "debuff" },
-    dcurse = { name = "Type: Curse", queryFunc = RAB_QueryDebuff, ext = "Curse", type = "debuff" },
-    dmagic = { name = "Type: Magic", queryFunc = RAB_QueryDebuff, ext = "Magic", type = "debuff" },
-    ddisease = { name = "Type: Disease", queryFunc = RAB_QueryDebuff, ext = "Disease", type = "debuff" },
-    dpoison = { name = "Type: Poison", queryFunc = RAB_QueryDebuff, ext = "Poison", type = "debuff" },
-    dtypeless = { name = "Type: Typeless", queryFunc = RAB_QueryDebuff, ext = "", type = "debuff" },
-    dicanremove = { name = "Type: You can remove", queryFunc = RAB_QueryDebuff, ext = "SELF", type = "debuff" },
-
-    health = { name = "Health", type = "special", queryFunc = RAB_QueryHealth, ext = "hp", buffFunc = RAB_CastResurrect, description = "Sum of health versus sum of max health." },
-    alive = { name = "Alive", type = "special", queryFunc = RAB_QueryHealth, ext = "alive", buffFunc = RAB_CastResurrect, description = "Number of people alive versus total headcount." },
-    mana = { name = "Mana", type = "special", queryFunc = RAB_QueryMana, description = "Sum of current mana vs sum of max mana.", ignoreClass = "rw" },
-    status = { name = "Status", type = "special", queryFunc = RAB_QueryStatus, description = "Displays buff sumary for PW:F, AI, MotW, BoK, BoS, BoW and Soulstones.", noUI = true },
-    scanunknown = { name = "Unknown Buff Scan", type = "special", queryFunc = RAB_ScanRaid, ext = "unknown", description = "Scans raid for unknown buff textures.", noUI = true },
-    scanraid = { name = "Raid Scan", type = "special", queryFunc = RAB_ScanRaid, ext = "known", description = "Scans raid and displays a report of all known buffs.", noUI = true },
-    ishere = { name = "Is Here", type = "special", queryFunc = RAB_QueryHere, description = "Displays people currently afk, offline or invisible." },
-    ctra = { name = "CTRA Version", type = "special", queryFunc = RAB_QueryCTRAVersion, description = "Displays people whose CTRA is out of date." },
-    blank = { name = "Blank", type = "special", queryFunc = RAB_QueryBlank, description = "Displays a blank bar - use as a header if you wish." },
-    onycloak = { name = "Onyxia Cloak", type = "special", queryFunc = RAB_QueryInventoryItem, ext = "15:15138", buffFunc = RAB_CastInventoryItem, description = "Checks that people are wearing their Onyxia Cloak." },
-    info = { name = "Target's (De)Buffs", type = "special", queryFunc = RAB_QueryBuffInfo, description = "Outputs buff names / textures for buffs and debuffs on your current target.", noUI = true },
-
-    priestres = { name = "Resurrection", type = "dummy", textures = { "Spell_Holy_Resurrection" }, castClass = "Priest" },
-    paladinres = { name = "Redemption", type = "dummy", textures = { "Spell_Holy_Resurrection" }, castClass = "Paladin" },
-    shamanres = { name = "Ancestral Spirit", type = "dummy", textures = { "Spell_Nature_Regenerate" }, castClass = "Shaman" },
-
-    selfflask = { name = "Flask of Supreme Power", textures = { "INV_Potion_41" }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 13512 },
-    selfgreaterarcane = { name = "Greater Arcane Elixir", textures = { "INV_Potion_25" }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 13454 },
-    selfdreamshard = { name = "Dreamshard Elixir", textures = { "INV_Potion_12" }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 61224 },
-    selfdreamtonic = { name = "Dreamtonic", textures = { "INV_Potion_10" }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 61423 },
-    selfspiritzanza = { name = 'Spirit of Zanza', textures = { 'INV_Potion_30' }, type = 'selfbuffonly', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20079 },
-    selfgreaterfirepower = { name = 'Elixir of Greater Firepower', textures = { 'INV_Potion_60' }, type = 'selfbuffonly', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 21546 },
-
-    selfbattleshout = { name = "Battle Shout", textures = { "Ability_Warrior_BattleShout" }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler },
-    selfmongoose = { name = 'Elixir of the Mongoose', textures = { 'INV_Potion_32', 'INV_Potion_93' }, type = 'selfbuffonly', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 13452 },
-    selfgiants = { name = "Elixir of Giants", textures = { "INV_Potion_61", 'INV_Misc_MonsterScales_11' }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 9206 },
-
-    selfmageblood = { name = 'Mageblood Potion', textures = { 'INV_Potion_45' }, type = 'selfbuffonly', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20007 },                                  --  tooltipname='Mana Regeneration',
-    selfnightfinsoup = { name = 'Nightfin Soup', textures = { 'Spell_Nature_ManaRegenTotem', 'Spell_Misc_Food' }, type = 'selfbuffonly', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 13931 }, --  tooltipname='Mana Regeneration'
-    selfsagefish = { name = 'Sagefish Delight', tooltipname = 'Well Fed', textures = { 'Spell_Misc_Food' }, type = 'selfbuffonly', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 21217 },
-    selfmushroomstam = { name = 'Magic Mushroom (stam)', tooltipname = 'Increased Stamina', textures = { 'INV_Boots_Plate_03', 'Spell_Misc_Food' }, type = 'selfbuffonly', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 51717 },
-    selfmushroomstr = { name = 'Magic Mushroom (str)', tooltipname = 'Well Fed', textures = { 'Spell_Misc_Food' }, type = 'selfbuffonly', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 51720 },
-    selfdesertdumpling = { name = 'Smoked Desert Dumpling', tooltipname = 'Well Fed', textures = { 'Spell_Misc_Food' }, type = 'selfbuffonly', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20452 },
-    selfwolfsteak = { name = 'Tender Wolf Steak', tooltipname = 'Well Fed', textures = { 'Spell_Misc_Food' }, type = 'selfbuffonly', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 18045 },
-    selftelabimmedley = { name = "Danonzo's Tel'Abim Medley", tooltipname = 'Well Fed', textures = { 'Spell_Misc_Food' }, type = 'selfbuffonly', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 60978 },
-
-    selfrumseyrum = { name = "Rumsey Rum Black Label", textures = { "INV_Drink_04" }, type = 'selfbuffonly', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 21151 },
-    selfelixirfortitude = { name = 'Elixir of Fortitude', textures = { 'INV_Potion_44' }, type = 'selfbuffonly', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 3825 },
-    selfstoneshield = { name = 'Greater Stoneshield Potion', textures = { 'INV_Potion_69' }, type = 'selfbuffonly', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 13455 },
-    selfsupdef = { name = 'Elixir of Superior Defence', textures = { 'INV_Potion_86' }, type = 'selfbuffonly', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 13445 },
-    selfagility = { name = 'Elixir of Greater Agility', textures = { 'INV_Potion_93', 'INV_Potion_32' }, type = 'selfbuffonly', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 9187 },
-    selffirewater = { name = 'Winterfall Firewater', textures = { 'INV_Potion_92', 'INV_Misc_MonsterScales_07' }, type = 'selfbuffonly', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 12820 },
-    selfgiftarthas = { name = 'Gift of Arthas', textures = { 'Spell_Shadow_FingerOfDeath' }, type = 'selfbuffonly', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 9088 },
-
-    -- bl buffs
-    selfroids = { name = 'R.O.I.D.S.', tooltipname = 'Rage of Ages', textures = { 'Spell_Nature_ForceOfNature', 'Spell_Nature_Strength', 'Spell_Nature_Purge' }, type = 'selfbuffonly', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 8410 },
-    selflungjuice = { name = 'Lung Juice Cocktail', tooltipname = 'Spirit of Boar', textures = { 'Spell_Nature_ForceOfNature', 'Spell_Nature_Purge', 'Spell_Nature_Strength' }, type = 'selfbuffonly', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 8411 },
-    selfscorpok = { name = 'Ground Scorpok Assay', tooltipname = 'Strike of the Scorpok', textures = { 'Spell_Nature_ForceOfNature', 'Spell_Nature_Purge', 'Spell_Nature_Strength' }, type = 'selfbuffonly', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 8412 },
-
-    -- targeted buffs
-    selfjujupower = { name = 'Juju Power', textures = { 'INV_Misc_MonsterScales_11', 'INV_Potion_61' }, type = 'selfbuffonly', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 12451, useOn = 'player' },
-    selfjujumight = { name = 'Juju Might', textures = { 'INV_Misc_MonsterScales_07', 'INV_Potion_92' }, type = 'selfbuffonly', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 12460, useOn = 'player' },
-    selfjujuguile = { name = "Juju Guile", textures = { "INV_Misc_MonsterScales_13" }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 12458, useOn = 'player' },
-
-    -- wep enchants
-    selfbrillmanaoil = { name = 'Brilliant Mana Oil', textures = {}, type = 'selfbuffonly', castClass = 'Self Wep Enchant', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20748, useOn = 'weapon' },
-    selfbrillmanaoiloh = { name = 'Brilliant Mana Oil (offhand)', textures = {}, type = 'selfbuffonly', castClass = 'Self Wep Enchant', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20748, useOn = 'weaponOH' },
-
-    selflessermanaoil = { name = 'Lesser Mana Oil', textures = {}, type = 'selfbuffonly', castClass = 'Self Wep Enchant', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20747, useOn = 'weapon' },
-    selflessermanaoiloh = { name = 'Lesser Mana Oil (offhand)', textures = {}, type = 'selfbuffonly', castClass = 'Self Wep Enchant', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20747, useOn = 'weaponOH' },
-
-    selfblessedwizardoil = { name = 'Blessed Wizard Oil', textures = {}, type = 'selfbuffonly', castClass = 'Self Wep Enchant', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 23123, useOn = 'weapon' },
-    selfblessedwizardoiloh = { name = 'Blessed Wizard Oil (offhand)', textures = {}, type = 'selfbuffonly', castClass = 'Self Wep Enchant', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 23123, useOn = 'weaponOH' },
-
-    selfbrilliantwizardoil = { name = 'Brilliant Wizard Oil', textures = {}, type = 'selfbuffonly', castClass = 'Self Wep Enchant', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20749, useOn = 'weapon' },
-    selfbrilliantwizardoiloh = { name = 'Brilliant Wizard Oil (offhand)', textures = {}, type = 'selfbuffonly', castClass = 'Self Wep Enchant', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20749, useOn = 'weaponOH' },
-
-    selfwizardoil = { name = 'Wizard Oil', textures = {}, type = 'selfbuffonly', castClass = 'Self Wep Enchant', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20750, useOn = 'weapon' },
-    selfwizardoiloh = { name = 'Wizard Oil (offhand)', textures = {}, type = 'selfbuffonly', castClass = 'Self Wep Enchant', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20750, useOn = 'weaponOH' },
-
-    selfshadowoil = { name = 'Shadow Oil', textures = {}, type = 'selfbuffonly', castClass = 'Self Wep Enchant', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 3824, useOn = 'weapon' },
-    selfshadowoiloh = { name = 'Shadow Oil (offhand)', textures = {}, type = 'selfbuffonly', castClass = 'Self Wep Enchant', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 3824, useOn = 'weaponOH' },
-
-    selfconsecratedstone = { name = 'Consecrated Sharpening Stone', textures = {}, type = 'selfbuffonly', castClass = 'Self Wep Enchant', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 23122, useOn = 'weapon' },
-    selfconsecratedstoneoh = { name = 'Consecrated Sharpening Stone (offhand)', textures = {}, type = 'selfbuffonly', castClass = 'Self Wep Enchant', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 23122, useOn = 'weaponOH' },
-
-    selfdenseweightstone = { name = 'Dense Weightstone', textures = {}, type = 'selfbuffonly', castClass = 'Self Wep Enchant', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 12643, useOn = 'weapon' },
-    selfdenseweightstoneoh = { name = 'Dense Weightstone (offhand)', textures = {}, type = 'selfbuffonly', castClass = 'Self Wep Enchant', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 12643, useOn = 'weaponOH' },
-
-    selfdensesharpeningstone = { name = 'Dense Sharpening Stone', textures = {}, type = 'selfbuffonly', castClass = 'Self Wep Enchant', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 12404, useOn = 'weapon' },
-    selfdensesharpeningstoneoh = { name = 'Dense Sharpening Stone (offhand)', textures = {}, type = 'selfbuffonly', castClass = 'Self Wep Enchant', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 12404, useOn = 'weaponOH' },
-
-    selfelementalsharpeningstone = { name = 'Elemental Sharpening Stone', textures = {}, type = 'selfbuffonly', castClass = 'Self Wep Enchant', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 18262, useOn = 'weapon' },
-    selfelementalsharpeningstoneoh = { name = 'Elemental Sharpening Stone (offhand)', textures = {}, type = 'selfbuffonly', castClass = 'Self Wep Enchant', queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 18262, useOn = 'weaponOH' },
+    priestres          = { name = "Resurrection", identifiers = { { tooltip = "Resurrection", texture = "Spell_Holy_Resurrection" } }, castClass = "Priest", ctraid = 22, recast = 3 },
+    paladinres         = { name = "Redemption", identifiers = { { tooltip = "Redemption", texture = "Spell_Holy_Resurrection" } }, castClass = "Paladin", ctraid = 23, recast = 3 },
+    shamanres          = { name = "Ancestral Spirit", identifiers = { { tooltip = "Ancestral Spirit", texture = "Spell_Nature_Regenerate" } }, castClass = "Shaman", ctraid = 24, recast = 3 },
 
 
+    selfflask = { name = "Flask of Supreme Power", identifiers = { { tooltip = "Flask of Supreme Power", texture = "INV_Potion_41" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 13512 },
+    selfgreaterarcane = { name = "Greater Arcane Elixir", identifiers = { { tooltip = "Greater Arcane Elixir", texture = "INV_Potion_25" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 13454 },
+    selfdreamshard = { name = "Dreamshard Elixir", identifiers = { { tooltip = "Dreamshard Elixir", texture = "INV_Potion_25" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 61224 },
+    selfdreamtonic = { name = "Dreamtonic", identifiers = { { tooltip = "Dreamtonic", texture = "INV_Potion_30" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 61423 },
+    selfspiritzanza = { name = "Spirit of Zanza", identifiers = { { tooltip = "Spirit of Zanza", texture = "INV_Potion_30" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20079 },
+    selfgreaterfirepower = { name = "Elixir of Greater Firepower", identifiers = { { tooltip = "Elixir of Greater Firepower", texture = "INV_Potion_60" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 21546 },
+    selfbattleshout = { name = "Battle Shout", identifiers = { { tooltip = "Battle Shout", texture = "Ability_Warrior_BattleShout" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler },
+    selfmongoose = { name = "Elixir of the Mongoose", identifiers = { { tooltip = "Elixir of the Mongoose", texture = "INV_Potion_32" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 13452 },
+    selfgiants = { name = "Elixir of Giants", identifiers = { { tooltip = "Elixir of Giants", texture = "INV_Potion_61" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 9206 },
+    selfmageblood = { name = "Mageblood Potion", identifiers = { { tooltip = "Mana Regeneration", texture = "INV_Potion_45" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20007 },
+    selfelixirfortitude = { name = "Elixir of Fortitude", identifiers = { { tooltip = "Elixir of Fortitude", texture = "INV_Potion_44" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 21546 },
+    selfstoneshield = { name = "Greater Stoneshield Potion", identifiers = { { tooltip = "Greater Stoneshield Potion", texture = "INV_Potion_69" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 13455 },
+    selfsupdef = { name = "Elixir of Superior Defence", identifiers = { { tooltip = "Elixir of Superior Defence", texture = "INV_Potion_86" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 13445 },
+    selfagility = { name = "Elixir of Greater Agility", identifiers = { { tooltip = "Elixir of Greater Agility", texture = "INV_Potion_93" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 9187 },
 
+    -- Food/drink
+    selfnightfinsoup = { name = "Nightfin Soup", identifiers = { { tooltip = "Mana Regeneration", texture = "Spell_Nature_ManaRegenTotem" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 13931 },
+    selfsagefish = { name = "Sagefish Delight", identifiers = { { tooltip = "Mana Regeneration", texture = "inv_misc_fish_21" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 21217 },
+    selfmushroomstam = { name = "Magic Mushroom (stam)", identifiers = { { tooltip = "Increased Stamina", texture = "INV_Boots_Plate_03" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 51717 },
+    selfmushroomstr = { name = "Magic Mushroom (str)", identifiers = { { tooltip = "Well Fed", texture = "Spell_Misc_Food" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 51720 },
+    selfdesertdumpling = { name = "Smoked Desert Dumpling", identifiers = { { tooltip = "Well Fed", texture = "Spell_Misc_Food" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20452 },
+    selftenderwolf = { name = "Tender Wolf Steak", identifiers = { { tooltip = "Well Fed", texture = "Spell_Misc_Food" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 18045 },
+    selftelabimmedley = { name = "Danonzo's Tel'Abim Medley", identifiers = { { tooltip = "Well Fed", texture = "Spell_Misc_Food" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 60978 },
+    selftelabimdelight = { name = "Danonzo's Tel'Abim Delight", identifiers = { { tooltip = "Well Fed", texture = "Spell_Misc_Food" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 60977 },
+    selftelabimsurprise = { name = "Danonzo's Tel'Abim Surprise", identifiers = { { tooltip = "Well Fed", texture = "Spell_Misc_Food" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 60976 },
+    selfrumseyrum = { name = "Rumsey Rum Black Label", identifiers = { { tooltip = "Rumsey Rum Black Label", texture = "INV_Drink_04" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 21151 },
+    selffirewater = { name = "Winterfall Firewater", identifiers = { { tooltip = "Winterfall Firewater", texture = "INV_Potion_92" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 12820 },
+    selfgiftarthas = { name = "Gift of Arthas", identifiers = { { tooltip = "Gift of Arthas", texture = "Spell_Shadow_FingerOfDeath" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 9088 },
 
+    selfroids = { name = "R.O.I.D.S.", identifiers = { { tooltip = "R.O.I.D.S.", texture = "Spell_Nature_ForceOfNature" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 8410 },
+    selflungjuice = { name = "Lung Juice Cocktail", identifiers = { { tooltip = "Lung Juice Cocktail", texture = "Spell_Nature_ForceOfNature" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 8411 },
+    selfscorpok = { name = "Ground Scorpok Assay", identifiers = { { tooltip = "Ground Scorpok Assay", texture = "Spell_Nature_ForceOfNature" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 8412 },
 
-    -- frost oil?
-    -- wf just for indicator?
+    selfjujupower = { name = "Juju Power", identifiers = { { tooltip = "Juju Power", texture = "INV_Misc_MonsterScales_11" }, { tooltip = "Juju Power", texture = "INV_Potion_61" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 12451, useOn = 'player' },
+    selfjujumight = { name = "Juju Might", identifiers = { { tooltip = "Juju Might", texture = "INV_Misc_MonsterScales_07" }, { tooltip = "Juju Might", texture = "INV_Potion_92" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 12460, useOn = 'player' },
+    selfjujuguile = { name = "Juju Guile", identifiers = { { tooltip = "Juju Guile", texture = "INV_Misc_MonsterScales_13" }, { tooltip = "Juju Guile", texture = "INV_Potion_92" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 12458, useOn = 'player' },
+
+    selfbrillmanaoil = { name = "Brilliant Mana Oil", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20748, useOn = 'weapon' },
+    selfbrillmanaoiloh = { name = "Brilliant Mana Oil (offhand)", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20748, useOn = 'weaponOH' },
+
+    selflessermanaoil = { name = "Lesser Mana Oil", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20747, useOn = 'weapon' },
+    selflessermanaoiloh = { name = "Lesser Mana Oil (offhand)", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20747, useOn = 'weaponOH' },
+
+    selfblessedwizardoil = { name = "Blessed Wizard Oil", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 23123, useOn = 'weapon' },
+    selfblessedwizardoiloh = { name = "Blessed Wizard Oil (offhand)", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 23123, useOn = 'weaponOH' },
+
+    selfbrilliantwizardoil = { name = "Brilliant Wizard Oil", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20749, useOn = 'weapon' },
+    selfbrilliantwizardoiloh = { name = "Brilliant Wizard Oil (offhand)", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20749, useOn = 'weaponOH' },
+
+    selfwizardoil = { name = "Wizard Oil", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20750, useOn = 'weapon' },
+    selfwizardoiloh = { name = "Wizard Oil (offhand)", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20750, useOn = 'weaponOH' },
+
+    selfshadowoil = { name = "Shadow Oil", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 3824, useOn = 'weapon' },
+    selfshadowoiloh = { name = "Shadow Oil (offhand)", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 3824, useOn = 'weaponOH' },
+
+    selfconsecratedstone = { name = "Consecrated Sharpening Stone", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 23122, useOn = 'weapon' },
+    selfconsecratedstoneoh = { name = "Consecrated Sharpening Stone (offhand)", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 23122, useOn = 'weaponOH' },
+
+    selfdenseweightstone = { name = "Dense Weightstone", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 12643, useOn = 'weapon' },
+    selfdenseweightstoneoh = { name = "Dense Weightstone (offhand)", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 12643, useOn = 'weaponOH' },
+
+    selfdensesharpeningstone = { name = "Dense Sharpening Stone", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 12404, useOn = 'weapon' },
+    selfdensesharpeningstoneoh = { name = "Dense Sharpening Stone (offhand)", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 12404, useOn = 'weaponOH' },
+
+    selfelementalsharpeningstone = { name = "Elemental Sharpening Stone", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 18262, useOn = 'weapon' },
+    selfelementalsharpeningstoneoh = { name = "Elemental Sharpening Stone (offhand)", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 18262, useOn = 'weaponOH' },
 };
