@@ -1029,8 +1029,8 @@ function RABui_Settings_BL_DetailFrame_SetBuff(cmd)
         " " ..
         (RAB_Buffs[bkey].castClass ~= nil and string.format(sRAB_Settings_BuffList_ToolTip_CastBy, (RAB_Chat_Colors[RAB_Buffs[bkey].castClass] ~= nil and RAB_Chat_Colors[RAB_Buffs[bkey].castClass] or NORMAL_FONT_COLOR_CODE) .. RAB_Buffs[bkey].castClass .. "|r") or ""));
     usedTextureSlots = 0;
-    if (RAB_Buffs[cmd].textures ~= nil) then
-        for key, val in RAB_Buffs[cmd].textures do
+    for _, identifier in ipairs(RAB_Buffs[cmd].identifiers) do
+        if (identifier.texture) then
             usedTextureSlots = usedTextureSlots + 1;
             if (usedTextureSlots < 4) then
                 getglobal("RAB_BuffDetail_TexBut" .. usedTextureSlots .. "Tex"):SetTexture("Interface\\Icons\\" .. val);
