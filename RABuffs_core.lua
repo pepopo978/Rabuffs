@@ -352,7 +352,7 @@ end
 function RAB_IsEligible(u, cmd, excludeNames)
     if not UnitIsConnected(u) then return false; end
     if cmd ~= 'pvp' and RAB_UnitIsDead(u) then return false; end
-    if (RAB_Buffs[cmd].type == 'selfbuffonly') then
+    if (RAB_Buffs[cmd].type == 'selfbuffonly' or RAB_Buffs[cmd].type == 'wepbuffonly') then
         return UnitIsUnit(u, 'player')
     end
 
@@ -367,6 +367,7 @@ function RAB_IsEligible(u, cmd, excludeNames)
     if ((RAB_Buffs[cmd].ignoreMTs == nil or not RAB_CTRA_IsMT(unitName)) and
             (RAB_Buffs[cmd].type ~= "self"
                 or RAB_Buffs[cmd].castClass == "Item"
+                or RAB_Buffs[cmd].castClass == "Item2"
                 or RAB_Buffs[cmd].castClass == "Item Tooltip"
                 or RAB_UnitClass(u) == RAB_Buffs[cmd].castClass) and
             (RAB_Buffs[cmd].ignoreClass == nil or string.find(RAB_Buffs[cmd].ignoreClass, RAB_ClassShort[RAB_UnitClass(u)]) == nil)) then

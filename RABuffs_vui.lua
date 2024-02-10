@@ -732,32 +732,34 @@ function RABui_AddFrameDropDown_Prepare()
                 buffs[id].castby = "Debuff";
             elseif (val.type == 'selfbuffonly' and val.castClass == nil) then
                 buffs[id].castby = 'Self Buff'
+            elseif (val.type == 'wepbuffonly' and val.castClass == nil) then
+                buffs[id].castby = 'Weapon Buff'
             end
             id = id + 1;
         end
     end
     table.sort(buffs, function(a, b) return (a.name < b.name) end);
     RAB_ADFDD_Buffs = buffs;
-    RAB_ADFDD_Cats = {};
+    RAB_ADFDD_Categories = {};
     for key, val in buffs do
-        if (RAB_ADFDD_Cats[val.castby] == nil) then
+        if (RAB_ADFDD_Categories[val.castby] == nil) then
             cb = val.castby;
-            if (cb == "Miscellaneous" or cb == "Debuff" or cb == "Item" or cb == 'Item Tooltip' or cb == 'Self Buff' or cb == 'Self Wep Enchant') then
+            if (cb == "Miscellaneous" or cb == "Debuff" or cb == "Item" or cb == "Item2" or cb == 'Item Tooltip' or cb == 'Self Buff' or cb == 'Self Wep Enchant') then
                 cb = "z" .. cb;
             end
-            tinsert(RAB_ADFDD_Cats, cb);
+            tinsert(RAB_ADFDD_Categories, cb);
         end
     end
-    table.sort(RAB_ADFDD_Cats);
+    table.sort(RAB_ADFDD_Categories);
     local obuff = "";
-    for key, val in RAB_ADFDD_Cats do
+    for key, val in RAB_ADFDD_Categories do
         if (val ~= obuff) then
             obuff = val;
             if (strsub(val, 1, 1) == "z") then
-                RAB_ADFDD_Cats[key] = strsub(val, 2);
+                RAB_ADFDD_Categories[key] = strsub(val, 2);
             end
         else
-            RAB_ADFDD_Cats[key] = nil;
+            RAB_ADFDD_Categories[key] = nil;
         end
     end
 end
@@ -765,7 +767,7 @@ end
 function RABui_BarDetail_BuffType_Initialize()
     local key, val, i; i = 1;
     if (UIDROPDOWNMENU_MENU_LEVEL == 1) then
-        for key, val in RAB_ADFDD_Cats do
+        for key, val in RAB_ADFDD_Categories do
             UIDropDownMenu_AddButton({ text = val, value = val, hasArrow = 1, notCheckable = 1 });
         end
     else
@@ -836,17 +838,26 @@ function split(str, delimiter)
     return result
 end
 
-function RABui_AddBar(bartype, barlabel, barpriority, outputTarget, excludeNamesStr)
+function RABui_AddBar(command, barlabel, barpriority, outputTarget, excludeNamesStr)
     local excludeNames = {};
     if (excludeNamesStr ~= nil and excludeNamesStr ~= "") then
         excludeNames = split(excludeNamesStr, ",")
     end
 
     if (RAB_BarDetail_EditBarId == 0) then
+        -- check for nil values before adding
+        if (barlabel == nil) then
+            RAB_Print("Bar label cannot be nil.", "warn");
+            return;
+        end
+        if (command == nil) then
+            RAB_Print("Bar command cannot be nil.", "warn");
+            return;
+        end
         tinsert(RABui_Bars,
             {
                 label = barlabel,
-                cmd = cmd,
+                cmd = command,
                 color = { 1, 1, 1 },
                 priority = barpriority,
                 extralabel = "",
@@ -856,7 +867,7 @@ function RABui_AddBar(bartype, barlabel, barpriority, outputTarget, excludeNames
         RABui_SyncBars();
     else
         RABui_Bars[RAB_BarDetail_EditBarId].label = barlabel;
-        RABui_Bars[RAB_BarDetail_EditBarId].cmd = bartype;
+        RABui_Bars[RAB_BarDetail_EditBarId].cmd = command;
         RABui_Bars[RAB_BarDetail_EditBarId].priority = barpriority;
         RABui_Bars[RAB_BarDetail_EditBarId].out = outputTarget;
         RABui_Bars[RAB_BarDetail_EditBarId].excludeNames = excludeNames;
@@ -940,7 +951,7 @@ function RAB_Settings_BL_Init()
     RAB_BL_Buffs = {};
     for key, val in RAB_Buffs do
         if (val.castClass ~= nil) then
-            sort = (val.castClass == "Item" and "zItem" or (val.castClass == "Monster" and "zMonster" or val.castClass));
+            sort = ((val.castClass == "Item" or val.castClass == "Item2") and "zItem" or (val.castClass == "Monster" and "zMonster" or val.castClass));
         elseif (val.type == "special") then
             sort = "zSpecial";
         elseif (val.type == "debuff") then

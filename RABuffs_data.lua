@@ -1365,17 +1365,18 @@ RAB_Buffs = {
 
     incombat           = { name = "In Combat", identifiers = { { tooltip = "In Combat", texture = "Spell_Shadow_DeathPact" } }, castClass = "Warrior", type = "self", invert = true },
     pvp                = { name = "PvP Enabled", identifiers = { { tooltip = "PvP Enabled", texture = "Spell_Shadow_DeathPact" } }, castClass = "Warrior", type = "self", invert = true },
-    flag               = { name = "WSG Flag", identifiers = { { tooltip = "WSG Flag", texture = "INV_BannerPVP_01" }, { tooltip = "WSG Flag", texture = "INV_BannerPVP_02" } }, castClass = "Item", invert = true, havebuff = "Carrying Flag", missbuff = "No Flag" },
-    battlestandard     = { name = "Battle Standard", identifiers = { { tooltip = "Battle Standard", texture = "INV_Banner_02" }, { tooltip = "Battle Standard", texture = "INV_Banner_01" } }, castClass = "Item", invert = true, type = "aura" },
+    flag               = { name = "WSG Flag", identifiers = { { tooltip = "WSG Flag", texture = "INV_BannerPVP_01" }, { tooltip = "WSG Flag", texture = "INV_BannerPVP_02" } }, castClass = "Item2", invert = true, havebuff = "Carrying Flag", missbuff = "No Flag" },
+    battlestandard     = { name = "Battle Standard", identifiers = { { tooltip = "Battle Standard", texture = "INV_Banner_02" }, { tooltip = "Battle Standard", texture = "INV_Banner_01" } }, castClass = "Item2", invert = true, type = "aura" },
 
-    zandalarbuff       = { name = "Spirit of Zandalar", identifiers = { { tooltip = "Spirit of Zandalar", texture = "Ability_Creature_Poison_05" } }, castClass = "Item", type = "special" },
-    dragonslayer       = { name = "Rallying Cry of the Dragonslayer", identifiers = { { tooltip = "Rallying Cry of the Dragonslayer", texture = "INV_Misc_Head_Dragon_01" } }, castClass = "Item", type = "special" },
-    fengus             = { name = "Fengus' Ferocity", identifiers = { { tooltip = "Fengus' Ferocity (DM-N Tribute)", texture = "Spell_Nature_UndyingStrength" } }, castClass = "Item", type = "special" },
-    slipkik            = { name = "Slip'kik's Savvy", identifiers = { { tooltip = "Slip'kik's Savvy (DM-N Tribute)", texture = "Spell_Holy_LesserHeal02" } }, castClass = "Item", type = "special" },
-    moldar             = { name = "Mol'dar's Moxie", identifiers = { { tooltip = "Mol'dar's Moxie (DM-N Tribute)", texture = "Spell_Nature_MassTeleport" } }, castClass = "Item", type = "special" },
+    zandalarbuff       = { name = "Spirit of Zandalar", identifiers = { { tooltip = "Spirit of Zandalar", texture = "Ability_Creature_Poison_05" } }, castClass = "Item2", type = "special" },
+    dragonslayer       = { name = "Rallying Cry of the Dragonslayer", identifiers = { { tooltip = "Rallying Cry of the Dragonslayer", texture = "INV_Misc_Head_Dragon_01" } }, castClass = "Item2", type = "special" },
+    fengus             = { name = "Fengus' Ferocity", identifiers = { { tooltip = "Fengus' Ferocity (DM-N Tribute)", texture = "Spell_Nature_UndyingStrength" } }, castClass = "Item2", type = "special" },
+    slipkik            = { name = "Slip'kik's Savvy", identifiers = { { tooltip = "Slip'kik's Savvy (DM-N Tribute)", texture = "Spell_Holy_LesserHeal02" } }, castClass = "Item2", type = "special" },
+    moldar             = { name = "Mol'dar's Moxie", identifiers = { { tooltip = "Mol'dar's Moxie (DM-N Tribute)", texture = "Spell_Nature_MassTeleport" } }, castClass = "Item2", type = "special" },
 
-    regen              = { name = "Regenerating", identifiers = { { tooltip = "Regenerating", texture = "INV_Drink_18" }, { tooltip = "Regenerating", texture = "INV_Drink_07" }, { tooltip = "Regenerating", texture = "INV_Misc_Fork&Knife" } }, castClass = "Item", invert = true, havebuff = "Regenerating", missbuff = "Not Regenerating", type = "self" },
-    hat                = { name = "Admiral's Hat", identifiers = { { tooltip = "Admiral's Hat", texture = "INV_Misc_Horn_03" } }, castClass = "Item", type = "aura" },
+    regen              = { name = "Regenerating", identifiers = { { tooltip = "Regenerating", texture = "INV_Drink_18" }, { tooltip = "Regenerating", texture = "INV_Drink_07" }, { tooltip = "Regenerating", texture = "INV_Misc_Fork&Knife" } }, castClass = "Item2", invert = true, havebuff = "Regenerating", missbuff = "Not Regenerating", type = "self" },
+    hat                = { name = "Admiral's Hat", identifiers = { { tooltip = "Admiral's Hat", texture = "INV_Misc_Horn_03" } }, castClass = "Item2", type = "aura" },
+
     giants             = { name = "Elixir of Giants", identifiers = { { tooltip = "Elixir of Giants", texture = "INV_Potion_61" } }, castClass = "Item", type = "self" },
     greaterarcane      = { name = "Greater Arcane Elixir", identifiers = { { tooltip = "Greater Arcane Elixir", texture = "INV_Potion_25" } }, castClass = "Item", type = "self" },
     mongoose           = { name = "Elixir of the Mongoose", identifiers = { { tooltip = "Elixir of the Mongoose", texture = "INV_Potion_32" } }, castClass = "Item", type = "self" },
@@ -1465,33 +1466,33 @@ RAB_Buffs = {
     selfjujumight = { name = "Juju Might", identifiers = { { tooltip = "Juju Might", texture = "INV_Misc_MonsterScales_07" }, { tooltip = "Juju Might", texture = "INV_Potion_92" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 12460, useOn = 'player' },
     selfjujuguile = { name = "Juju Guile", identifiers = { { tooltip = "Juju Guile", texture = "INV_Misc_MonsterScales_13" }, { tooltip = "Juju Guile", texture = "INV_Potion_92" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 12458, useOn = 'player' },
 
-    selfbrillmanaoil = { name = "Brilliant Mana Oil", identifiers = {}, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20748, useOn = 'weapon' },
-    selfbrillmanaoiloh = { name = "Brilliant Mana Oil (offhand)", identifiers = {}, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20748, useOn = 'weaponOH' },
+    selfbrillmanaoil = { name = "Brilliant Mana Oil", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20748, useOn = 'weapon' },
+    selfbrillmanaoiloh = { name = "Brilliant Mana Oil (offhand)", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20748, useOn = 'weaponOH' },
 
-    selflessermanaoil = { name = "Lesser Mana Oil", identifiers = {}, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20747, useOn = 'weapon' },
-    selflessermanaoiloh = { name = "Lesser Mana Oil (offhand)", identifiers = {}, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20747, useOn = 'weaponOH' },
+    selflessermanaoil = { name = "Lesser Mana Oil", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20747, useOn = 'weapon' },
+    selflessermanaoiloh = { name = "Lesser Mana Oil (offhand)", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20747, useOn = 'weaponOH' },
 
-    selfblessedwizardoil = { name = "Blessed Wizard Oil", identifiers = {}, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 23123, useOn = 'weapon' },
-    selfblessedwizardoiloh = { name = "Blessed Wizard Oil (offhand)", identifiers = {}, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 23123, useOn = 'weaponOH' },
+    selfblessedwizardoil = { name = "Blessed Wizard Oil", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 23123, useOn = 'weapon' },
+    selfblessedwizardoiloh = { name = "Blessed Wizard Oil (offhand)", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 23123, useOn = 'weaponOH' },
 
-    selfbrilliantwizardoil = { name = "Brilliant Wizard Oil", identifiers = {}, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20749, useOn = 'weapon' },
-    selfbrilliantwizardoiloh = { name = "Brilliant Wizard Oil (offhand)", identifiers = {}, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20749, useOn = 'weaponOH' },
+    selfbrilliantwizardoil = { name = "Brilliant Wizard Oil", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20749, useOn = 'weapon' },
+    selfbrilliantwizardoiloh = { name = "Brilliant Wizard Oil (offhand)", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20749, useOn = 'weaponOH' },
 
-    selfwizardoil = { name = "Wizard Oil", identifiers = {}, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20750, useOn = 'weapon' },
-    selfwizardoiloh = { name = "Wizard Oil (offhand)", identifiers = {}, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20750, useOn = 'weaponOH' },
+    selfwizardoil = { name = "Wizard Oil", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20750, useOn = 'weapon' },
+    selfwizardoiloh = { name = "Wizard Oil (offhand)", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20750, useOn = 'weaponOH' },
 
-    selfshadowoil = { name = "Shadow Oil", identifiers = {}, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 3824, useOn = 'weapon' },
-    selfshadowoiloh = { name = "Shadow Oil (offhand)", identifiers = {}, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 3824, useOn = 'weaponOH' },
+    selfshadowoil = { name = "Shadow Oil", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 3824, useOn = 'weapon' },
+    selfshadowoiloh = { name = "Shadow Oil (offhand)", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 3824, useOn = 'weaponOH' },
 
-    selfconsecratedstone = { name = "Consecrated Sharpening Stone", identifiers = {}, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 23122, useOn = 'weapon' },
-    selfconsecratedstoneoh = { name = "Consecrated Sharpening Stone (offhand)", identifiers = {}, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 23122, useOn = 'weaponOH' },
+    selfconsecratedstone = { name = "Consecrated Sharpening Stone", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 23122, useOn = 'weapon' },
+    selfconsecratedstoneoh = { name = "Consecrated Sharpening Stone (offhand)", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 23122, useOn = 'weaponOH' },
 
-    selfdenseweightstone = { name = "Dense Weightstone", identifiers = {}, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 12643, useOn = 'weapon' },
-    selfdenseweightstoneoh = { name = "Dense Weightstone (offhand)", identifiers = {}, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 12643, useOn = 'weaponOH' },
+    selfdenseweightstone = { name = "Dense Weightstone", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 12643, useOn = 'weapon' },
+    selfdenseweightstoneoh = { name = "Dense Weightstone (offhand)", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 12643, useOn = 'weaponOH' },
 
-    selfdensesharpeningstone = { name = "Dense Sharpening Stone", identifiers = {}, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 12404, useOn = 'weapon' },
-    selfdensesharpeningstoneoh = { name = "Dense Sharpening Stone (offhand)", identifiers = {}, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 12404, useOn = 'weaponOH' },
+    selfdensesharpeningstone = { name = "Dense Sharpening Stone", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 12404, useOn = 'weapon' },
+    selfdensesharpeningstoneoh = { name = "Dense Sharpening Stone (offhand)", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 12404, useOn = 'weaponOH' },
 
-    selfelementalsharpeningstone = { name = "Elemental Sharpening Stone", identifiers = {}, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 18262, useOn = 'weapon' },
-    selfelementalsharpeningstoneoh = { name = "Elemental Sharpening Stone (offhand)", identifiers = {}, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 18262, useOn = 'weaponOH' },
+    selfelementalsharpeningstone = { name = "Elemental Sharpening Stone", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 18262, useOn = 'weapon' },
+    selfelementalsharpeningstoneoh = { name = "Elemental Sharpening Stone (offhand)", identifiers = {}, type = "wepbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 18262, useOn = 'weaponOH' },
 };
