@@ -1445,7 +1445,7 @@ RAB_Buffs = {
 
     -- Food/drink
     selfnightfinsoup = { name = "Nightfin Soup", identifiers = { { tooltip = "Mana Regeneration", texture = "Spell_Nature_ManaRegenTotem" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 13931 },
-    selfsagefish = { name = "Sagefish Delight", identifiers = { { tooltip = "Mana Regeneration", texture = "Spell_Misc_Food" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 21217 },
+    selfsagefish = { name = "Sagefish Delight", identifiers = { { tooltip = "Mana Regeneration", texture = "inv_misc_fish_21" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 21217 },
     selfmushroomstam = { name = "Magic Mushroom (stam)", identifiers = { { tooltip = "Increased Stamina", texture = "INV_Boots_Plate_03" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 51717 },
     selfmushroomstr = { name = "Magic Mushroom (str)", identifiers = { { tooltip = "Well Fed", texture = "Spell_Misc_Food" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 51720 },
     selfdesertdumpling = { name = "Smoked Desert Dumpling", identifiers = { { tooltip = "Well Fed", texture = "Spell_Misc_Food" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 20452 },
