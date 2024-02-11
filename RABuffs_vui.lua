@@ -1044,7 +1044,7 @@ function RABui_Settings_BL_DetailFrame_SetBuff(cmd)
         if (identifier.texture) then
             usedTextureSlots = usedTextureSlots + 1;
             if (usedTextureSlots < 4) then
-                getglobal("RAB_BuffDetail_TexBut" .. usedTextureSlots .. "Tex"):SetTexture("Interface\\Icons\\" .. val);
+                getglobal("RAB_BuffDetail_TexBut" .. usedTextureSlots .. "Tex"):SetTexture("Interface\\Icons\\" .. identifier.texture);
                 getglobal("RAB_BuffDetail_TexBut" .. usedTextureSlots).spellId = sRAB_SpellIDs
                     [(usedTextureSlots == 1 and cmd or (RAB_Buffs[cmd].bigcast ~= nil and RAB_Buffs[cmd].bigcast or "dummy"))];
             end
