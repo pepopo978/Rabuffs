@@ -1417,6 +1417,7 @@ RAB_Buffs = {
     shazz              = { name = "Amplify Magic [Shazzrah]", identifiers = { { tooltip = "Amplify Magic [Shazzrah]", texture = "Spell_Arcane_StarFire" } }, type = "debuff" },
     cthun              = { name = "Digestive Acid [C'Thun]", identifiers = { { tooltip = "Digestive Acid [C'Thun]", texture = "Ability_Creature_Disease_02" } }, type = "debuff" },
     drunk              = { name = "Drunk [ZG]", identifiers = { { tooltip = "Drunk [ZG]", texture = "Ability_Creature_Poison_01" } }, type = "debuff" },
+    dbronze            = { name = "Chromaggus: Bronze", identifiers = { { tooltip = "Brood Affliction: Bronze", texture = "INV_Misc_Head_Dragon_Bronze" } }, type = "debuff", invert = true },
     dcurse             = { name = "Type: Curse", identifiers = { { tooltip = "Type: Curse", texture = "Spell_Shadow_AntiShadow" }, { tooltip = "Type: Curse", texture = "Spell_Shadow_CurseOfAchimonde" } }, type = "debuff" },
     dmagic             = { name = "Type: Magic", identifiers = { { tooltip = "Type: Magic", texture = "Spell_Shadow_AntiShadow" }, { tooltip = "Type: Magic", texture = "Spell_Shadow_CurseOfAchimonde" } }, type = "debuff" },
     ddisease           = { name = "Type: Disease", identifiers = { { tooltip = "Type: Disease", texture = "Spell_Shadow_AntiShadow" }, { tooltip = "Type: Disease", texture = "Spell_Shadow_CurseOfAchimonde" } }, type = "debuff" },
@@ -1459,8 +1460,9 @@ RAB_Buffs = {
     selfgiftarthas = { name = "Gift of Arthas", identifiers = { { tooltip = "Gift of Arthas", texture = "Spell_Shadow_FingerOfDeath" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 9088 },
 
     selfroids = { name = "R.O.I.D.S.", identifiers = { { tooltip = "R.O.I.D.S.", texture = "Spell_Nature_ForceOfNature" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 8410 },
-    selflungjuice = { name = "Lung Juice Cocktail", identifiers = { { tooltip = "Lung Juice Cocktail", texture = "Spell_Nature_ForceOfNature" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 8411 },
+    selflungjuice = { name = "Lung Juice Cocktail", identifiers = { { tooltip = "Lung Juice Cocktail", texture = "Spell_Nature_Purge" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 8411 },
     selfscorpok = { name = "Ground Scorpok Assay", identifiers = { { tooltip = "Ground Scorpok Assay", texture = "Spell_Nature_ForceOfNature" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 8412 },
+    selfcerebralcortex = { name = "Cerebral Cortex Compound", identifiers = { { tooltip = "Infallible Mind", texture = "Spell_Ice_Lament" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 8423 },
 
     selfjujupower = { name = "Juju Power", identifiers = { { tooltip = "Juju Power", texture = "INV_Misc_MonsterScales_11" }, { tooltip = "Juju Power", texture = "INV_Potion_61" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 12451, useOn = 'player' },
     selfjujumight = { name = "Juju Might", identifiers = { { tooltip = "Juju Might", texture = "INV_Misc_MonsterScales_07" }, { tooltip = "Juju Might", texture = "INV_Potion_92" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 12460, useOn = 'player' },
