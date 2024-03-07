@@ -164,6 +164,9 @@ sRAB_LOCALIZATION["enUS"] = function(ui, output, spells)
         sRAB_Settings_Option_showparty_Description = "RABuffs window will be shown when you're in a party.";
         sRAB_Settings_Option_showraid = "Display in a raid";
         sRAB_Settings_Option_showraid_Description = "RABuffs window will be shown when you're in a raid group.";
+        sRAB_Settings_Option_hideincombat = "Hide in combat";
+        sRAB_Settings_Option_hideincombat_Description =
+        "RABuffs window will be hidden while you're in combat.";
         sRAB_Settings_Option_showsampleoutputonclick = "Show sample output";
         sRAB_Settings_Option_showsampleoutputonclick_Description =
         "When clicking on a bar does not result in a spell being cast, display query text output in console window.";

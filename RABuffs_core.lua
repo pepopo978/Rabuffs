@@ -27,6 +27,7 @@ RABui_DefSettings = {
     showsolo = true,
     showparty = true,
     showraid = true,
+    hideincombat = false,
     trustctra = false,
     keepversions = false,
     enablefadingfx = true,

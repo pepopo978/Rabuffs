@@ -720,6 +720,15 @@
                             </Anchor>
                         </Anchors>
                     </CheckButton>
+                    <CheckButton name="RAB_Settings_hideincombat" inherits="RAB_Settings_CheckBox">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeTo="RAB_Settings_showsolo" relativePoint="TOPLEFT">
+                                <Offset>
+                                    <AbsDimension x="150" y="0"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                    </CheckButton>
                     <CheckButton name="RAB_Settings_showparty" inherits="RAB_Settings_CheckBox">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeTo="RAB_Settings_showsolo" relativePoint="BOTTOMLEFT">
