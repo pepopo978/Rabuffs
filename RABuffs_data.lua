@@ -1295,6 +1295,10 @@ RAB_Buffs = {
     blank              = { name = "Blank", identifiers = {}, type = "special", queryFunc = RAB_QueryBlank, description = "Displays a blank bar - use as a header if you wish." },
     onycloak           = { name = "Onyxia Cloak", identifiers = {}, type = "special", queryFunc = RAB_QueryInventoryItem, ext = "15:15138", buffFunc = RAB_CastInventoryItem, description = "Checks that people are wearing their Onyxia Cloak." },
     info               = { name = "Target's (De)Buffs", identifiers = {}, type = "special", queryFunc = RAB_QueryBuffInfo, description = "Outputs buff names / textures for buffs and debuffs on your current target.", noUI = true },
+    stormwindgof       = { name = "Stormwind Gift of Friendship", identifiers = { { tooltip = "Stormwind Gift of Friendship", texture = "INV_Misc_Gift_03" } }, type = "special" },
+	darnassusgof       = { name = "Darnassus Gift of Friendship", identifiers = { { tooltip = "Darnassus Gift of Friendship", texture = "INV_Misc_Gift_02" } }, type = "special" },
+	orgrimmargof       = { name = "Orgrimmar Gift of Friendship", identifiers = { { tooltip = "Orgrimmar Gift of Friendship", texture = "INV_Misc_Gift_01" } }, type = "special" },
+	thunderbluffgof    = { name = "Thunder Bluff Gift of Friendship", identifiers = { { tooltip = "Thunder Bluff of Friendship", texture = "INV_Misc_Gift_05" } }, type = "special" },
 
     -- Buffs
     ai                 = { name = "Arcane Intellect", identifiers = { { tooltip = "Arcane Intellect", texture = "Spell_Holy_ArcaneIntellect" }, { tooltip = "Arcane Brilliance", texture = "Spell_Holy_MagicalSentry" } }, bigcast = "ab", bigsort = "group", bigthreshold = 3, ignoreClass = "wr", castClass = "Mage", priority = { priest = 0.5, druid = 0.5, paladin = 0.4, shaman = 0.4, warlock = 0.3 }, ctraid = 3, recast = 5 },
