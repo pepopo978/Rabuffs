@@ -28,6 +28,7 @@ RABui_DefSettings = {
     showparty = true,
     showraid = true,
     hideincombat = false,
+    hideactive = false,
     trustctra = false,
     keepversions = false,
     enablefadingfx = true,
@@ -58,6 +59,7 @@ RAB_ClassShort = {
     Warrior = "w",
     Paladin = "a"
 };
+RABui_CompleteBars = {}; -- track which bars to hide/show
 
 RAB_CastLog = {}; -- Spell targets out of LoS. [unit] = expires;
 RAB_CurrentGroupStatus = -1;

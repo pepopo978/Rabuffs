@@ -36,7 +36,7 @@
             <OnUpdate>if (RABui_Settings.enablefadingfx) then RABui_BarRedraw(); end</OnUpdate>
         </Scripts>
     </Button>
-    <Frame name="RAB_Settings_TabFrame" virtual="true" hidden="true">
+    <Frame name="RAB_Settings_TabFrame" virtual="true" hidden="true" movable="true">
         <Size>
             <AbsDimension x="315" y="355"/>
         </Size>
@@ -53,7 +53,10 @@
             <AbsDimension x="25" y="25"/>
         </Size>
         <Scripts>
-            <OnClick>RABui_Settings_ToggleOption(this.name);</OnClick>
+            <OnClick>
+                RABui_Settings_ToggleOption(this.name);
+                RABui_SyncBars();
+            </OnClick>
             <OnShow>RABui_Settings_InitOption();</OnShow>
             <OnEnter>GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
                 GameTooltip:AddLine(getglobal(this:GetName() .. "Text"):GetText(),1,1,1);
@@ -752,6 +755,15 @@
                             <Anchor point="TOPLEFT" relativeTo="RAB_Settings_showparty" relativePoint="BOTTOMLEFT">
                                 <Offset>
                                     <AbsDimension x="0" y="7"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                    </CheckButton>
+                    <CheckButton name="RAB_Settings_hideactive" inherits="RAB_Settings_CheckBox">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeTo="RAB_Settings_lockwindow" relativePoint="TOPLEFT">
+                                <Offset>
+                                    <AbsDimension x="150" y="0"/>
                                 </Offset>
                             </Anchor>
                         </Anchors>

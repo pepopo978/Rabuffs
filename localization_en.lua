@@ -167,6 +167,9 @@ sRAB_LOCALIZATION["enUS"] = function(ui, output, spells)
         sRAB_Settings_Option_hideincombat = "Hide in combat";
         sRAB_Settings_Option_hideincombat_Description =
         "RABuffs window will be hidden while you're in combat.";
+        sRAB_Settings_Option_hideactive = "Hide active";
+        sRAB_Settings_Option_hideactive_Description =
+        "Hide active buffs/consumes from the list.";
         sRAB_Settings_Option_showsampleoutputonclick = "Show sample output";
         sRAB_Settings_Option_showsampleoutputonclick_Description =
         "When clicking on a bar does not result in a spell being cast, display query text output in console window.";

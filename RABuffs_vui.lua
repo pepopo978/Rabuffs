@@ -128,33 +128,63 @@ function RABui_Load()
 end
 
 function RABui_SyncBars()
-	local i
+	-- create bars if necessary
 	for i = 1, table.getn(RABui_Bars) do
 		if (i > RABui_BarCount) then
 			RABui_CreateBar(i);
 			RABui_BarCount = i;
 		end
-		getglobal("RAB_Bar" .. i):Show();
-		getglobal("RAB_Bar" .. i .. "Tex"):SetTexture("Interface\\AddOns\\RABuffs\\bar.tga");
-		getglobal("RAB_Bar" .. i .. "Tex2"):SetTexture("Interface\\AddOns\\RABuffs\\bar.tga");
-		getglobal("RAB_Bar" .. i .. "Tex"):SetVertexColor(RABui_Bars[i].color[1], RABui_Bars[i].color[2],
-				RABui_Bars[i].color[3]);
-		getglobal("RAB_Bar" .. i .. "Tex2"):SetVertexColor(RABui_Bars[i].color[1], RABui_Bars[i].color[2],
-				RABui_Bars[i].color[3]);
-		RABui_SetBarText(i, RABui_Bars[i].label .. (RABui_Bars[i].extralabel == nil and "" or RABui_Bars[i].extralabel));
 	end
-	for i = table.getn(RABui_Bars) + 1, RABui_BarCount do
-		getglobal("RAB_Bar" .. i):Hide();
+
+	local barsToShow = {};
+	local shownBarCount = 0;
+
+	-- check if bar should be hidden/unhidden
+	if RABui_Settings.hideactive then
+		barsToShow = {}; -- make separate list of bars to show
+		shownBarCount = 0;
+		for j = 1, RABui_BarCount do
+			-- only show bars that aren't complete
+			if (RABui_CompleteBars[j] == nil) then
+				shownBarCount = shownBarCount + 1;
+				table.insert(barsToShow, RABui_Bars[j]);
+			else
+				table.insert(barsToShow, nil);
+			end
+		end
+	else
+		barsToShow = RABui_Bars;
+		shownBarCount = RABui_BarCount;
 	end
-	RABFrame:SetHeight(10 + table.getn(RABui_Bars) * 12);
+
+	local shownBars = 0;
+	for i = 1, RABui_BarCount do
+		local showBar = barsToShow[i];
+		local bar = getglobal("RAB_Bar" .. i)
+		if (showBar == nil) then
+			bar:Hide();
+		else
+			shownBars = shownBars + 1;
+			RABui_ShowBarAtIndex(bar, shownBars);
+			local tex = getglobal("RAB_Bar" .. i .. "Tex");
+			local tex2 = getglobal("RAB_Bar" .. i .. "Tex2");
+			tex:SetTexture("Interface\\AddOns\\RABuffs\\bar.tga");
+			tex:SetVertexColor(barsToShow[i].color[1], barsToShow[i].color[2], barsToShow[i].color[3]);
+			tex2:SetTexture("Interface\\AddOns\\RABuffs\\bar.tga");
+			tex2:SetVertexColor(barsToShow[i].color[1], barsToShow[i].color[2], barsToShow[i].color[3]);
+			RABui_SetBarText(i, barsToShow[i].label .. (barsToShow[i].extralabel == nil and "" or barsToShow[i].extralabel));
+		end
+	end
+
+	RABFrame:SetHeight(10 + shownBarCount * 12);
 	RABui_Settings_Layout_SyncList();
 end
 
 function RABui_UpdateBars()
-	local i;
 	for i = 1, table.getn(RABui_Bars) do
 		RABui_UpdateBar(i);
 	end
+	RABui_SyncBars();
 end
 
 function RABui_SetBarValue(barid, cur, fade, max)
@@ -165,6 +195,23 @@ function RABui_SetBarValue(barid, cur, fade, max)
 	if (tonumber(cur) > tonumber(max)) then
 		max = tonumber(cur);
 	end
+
+	if cur - fade >= math.max(max, 1) then
+		if not RABui_CompleteBars[barid] then
+			RABui_CompleteBars[barid] = true;
+			if RABui_Settings.hideactive then
+				RABui_SyncBars();
+			end
+		end
+	else
+		if  RABui_CompleteBars[barid] then
+			RABui_CompleteBars[barid] = nil;
+			if RABui_Settings.hideactive then
+				RABui_SyncBars();
+			end
+		end
+	end
+
 	local bar = getglobal("RAB_Bar" .. barid);
 	if (bar ~= nil and (cur ~= bar.cur or max ~= bar.max or fade ~= bar.fade)) then
 		bar.cur, bar.max, bar.fade = cur, max, fade;
@@ -182,7 +229,10 @@ function RABui_SetBarValue(barid, cur, fade, max)
 end
 
 function RABui_SetBarText(barid, text)
-	getglobal("RAB_Bar" .. barid):SetText(text);
+	local bar = getglobal("RAB_Bar" .. barid);
+	if bar then
+		bar:SetText(text);
+	end
 end
 
 function RABui_GetBarValue(barid)
@@ -1078,7 +1128,7 @@ function RABui_Settings_BL_DetailFrame_SetBuff(cmd)
 		if (identifier.texture) then
 			usedTextureSlots = usedTextureSlots + 1;
 			if (usedTextureSlots < 4) then
-                getglobal("RAB_BuffDetail_TexBut" .. usedTextureSlots .. "Tex"):SetTexture("Interface\\Icons\\" .. identifier.texture);
+				getglobal("RAB_BuffDetail_TexBut" .. usedTextureSlots .. "Tex"):SetTexture("Interface\\Icons\\" .. identifier.texture);
 				getglobal("RAB_BuffDetail_TexBut" .. usedTextureSlots).spellId = sRAB_SpellIDs
 				[(usedTextureSlots == 1 and cmd or (RAB_Buffs[cmd].bigcast ~= nil and RAB_Buffs[cmd].bigcast or "dummy"))];
 			end
@@ -1354,8 +1404,12 @@ end
 function RABui_CreateBar(id)
 	local ptr = CreateFrame("Button", "RAB_Bar" .. id, RABFrame, "RAB_Bar");
 	ptr:SetID(id);
-	ptr:SetPoint("TOPLEFT", RABFrame, "TOPLEFT", 4, -12 * (id - 1) - 5);
-	ptr:Show();
+	return ptr;
+end
+
+function RABui_ShowBarAtIndex(bar, index)
+	bar:SetPoint("TOPLEFT", RABFrame, "TOPLEFT", 4, -12 * (index - 1) - 5);
+	bar:Show();
 end
 
 function RAB_TimeFormatOffset(tmr)
