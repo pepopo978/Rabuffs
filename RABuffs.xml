@@ -55,6 +55,7 @@
         <Scripts>
             <OnClick>
                 RABui_Settings_ToggleOption(this.name);
+                RABui_UpdateVisibility();
                 RABui_SyncBars();
             </OnClick>
             <OnShow>RABui_Settings_InitOption();</OnShow>

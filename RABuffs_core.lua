@@ -4,7 +4,7 @@
 
 RAB_Lock = 1;
 
-RABuffs_Version = "0.10.3";
+RABuffs_Version = "0.11.0";
 RABuffs_DeciVersion = 0.100300;
 
 RABui_Settings = {};
@@ -24,7 +24,7 @@ RABui_DefSettings = {
     partymode = true,
     uilocale = "",
     outlocale = "",
-    showsolo = true,
+    showsolo = false,
     showparty = true,
     showraid = true,
     hideincombat = false,
@@ -32,7 +32,7 @@ RABui_DefSettings = {
     trustctra = false,
     keepversions = false,
     enablefadingfx = true,
-    showsampleoutputonclick = true,
+    showsampleoutputonclick = false,
     newestVersion = "fresh",
     newestVersionTitle = RABuffs_Version,
     newestVersionPlayer = "Default",

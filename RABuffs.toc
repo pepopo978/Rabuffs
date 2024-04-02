@@ -4,7 +4,7 @@
 ## OptionalDeps: CT_RaidAssist, SlashHelp
 ## SavedVariables: RABui_Settings
 ## SavedVariablesPerCharacter: RABui_IsUIShown
-## X-Version: 0.10.3
+## X-Version: 0.11.0
 ## X-URL: http://www.curse-gaming.com
 RABuffs_strings.lua
 localization_en.lua
