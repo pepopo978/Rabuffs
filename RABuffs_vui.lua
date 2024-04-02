@@ -96,7 +96,7 @@ end
 function RABui_ShowAfterCombat()
 	if (RABui_Settings.hideincombat and not UnitAffectingCombat("player")) then
 		-- trigger UpdateVisibility to check for other conditions
-        RABui_UpdateVisibility(RAB_CurrentGroupStatus, RAB_CurrentGroupStatus);
+		RABui_UpdateVisibility(RAB_CurrentGroupStatus, RAB_CurrentGroupStatus);
 		RAB_Core_Raise("RAB_GROUPSTATUS", RAB_CurrentGroupStatus, RAB_CurrentGroupStatus);
 	end
 end
@@ -188,6 +188,24 @@ function RABui_UpdateBars()
 	RABui_SyncBars();
 end
 
+function RABui_CompleteBar(barid)
+	if not RABui_CompleteBars[barid] then
+		RABui_CompleteBars[barid] = true;
+		if RABui_Settings.hideactive then
+			RABui_SyncBars();
+		end
+	end
+end
+
+function RABui_UncompleteBar(barid)
+	if RABui_CompleteBars[barid] then
+		RABui_CompleteBars[barid] = nil;
+		if RABui_Settings.hideactive then
+			RABui_SyncBars();
+		end
+	end
+end
+
 function RABui_SetBarValue(barid, cur, fade, max)
 	if (max == nil) then
 		max = tonumber(fade);
@@ -197,19 +215,19 @@ function RABui_SetBarValue(barid, cur, fade, max)
 		max = tonumber(cur);
 	end
 
+	local _, _, cmd = string.find(RABui_Bars[barid].cmd, "(%a+)"); -- get the first word of the full command
+	local isDebuff = RAB_Buffs[cmd].type == "debuff"
 	if cur - fade >= math.max(max, 1) then
-		if not RABui_CompleteBars[barid] then
-			RABui_CompleteBars[barid] = true;
-			if RABui_Settings.hideactive then
-				RABui_SyncBars();
-			end
+		if isDebuff then
+			RABui_UncompleteBar(barid)
+		else
+			RABui_CompleteBar(barid)
 		end
 	else
-		if  RABui_CompleteBars[barid] then
-			RABui_CompleteBars[barid] = nil;
-			if RABui_Settings.hideactive then
-				RABui_SyncBars();
-			end
+		if isDebuff then
+			RABui_CompleteBar(barid)
+		else
+			RABui_UncompleteBar(barid)
 		end
 	end
 
