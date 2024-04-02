@@ -73,14 +73,14 @@ function RABui_OnEvent()
 	end
 end
 
-function RABui_UpdateVisibility()
-	if (arg2 == -1 and RABui_IsUIShown) then
+function RABui_UpdateVisibility(currentGroupStatus, previousGroupStatus)
+	if (previousGroupStatus == -1 and RABui_IsUIShown) then
 		RABFrame:Show();
-	elseif (arg2 == -1 and not RABui_IsUIShown) then
+	elseif (previousGroupStatus == -1 and not RABui_IsUIShown) then
 		RABFrame:Hide();
-	elseif ((arg1 == 0 and RABui_Settings.showsolo) or
-			(arg1 == 1 and RABui_Settings.showparty) or
-			(arg1 == 2 and RABui_Settings.showraid)) then
+	elseif ((currentGroupStatus == 0 and RABui_Settings.showsolo) or
+			(currentGroupStatus == 1 and RABui_Settings.showparty) or
+			(currentGroupStatus == 2 and RABui_Settings.showraid)) then
 		RABFrame:Show();
 	else
 		RABFrame:Hide();
@@ -96,6 +96,7 @@ end
 function RABui_ShowAfterCombat()
 	if (RABui_Settings.hideincombat and not UnitAffectingCombat("player")) then
 		-- trigger UpdateVisibility to check for other conditions
+        RABui_UpdateVisibility(RAB_CurrentGroupStatus, RAB_CurrentGroupStatus);
 		RAB_Core_Raise("RAB_GROUPSTATUS", RAB_CurrentGroupStatus, RAB_CurrentGroupStatus);
 	end
 end
@@ -1421,7 +1422,6 @@ function RAB_TimeFormatOffset(tmr)
 end
 
 RAB_Core_Register("PLAYER_LOGIN", "loadui", RABui_Load);
-RAB_Core_Register("RAB_GROUPSTATUS", "uiVisibility", RABui_UpdateVisibility);
 RAB_Core_Register("PLAYER_REGEN_DISABLED", "combatStarted", RABui_HideInCombat);
 RAB_Core_Register("PLAYER_REGEN_ENABLED", "combatStopped", RABui_ShowAfterCombat);
 

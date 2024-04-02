@@ -55,7 +55,7 @@
         <Scripts>
             <OnClick>
                 RABui_Settings_ToggleOption(this.name);
-                RABui_UpdateVisibility();
+                RABui_UpdateVisibility(RAB_CurrentGroupStatus, RAB_CurrentGroupStatus)
                 RABui_SyncBars();
             </OnClick>
             <OnShow>RABui_Settings_InitOption();</OnShow>
