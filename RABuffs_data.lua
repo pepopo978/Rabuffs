@@ -1463,6 +1463,7 @@ RAB_Buffs = {
     selffirewater = { name = "Winterfall Firewater", identifiers = { { tooltip = "Winterfall Firewater", texture = "INV_Potion_92" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 12820 },
     selfgiftarthas = { name = "Gift of Arthas", identifiers = { { tooltip = "Gift of Arthas", texture = "Spell_Shadow_FingerOfDeath" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 9088 },
 
+    selfbogling = { name = "Bogling Root", identifiers = { { tooltip = "Fury of the Bogling", texture = "Spell_Nature_Strength" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 5206 },
     selfroids = { name = "R.O.I.D.S.", identifiers = { { tooltip = "Rage of Ages", texture = "Spell_Nature_Strength" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 8410 },
     selflungjuice = { name = "Lung Juice Cocktail", identifiers = { { tooltip = "Spirit of Boar", texture = "Spell_Nature_Purge" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 8411 },
     selfscorpok = { name = "Ground Scorpok Assay", identifiers = { { tooltip = "Strike of the Scorpok", texture = "Spell_Nature_ForceOfNature" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 8412 },

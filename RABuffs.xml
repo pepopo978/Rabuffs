@@ -848,6 +848,10 @@
                 PanelTemplates_SetNumTabs(this, 4);
                 this.selectedTab=1;
                 PanelTemplates_UpdateTabs(this);
+                local self = this;
+                this:RegisterForDrag("LeftButton")
+                this:SetScript("OnDragStart", function() self:StartMoving() end)
+                this:SetScript("OnDragStop", function() self:StopMovingOrSizing() end)
             </OnLoad>
         </Scripts>
     </Frame>
