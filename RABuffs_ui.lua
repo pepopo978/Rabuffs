@@ -18,7 +18,7 @@ RAB_Chat_Colors = {
     Priest  = "|cffffffff",
     Warlock = "|cff9382c9",
     Druid   = "|cffff7c0a",
-    Shaman  = "|cfff48cba",
+    Shaman  = "|cff0070de",
     Paladin = "|cfff48cba"
 };
 
