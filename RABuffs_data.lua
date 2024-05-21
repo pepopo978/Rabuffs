@@ -1487,8 +1487,9 @@ RAB_Buffs = {
 	trueshot = { name = "True Shot Aura", identifiers = { { tooltip = "True Shot Aura", texture = "Ability_TrueShot" } }, castClass = "Hunter", type = "aura", recast = 5 },
 	battleshout = { name = "Battle Shout", identifiers = { { tooltip = "Battle Shout", texture = "Ability_Warrior_BattleShout" } }, castClass = "Warrior", type = "aura", recast = 5 },
 
-	incombat = { name = "In Combat", identifiers = { { tooltip = "In Combat", texture = "Spell_Shadow_DeathPact" } }, castClass = "Warrior", type = "self", invert = true },
-	pvp = { name = "PvP Enabled", identifiers = { { tooltip = "PvP Enabled", texture = "Spell_Shadow_DeathPact" } }, castClass = "Warrior", type = "self", invert = true },
+	incombat = { name = "In Combat", sfunc = UnitAffectingCombat, sfuncmodel = 2, havebuff = "In Combat", missbuff = "Out of combat", invert = true },
+	pvp = { name = "PvP Enabled", sfunc = UnitIsPVP, sfuncmodel = 2, invert = true, havebuff = "PvP Enabled", missbuff = "Not PvP Enabled" },
+
 	flag = { name = "WSG Flag", identifiers = { { tooltip = "WSG Flag", texture = "INV_BannerPVP_01" }, { tooltip = "WSG Flag", texture = "INV_BannerPVP_02" } }, castClass = "Item2", invert = true, havebuff = "Carrying Flag", missbuff = "No Flag" },
 	battlestandard = { name = "Battle Standard", identifiers = { { tooltip = "Battle Standard", texture = "INV_Banner_02" }, { tooltip = "Battle Standard", texture = "INV_Banner_01" } }, castClass = "Item2", invert = true, type = "aura" },
 
