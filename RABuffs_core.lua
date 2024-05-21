@@ -486,8 +486,8 @@ function RAB_TextureToBuff(texture) -- Convert texture to buff key, if known.
     texture = RAB_SanitizeTexture(texture);
 
     for buffKey, buffData in RAB_Buffs do
-        -- check for missing identifiers
-        if (buffData.identifiers == nil) then
+        -- check for missing identifiers unless it's a special buff
+        if (buffData.identifiers == nil and buffData.sfunc == nil) then
             RAB_Print("Buff " .. buffKey .. " has no identifiers!", "warn")
         else
             for _, identifier in ipairs(buffData.identifiers) do
