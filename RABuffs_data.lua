@@ -1532,6 +1532,11 @@ RAB_Buffs = {
 	spelldmg = { name = "Flask of Supreme Power", identifiers = { { tooltip = "Supreme Power", texture = "INV_Potion_41" } }, castClass = "Item", type = "self" },
 	wisdom = { name = "Flask of Distilled Wisdom", identifiers = { { tooltip = "Distilled Wisdom", texture = "INV_Potion_97" } }, castClass = "Item", type = "self" },
 	titans = { name = "Flask of the Titans", identifiers = { { tooltip = "Flask of the Titans", texture = "INV_Potion_62" } }, castClass = "Item", type = "self" },
+	anyflask = { name = "Any Flask", identifiers = {
+		{ tooltip = "Supreme Power", texture = "INV_Potion_41" },
+		{ tooltip = "Distilled Wisdom", texture = "INV_Potion_97" },
+		{ tooltip = "Flask of the Titans", texture = "INV_Potion_62" }
+	}, castClass = "Item", type = "self" },
 
 	spiritofzanza = { name = "Spirit of Zanza", identifiers = { { tooltip = "Spirit of Zanza", texture = "INV_Potion_30" } }, castClass = "Item", type = "self" },
 	sheenofzanza = { name = "Sheen of Zanza", identifiers = { { tooltip = "Sheen of Zanza", texture = "INV_Potion_29" } }, castClass = "Item", type = "self" },
