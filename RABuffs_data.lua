@@ -1585,7 +1585,14 @@ RAB_Buffs = {
 	selftelabimmedley = { name = "Danonzo's Tel'Abim Medley", identifiers = { { tooltip = "Well Fed", texture = "Spell_Misc_Food" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 60978 },
 	selftelabimdelight = { name = "Danonzo's Tel'Abim Delight", identifiers = { { tooltip = "Well Fed", texture = "Spell_Misc_Food" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 60977 },
 	selftelabimsurprise = { name = "Danonzo's Tel'Abim Surprise", identifiers = { { tooltip = "Well Fed", texture = "Spell_Misc_Food" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 60976 },
-	selfrumseyrum = { name = "Rumsey Rum Black Label", identifiers = { { tooltip = "Rumsey Rum Black Label", texture = "INV_Drink_04" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 21151 },
+	selfrumseyrum = { name = "Rumsey Rum Black Label", identifiers = {
+		{ tooltip = "Rumsey Rum Black Label", texture = "INV_Drink_04" },
+		{ tooltip = "Increased Stamina", texture = "INV_Drink_04" }, -- doesn't stack with merlot
+	}, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 21151 },
+	selfmerlot = { name = "Medivh's Merlot", identifiers = {
+		{ tooltip = "Increased Stamina", texture = "INV_Drink_04" },
+		{ tooltip = "Rumsey Rum Black Label", texture = "INV_Drink_04" }, -- doesn't stack with rum
+	}, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 61174 },
 	selffirewater = { name = "Winterfall Firewater", identifiers = { { tooltip = "Winterfall Firewater", texture = "INV_Potion_92" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 12820 },
 	selfgiftarthas = { name = "Gift of Arthas", identifiers = { { tooltip = "Gift of Arthas", texture = "Spell_Shadow_FingerOfDeath" } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 9088 },
 
