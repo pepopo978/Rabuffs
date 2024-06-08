@@ -39,14 +39,14 @@ RABui_DefSettings = {
 	newestVersionRealm = "Default"
 };
 RABui_DefBars = {
-	{ class = "ALL", name = "alive", label = "Alive", color = { 0.3, 1, 0.3 }, priority = 1, out = "RAID" },
-	{ class = "ALL", name = "mana", classes = "pdsa", label = "Healer", color = { 0.4, 0.6, 1 }, priority = 1, out = "RAID" },
-	{ class = "ALL", name = "mana", classes = "mlh", label = "DPS", color = { 0.2, 0.2, 1 }, priority = 1, out = "RAID" },
-	{ class = "DRUID", name = "motw", label = "Mark", color = { 0.8, 0.2, 1 }, priority = 10, out = "RAID" },
-	{ class = "DRUID", name = "thorns", label = "Thorns", color = { 0.8, 0.6, 1 }, priority = 5, out = "RAID" },
-	{ class = "PRIEST", name = "pwf", label = "Fortitude", color = { 0.9, 0.9, 0.9 }, priority = 10, out = "RAID" },
-	{ class = "PRIEST", name = "sprot", label = "Shadow Protection", color = { 0.6, 0.6, 0.6 }, priority = 5, out = "RAID" },
-	{ class = "MAGE", name = "ai", label = "Intellect", color = { 0, 0.6, 1 }, priority = 10, out = "RAID" }
+	{ class = "ALL", buffKey = "alive", label = "Alive", color = { 0.3, 1, 0.3 }, priority = 1, out = "RAID" },
+	{ class = "ALL", buffKey = "mana", classes = "pdsa", label = "Healer", color = { 0.4, 0.6, 1 }, priority = 1, out = "RAID" },
+	{ class = "ALL", buffKey = "mana", classes = "mlh", label = "DPS", color = { 0.2, 0.2, 1 }, priority = 1, out = "RAID" },
+	{ class = "DRUID", buffKey = "motw", label = "Mark", color = { 0.8, 0.2, 1 }, priority = 10, out = "RAID" },
+	{ class = "DRUID", buffKey = "thorns", label = "Thorns", color = { 0.8, 0.6, 1 }, priority = 5, out = "RAID" },
+	{ class = "PRIEST", buffKey = "pwf", label = "Fortitude", color = { 0.9, 0.9, 0.9 }, priority = 10, out = "RAID" },
+	{ class = "PRIEST", buffKey = "sprot", label = "Shadow Protection", color = { 0.6, 0.6, 0.6 }, priority = 5, out = "RAID" },
+	{ class = "MAGE", buffKey = "ai", label = "Intellect", color = { 0, 0.6, 1 }, priority = 10, out = "RAID" }
 };
 RAB_ClassShort = {
 	Mage = "m",
@@ -241,6 +241,14 @@ function RAB_StartUp()
 			bar.groups = groups;
 			bar.classes = classes;
 			bar.cmd = nil;
+		end
+
+		if not bar.classes then
+			bar.classes = "";
+		end
+
+		if not bar.groups then
+			bar.groups = "";
 		end
 
 		RABui_DefBars = nil;
