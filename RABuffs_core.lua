@@ -39,14 +39,14 @@ RABui_DefSettings = {
 	newestVersionRealm = "Default"
 };
 RABui_DefBars = {
-	{ class = "ALL", cmd = "alive", label = "Alive", color = { 0.3, 1, 0.3 }, priority = 1, out = "RAID" },
-	{ class = "ALL", cmd = "mana pdsa", label = "Healer", color = { 0.4, 0.6, 1 }, priority = 1, out = "RAID" },
-	{ class = "ALL", cmd = "mana mlh", label = "DPS", color = { 0.2, 0.2, 1 }, priority = 1, out = "RAID" },
-	{ class = "DRUID", cmd = "motw", label = "Mark", color = { 0.8, 0.2, 1 }, priority = 10, out = "RAID" },
-	{ class = "DRUID", cmd = "thorns", label = "Thorns", color = { 0.8, 0.6, 1 }, priority = 5, out = "RAID" },
-	{ class = "PRIEST", cmd = "pwf", label = "Fortitude", color = { 0.9, 0.9, 0.9 }, priority = 10, out = "RAID" },
-	{ class = "PRIEST", cmd = "sprot", label = "Shadow Protection", color = { 0.6, 0.6, 0.6 }, priority = 5, out = "RAID" },
-	{ class = "MAGE", cmd = "ai", label = "Intellect", color = { 0, 0.6, 1 }, priority = 10, out = "RAID" }
+	{ class = "ALL", name = "alive", label = "Alive", color = { 0.3, 1, 0.3 }, priority = 1, out = "RAID" },
+	{ class = "ALL", name = "mana", classes = "pdsa", label = "Healer", color = { 0.4, 0.6, 1 }, priority = 1, out = "RAID" },
+	{ class = "ALL", name = "mana", classes = "mlh", label = "DPS", color = { 0.2, 0.2, 1 }, priority = 1, out = "RAID" },
+	{ class = "DRUID", name = "motw", label = "Mark", color = { 0.8, 0.2, 1 }, priority = 10, out = "RAID" },
+	{ class = "DRUID", name = "thorns", label = "Thorns", color = { 0.8, 0.6, 1 }, priority = 5, out = "RAID" },
+	{ class = "PRIEST", name = "pwf", label = "Fortitude", color = { 0.9, 0.9, 0.9 }, priority = 10, out = "RAID" },
+	{ class = "PRIEST", name = "sprot", label = "Shadow Protection", color = { 0.6, 0.6, 0.6 }, priority = 5, out = "RAID" },
+	{ class = "MAGE", name = "ai", label = "Intellect", color = { 0, 0.6, 1 }, priority = 10, out = "RAID" }
 };
 RAB_ClassShort = {
 	Mage = "m",
@@ -199,11 +199,57 @@ function RAB_StartUp()
 			end
 		end
 	end
-	RABui_DefBars = nil;
 
-	RAB_Versions = type(RABui_Settings.keepversions) == "table" and RABui_Settings.keepversions or {};
+	-- set new selfLimit and useOnClick values
+	for _, bar in ipairs(RABui_Bars) do
+		-- default useOnClick to true
+		if bar.useOnClick == nil then
+			bar.useOnClick = true;
+		end
+		-- default selfLimit to false
+		if not bar.selfLimit then
+			bar.selfLimit = false; -- default to false
+		end
 
-	return "remove";
+		-- convert from old cmd format if necessary
+		if bar.cmd then
+			local _, _, buffKey, groups, classes = string.find(bar.cmd, "(%a+) ?(%d*) ?(%a*)");
+
+			-- remove self from start of name if present and set selfLimit to true
+			if string.find(buffKey, "self") == 1 then
+				buffKey = string.sub(buffKey, 5);
+				bar.selfLimit = true;
+			end
+
+			if buffKey == "spiritzanza" then
+				buffKey = "spiritofzanza";
+			end
+
+			if buffKey == "fortitude" then
+				buffKey = "elixirfortitude";
+			end
+
+			-- look if old "self" or "selfbuffonly" or "wepbuffonly" type is set on the buff buffKey
+			local buff = RAB_Buffs[buffKey];
+			if buff and buff.type then
+				if buff.type == "self" or buff.type == "selfbuffonly" or buff.type == "wepbuffonly" then
+					bar.selfLimit = true;
+				end
+			end
+
+			bar.buffKey = buffKey; -- key of the buff in RAB_Buffs
+			bar.groups = groups;
+			bar.classes = classes;
+			bar.cmd = nil;
+		end
+
+		RABui_DefBars = nil;
+
+		RAB_Versions = type(RABui_Settings.keepversions) == "table" and RABui_Settings.keepversions or {};
+
+	end
+
+	return "remove"; -- unsubscribe event
 end
 
 function RAB_CleanUp()
@@ -283,11 +329,11 @@ function RAB_DoSendMessage(st, target)
 	SetCVar("autoClearAFK", autoClearAFK);
 end
 
-function RAB_GroupMembers(init)
-	return RAB_GroupMember, init, 0
+function RAB_GroupMembers(userData)
+	return RAB_GroupMember, userData, 0
 end
 
-function RAB_GroupMember(state, i)
+function RAB_GroupMember(userData, i)
 	local party_prefix, party_max, ok, group, u;
 	if (UnitInRaid("player")) then
 		party_prefix = "raid";
@@ -297,8 +343,6 @@ function RAB_GroupMember(state, i)
 		party_max = 5;
 	end
 	ok = false;
-
-	local _, _, _, sGroupLimit, sClassLimit = string.find(state, "(%a*) ?(%d*) ?(%a*)");
 
 	while true do
 		i = i + 1;
@@ -311,8 +355,8 @@ function RAB_GroupMember(state, i)
 		end
 		_, _, group = GetRaidRosterInfo(i);
 		if (UnitExists(u) and RAB_UnitClass(u) ~= nil) then
-			if (sGroupLimit == "" or string.find(sGroupLimit, tostring(group)) ~= nil) then
-				if (sClassLimit == "" or string.find(sClassLimit, RAB_ClassShort[RAB_UnitClass(u)]) ~= nil) then
+			if (userData.groups == "" or string.find(userData.groups, tostring(group)) ~= nil) then
+				if (userData.classes == "" or string.find(userData.classes, RAB_ClassShort[RAB_UnitClass(u)]) ~= nil) then
 					return i, u, group;
 				end
 			end
@@ -321,80 +365,90 @@ function RAB_GroupMember(state, i)
 end
 
 -- GENERAL BUFF-QUERY CODELINE.
-function RAB_BuffCheckOutput(msg, outputTo, invert, excludeNames)
+function RAB_BuffCheckOutput(userData, outputTo, invert)
 	-- Check query, output results (Called by the /rab handler (command UI), bar clicks (visual UI)).
-	local _, _, cmd, grouplimit, classlimit = string.find(msg, "(%a+) ?(%d*) ?(%a*)");
-	local out = (grouplimit ~= "" and grouplimit ~= "12345678") and ("[G" .. grouplimit .. "] ") or "";
-	out = out .. (classlimit ~= "" and strlen(classlimit) < 8 and "[" .. classlimit .. "] " or "");
+	local output = (userData.groups ~= "" and userData.groups ~= "12345678") and ("[G" .. userData.groups .. "] ") or "";
+	output = output .. (userData.classes ~= "" and strlen(userData.classes) < 8 and "[" .. userData.classes .. "] " or "");
 
-	if (RAB_Buffs[cmd] ~= nil) then
-		local _, _, _, _, _, _, mtext, htext, invert2 = RAB_CallRaidBuffCheck(msg, true, true, excludeNames);
+	if (RAB_Buffs[userData.buffKey] ~= nil) then
+		local _, _, _, _, _, _, mtext, htext, invert2 = RAB_CallRaidBuffCheck(userData, true, true);
 		if (invert2) then
 			invert = not invert;
 		end
 		if (mtext == nil) then
 			return ;
 		end
-		out = out .. (invert and htext or mtext);
+		output = output .. (invert and htext or mtext);
 	else
-		out = "Unknown buff requested ('" .. cmd .. "').";
+		output = "Unknown buff requested ('" .. userData.buffKey .. "').";
 		outputTo = "CONSOLE";
 	end
 	if (outputTo == "RAID" and not UnitInRaid("player")) then
 		outputTo = "PARTY";
 	end
-	out = sRAB_BuffOutputPrefix .. out;
-	RAB_SendMessage(out, outputTo, sRAB_BuffOutputPrefix);
+	output = sRAB_BuffOutputPrefix .. output;
+	RAB_SendMessage(output, outputTo, sRAB_BuffOutputPrefix);
 end
 
-function RAB_CallRaidBuffCheck(msg, needraw, needtxt, excludeNames)
+function RAB_CallRaidBuffCheck(userData, needraw, needtxt)
 	-- Check query, return results (UI)
 	local repl;
 	if (RAB_Lock == 1) then
 		return { total = 0, buffed = 0, txt = sRAB_Error_NotReady, hastxt = sRAB_Error_NotReady };
 	end
-	local _, _, cmd = string.find(msg, "(%a+)");
+	local excludeNames = userData.excludeNames or {};
 
-	excludeNames = excludeNames or {};
-
-	if (RAB_Buffs ~= nil and RAB_Buffs[cmd] ~= nil and RAB_Buffs[cmd].queryFunc ~= nil) then
-		return RAB_Buffs[cmd].queryFunc(msg, needraw, needtxt);
-	elseif (RAB_Buffs ~= nil and RAB_Buffs[cmd] ~= nil) then
-		return RAB_DefaultQueryHandler(msg, cmd, needraw, needtxt, excludeNames);
+	if RAB_Buffs ~= nil and RAB_Buffs[userData.buffKey] ~= nil then
+		if RAB_Buffs[userData.buffKey].queryFunc ~= nil then
+			return RAB_Buffs[userData.buffKey].queryFunc(userData, needraw, needtxt);
+		else
+			return RAB_DefaultQueryHandler(userData, needraw, needtxt);
+		end
 	else
 		return 0, 0, 0, sRAB_Error_NoBuffDataBar, "", "", sRAB_Error_NoBuffData, sRAB_Error_NoBuffData;
 	end
 end
 
-function RAB_IsEligible(u, cmd, excludeNames)
+function RAB_IsEligible(u, userData)
 	if not UnitIsConnected(u) then
 		return false;
 	end
-	if cmd ~= 'pvp' and RAB_UnitIsDead(u) then
+
+	if userData.buffKey ~= 'pvp' and RAB_UnitIsDead(u) then
 		return false;
 	end
-	if (RAB_Buffs[cmd].type == 'selfbuffonly' or RAB_Buffs[cmd].type == 'wepbuffonly') then
-		return UnitIsUnit(u, 'player')
+
+	if userData.selfLimit and not UnitIsUnit(u, 'player') then
+		return false;
 	end
 
 	local unitName = UnitName(u);
+
 	-- If unitname matches anything in the excludeNames list case insensitive, return false
-	for _, name in ipairs(excludeNames) do
+	for _, name in ipairs(userData.excludeNames or {}) do
 		if string.lower(name) == string.lower(unitName) then
 			return false;
 		end
 	end
 
-	if ((RAB_Buffs[cmd].ignoreMTs == nil or not RAB_CTRA_IsMT(unitName)) and
-			(RAB_Buffs[cmd].type ~= "self"
-					or RAB_Buffs[cmd].castClass == "Item"
-					or RAB_Buffs[cmd].castClass == "Item2"
-					or RAB_Buffs[cmd].castClass == "Item Tooltip"
-					or RAB_UnitClass(u) == RAB_Buffs[cmd].castClass) and
-			(RAB_Buffs[cmd].ignoreClass == nil or string.find(RAB_Buffs[cmd].ignoreClass, RAB_ClassShort[RAB_UnitClass(u)]) == nil)) then
-		return true;
+	local buff = RAB_Buffs[userData.buffKey];
+
+	-- check for main tank filtering
+	if buff.ignoreMTs ~= nil and RAB_CTRA_IsMT(unitName) then
+		return false;
 	end
-	return false;
+
+	-- check for ignoreClass
+	if buff.ignoreClass ~= nil and string.find(buff.ignoreClass, RAB_ClassShort[RAB_UnitClass(u)]) ~= nil then
+		return false;
+	end
+
+	-- check for class specific spells
+	if buff.class ~= nil and RAB_UnitClass(u) ~= buff.class then
+		return false;
+	end
+
+	return true;
 end
 
 function RAB_IsSanePvP(target)
@@ -548,30 +602,21 @@ function RAB_TextureToBuff(texture)
 	return nil;
 end
 
-function RAB_IsBuffUp(unit, bkey)
+function RAB_IsBuffUp(unit, buffKey)
 	-- Resolve and check a buff based on its key [Custom stuff doesn't work]
 	local key, val, ret;
-	if (RAB_Buffs[bkey].sfuncmodel == 2) then
-		return RAB_Buffs[bkey].sfunc(unit);
-	elseif (RAB_Buffs[bkey].sfuncmodel == 1) then
-		for _, identifier in ipairs(RAB_Buffs[bkey].identifiers) do
-			if (RAB_Buffs[bkey].sfunc(unit, identifier.texture)) then
+	if (RAB_Buffs[buffKey].type == "debuff") then
+		for _, identifier in ipairs(RAB_Buffs[buffKey].identifiers) do
+			if (isUnitDebuffUp(unit, identifier)) then
 				return true;
 			end
 		end
 		return false;
-	elseif (RAB_Buffs[bkey].type == "debuff") then
-		for _, identifier in ipairs(RAB_Buffs[bkey].identifiers) do
-			if (isUnitDebuffUp(unit, identifier.texture)) then
-				return true;
-			end
-		end
-		return false;
-	elseif (RAB_Buffs[bkey].type == "special") then
+	elseif (RAB_Buffs[buffKey].type == "special") then
 		return nil;
 	else
-		for _, identifier in ipairs(RAB_Buffs[bkey].identifiers) do
-			if (isUnitBuffUp(unit, identifier.texture)) then
+		for _, identifier in ipairs(RAB_Buffs[buffKey].identifiers) do
+			if (isUnitBuffUp(unit, identifier)) then
 				return true;
 			end
 		end
@@ -588,52 +633,57 @@ end
 
 function RAB_UnitIsDead(unit)
 	-- Still hopelessly bugged.
-	return (UnitIsDeadOrGhost(unit) and not isUnitBuffUp(unit, "Ability_Rogue_FeignDeath"));
+	return (UnitIsDeadOrGhost(unit) and not isUnitBuffUp(unit, { tooltip = "Feign Death", texture = "Ability_Rogue_FeignDeath", spellId = 5384 }));
 end
 
-function isUnitBuffUp(unit, buff)
-	if (unit == nil or not UnitExists(unit) or buff == nil) then
+function isUnitBuffUp(unit, identifier)
+	if (unit == nil or not UnitExists(unit) or identifier == nil) then
 		return false;
 	end
-	local i = 1;
-	while (UnitBuff(unit, i)) do
-		if (string.find(UnitBuff(unit, i), buff)) then
-			local _, stack = UnitBuff(unit, i);
-			return true, stack;
+	for i = 1, 32 do
+		local texture, stacks, spellId = UnitBuff(unit, i);
+		if texture then
+			-- use spellID if available, requires superwow
+			if spellId and identifier.spellId and spellId == identifier.spellId then
+				return true;
+			else
+				-- fall back to texture + tooltip comparison, not perfect
+				RAB_TooltipScanner:ClearLines()
+				RAB_TooltipScanner:SetUnitBuff(unit, i)
+				local tooltip = RAB_TooltipScannerTextLeft1:GetText()
+				if tooltip and identifier.tooltip and identifier.texture and string.find(tooltip, identifier.tooltip) and string.find(texture, identifier.texture) then
+					return true;
+				end
+			end
+		else
+			break
 		end
-		i = i + 1;
 	end
 	return false;
 end
 
-function isUnitDebuffUp(unit, buff)
-	if (unit == nil or not UnitExists(unit) or buff == nil) then
+function isUnitDebuffUp(unit, identifier)
+	if (unit == nil or not UnitExists(unit) or identifier == nil) then
 		return false;
 	end
-	local i = 1;
-	while (UnitDebuff(unit, i)) do
-		if (string.find(UnitDebuff(unit, i), tostring(buff))) then
-			local _, stack = UnitDebuff(unit, i);
-			return true, stack;
+	for i = 1, 16 do
+		local texture, stacks, spellSchool, spellId = UnitDebuff(unit, i);
+		if texture then
+			-- use spellID if available, requires superwow
+			if spellId and identifier.spellId then
+				return spellId == identifier.spellId;
+			else
+				-- fall back to texture + tooltip comparison, not perfect
+				RAB_TooltipScanner:ClearLines()
+				RAB_TooltipScanner:SetUnitDebuff(unit, i)
+				local tooltip = RAB_TooltipScannerTextLeft1:GetText()
+				if tooltip and identifier.tooltip and identifier.texture then
+					return string.find(tooltip, identifier.tooltip) and string.find(texture, identifier.texture);
+				end
+			end
+		else
+			break
 		end
-		i = i + 1;
-	end
-	return false;
-end
-
-function isUnitBuffTooltipUp(unit, tooltipname)
-	if (unit == nil or not UnitExists(unit) or tooltipname == nil) then
-		return false;
-	end
-	local i = 1
-	while (UnitBuff(unit, i)) do
-		RAB_TooltipScanner:ClearLines()
-		RAB_TooltipScanner:SetUnitBuff(unit, i)
-		bufftooltip = RAB_TooltipScannerTextLeft1:GetText()
-		if (string.find(bufftooltip, tooltipname)) then
-			return true
-		end
-		i = i + 1;
 	end
 	return false;
 end

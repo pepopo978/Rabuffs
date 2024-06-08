@@ -13,7 +13,17 @@ RABui_NextUpdate = 0;
 RABui_LastShiftState = 0; -- Shift*1+Alt*2
 
 RAB_BarDetail_SelectedGroups = { true, true, true, true, true, true, true, true };
-RAB_BarDetail_SelectedClasses = { m = true, l = true, p = true, r = true, d = true, h = true, s = true, w = true, a = true };
+RAB_BarDetail_SelectedClasses = {
+	m = true,
+	l = true,
+	p = true,
+	r = true,
+	d = true,
+	h = true,
+	s = true,
+	w = true,
+	a = true
+};
 RAB_BarDetail_SelectedType = ""; -- AddBar Bar Type
 RAB_BarDetail_Output = "";
 RAB_BarDetail_EditBarId = 0;     -- 0 = new bar
@@ -215,8 +225,12 @@ function RABui_SetBarValue(barid, cur, fade, max)
 		max = tonumber(cur);
 	end
 
-	local _, _, cmd = string.find(RABui_Bars[barid].cmd, "(%a+)"); -- get the first word of the full command
-	local isDebuff = RAB_Buffs[cmd].type == "debuff"
+	local userData = RABui_Bars[barid];
+	local buffData = RAB_Buffs[userData.buffKey];
+	local isDebuff = false
+	if buffData ~= nil then
+		isDebuff = buffData.type == "debuff"
+	end
 	if cur - fade >= math.max(max, 1) then
 		if isDebuff then
 			RABui_UncompleteBar(barid)
@@ -314,8 +328,7 @@ end
 
 function RABui_UpdateBar(barid)
 	local i, line, cl;
-	local buffed, fading, total, misc = RAB_CallRaidBuffCheck(RABui_Bars[barid].cmd, false, false,
-			RABui_Bars[barid].excludeNames);
+	local buffed, fading, total, misc = RAB_CallRaidBuffCheck(RABui_Bars[barid], false, false);
 
 	RABui_SetBarValue(barid, buffed, fading, total);
 
@@ -355,9 +368,11 @@ function RABui_UpdateTooltip(id)
 	local index, info, l;
 	local info;
 
+	local buffData = RAB_Buffs[RABui_Bars[id].buffKey];
+
 	local buffed, fading, total, misc, mhead, hhead, mtext, htext, invert, raw, rawsort, rawgroup = RAB_CallRaidBuffCheck(
-			RABui_Bars[id].cmd, true, false, RABui_Bars[id].excludeNames);
-	local _, _, bcmd = string.find(RABui_Bars[id].cmd, "^(%a+)");
+			RABui_Bars[id], true, false);
+
 	local og, cg, pline, linepeoplecount = 0, "", "", 0;
 	if (raw ~= nil) then
 		l = 0;
@@ -391,17 +406,17 @@ function RABui_UpdateTooltip(id)
 		end
 		if (l == 0) then
 			RAB_Tooltip:AddLine(sRAB_Tooltip_NoOne);
-			if (showwhat == false and buffed > 0 and RAB_Buffs[bcmd].recast ~= nil) then
+			if (showwhat == false and buffed > 0 and buffData.recast ~= nil) then
 				table.sort(raw,
 						function(a, b)
 							return tonumber(tostring(a.fade) == "nil" and 9999 or tostring(a.fade)) <
 									tonumber(tostring(b.fade) == "nil" and 9999 or tostring(b.fade));
 						end);
-				if (raw[1].fade ~= nil and raw[1].fade < RAB_Buffs[bcmd].recast * 60) then
+				if (raw[1].fade ~= nil and raw[1].fade < buffData.recast * 60) then
 					RAB_Tooltip:SetOwner(RABFrame, "ANCHOR_LEFT");
-					RAB_Tooltip:AddLine(string.format(sRAB_Tooltip_FadeSoon, RAB_Buffs[bcmd].name));
+					RAB_Tooltip:AddLine(string.format(sRAB_Tooltip_FadeSoon, buffData.name));
 					for i = 1, 10 do
-						if (raw[i] ~= nil and raw[i].fade ~= nil and raw[i].fade < RAB_Buffs[bcmd].recast * 60) then
+						if (raw[i] ~= nil and raw[i].fade ~= nil and raw[i].fade < buffData.recast * 60) then
 							RAB_Tooltip:AddDoubleLine(
 									RABui_Tooltip_FormatNick(raw[i].name, raw[i].class, raw[i].unit, raw[i].append),
 									RAB_TimeFormatOffset(raw[i].fade));
@@ -433,12 +448,12 @@ function RABui_UpdateTooltip(id)
 	if (outTarget ~= "") then
 		outTarget = string.format(sRAB_Tooltip_ClickToOutput, outTarget) .. " ";
 	end
-	if ((RAB_Buffs[bcmd].castClass == RAB_UnitClass("player") and sRAB_SpellNames[bcmd] ~= nil) or RAB_Buffs[bcmd].buffFunc ~= nil) then
+	if ((buffData.grouping == RAB_UnitClass("player") and sRAB_SpellNames[RABui_Bars[id].buffKey] ~= nil) or buffData.buffFunc ~= nil) then
 		local tip = "";
-		if (RAB_Buffs[bcmd].buffFunc == nil) then
-			tip = RAB_DefaultCastingHandler("tip", RABui_Bars[id].cmd, RABui_Bars[id].excludeNames);
+		if (buffData.buffFunc == nil) then
+			tip = RAB_DefaultCastingHandler("tip", RABui_Bars[id]);
 		else
-			tip = RAB_Buffs[bcmd].buffFunc("tip", RABui_Bars[id].cmd);
+			tip = buffData.buffFunc("tip", RABui_Bars[id]);
 		end
 		if (type(tip) == "string" and tip ~= "") then
 			RAB_Tooltip:AddLine(tip);
@@ -491,26 +506,26 @@ end
 
 function RABui_BarOnClick()
 	local id = this:GetID();
-	local _, _, cmd = string.find(RABui_Bars[id].cmd, "(%a+)");
+
+	local buffData = RAB_Buffs[RABui_Bars[id].buffKey];
 
 	if (arg1 == "LeftButton" and IsControlKeyDown()) then
-		RAB_BuffCheckOutput(RABui_Bars[id].cmd, RABui_Bars[id].out ~= nil and RABui_Bars[id].out or "RAID",
-				IsShiftKeyDown(), RABui_Bars[id].excludeNames);
-	elseif (arg1 == "LeftButton" and RAB_Buffs[cmd] ~= nil) then
+		RAB_BuffCheckOutput(RABui_Bars[id], RABui_Bars[id].out ~= nil and RABui_Bars[id].out or "RAID", IsShiftKeyDown());
+	elseif (arg1 == "LeftButton" and buffData ~= nil) then
 		local doOut = true;
-		if (RAB_Buffs[cmd].buffFunc ~= nil) then
-			doOut = not RAB_Buffs[cmd].buffFunc("cast", RABui_Bars[id].cmd);
+		if (buffData.buffFunc ~= nil) then
+			doOut = not buffData.buffFunc("cast", RABui_Bars[id]);
 		else
-			doOut = not RAB_DefaultCastingHandler("cast", RABui_Bars[id].cmd, RABui_Bars[id].excludeNames);
+			doOut = not RAB_DefaultCastingHandler("cast", RABui_Bars[id]);
 		end
 		if (doOut and RABui_Settings.showsampleoutputonclick) then
-			RAB_BuffCheckOutput(RABui_Bars[id].cmd, "CONSOLE", IsShiftKeyDown(), RABui_Bars[id].excludeNames);
+			RAB_BuffCheckOutput(RABui_Bars[id], "CONSOLE", IsShiftKeyDown());
 		end
 	end
 end
 
 function RABui_BarDetail_SetBarData(id)
-	local query, priority, groups, classes, label, excludeNames = "", 5, "", "", "", "";
+	local buffKey, priority, groups, classes, label, excludeNames = "", 5, "", "", "", "";
 
 	if (id == 0) then
 		RAB_BarDetail_Header:SetText(sRAB_AddBarFrame_AddBar);
@@ -521,10 +536,24 @@ function RABui_BarDetail_SetBarData(id)
 		RAB_BarDetail_Header:SetText(sRAB_AddBarFrame_EditBar);
 		RAB_BarDetail_Accept:SetText(sRAB_AddBarFrame_Edit);
 		RAB_BarDetail_Remove:Show();
-		_, _, query, groups, classes = string.find(RABui_Bars[id].cmd, "(%a+) ?(%d*) ?(%a*)");
+
+		buffKey = RABui_Bars[id].buffKey;
+		groups = RABui_Bars[id].groups;
+		classes = RABui_Bars[id].classes;
 		label = RABui_Bars[id].label;
 		priority = RABui_Bars[id].priority;
 		RAB_BarDetail_Output = RABui_Bars[id].out;
+
+		RAB_BarDetail_SelfLimit:SetChecked(RABui_Bars[id].selfLimit);
+
+		local buffData = RAB_Buffs[buffKey];
+
+		-- if type is selfbuffonly/wepbuffonly disable the checkbutton
+		if buffData and buffData.type == 'selfbuffonly' or buffData.type == 'wepbuffonly' then
+			RAB_BarDetail_SelfLimit:Disable();
+		end
+
+		RAB_BarDetail_UseOnClick:SetChecked(RABui_Bars[id].useOnClick);
 
 		-- check for excludeNames not being nil or empty list
 		if (RABui_Bars[id].excludeNames ~= nil) then
@@ -553,9 +582,9 @@ function RABui_BarDetail_SetBarData(id)
 	RAB_BarDetail_Label:SetText(label);
 	RAB_BarDetail_PlayerExcludes:SetText(excludeNames);
 
-	RAB_BarDetail_SelectedType = query;
-	UIDropDownMenu_SetSelectedValue(RAB_BarDetail_Type, query);
-	UIDropDownMenu_SetText((query ~= nil and RAB_Buffs[query] ~= nil) and RAB_Buffs[query].name or "", RAB_BarDetail_Type);
+	RAB_BarDetail_SelectedType = buffKey;
+	UIDropDownMenu_SetSelectedValue(RAB_BarDetail_Type, buffKey);
+	UIDropDownMenu_SetText((buffKey ~= nil and RAB_Buffs[buffKey] ~= nil) and RAB_Buffs[buffKey].name or "", RAB_BarDetail_Type);
 
 	UIDropDownMenu_SetSelectedValue(RAB_BarDetail_OutputTarget, RAB_BarDetail_Output);
 	local outtext = sRAB_Settings_BarDetail_Output_RaidParty;
@@ -575,7 +604,7 @@ function RABui_BarDetail_SetBarData(id)
 	end
 	UIDropDownMenu_SetText(outtext, RAB_BarDetail_OutputTarget);
 
-	RAB_BarDetail_Priority:SetValue(11 - (priority == nil and 5 or priority));
+	RAB_BarDetail_Priority:SetValue(11 - (priority == nil and 1 or priority));
 
 	RABui_BarDetail_BarGroups_UpdateText();
 	RABui_BarDetail_BarClasses_UpdateText();
@@ -672,21 +701,32 @@ end
 function RABui_BarDetail_BarClasses_UpdateText()
 	local sb, gc, fgc, key, val = "", 0, 0;
 	local ignoreString = "-";
-	if (RAB_BarDetail_SelectedType ~= "" and RAB_BarDetail_SelectedType ~= nil and RAB_Buffs[RAB_BarDetail_SelectedType] ~= nil and RAB_Buffs[RAB_BarDetail_SelectedType].ignoreClass ~= nil) then
+	local buffSelected = RAB_BarDetail_SelectedType ~= "" and RAB_BarDetail_SelectedType ~= nil and RAB_Buffs[RAB_BarDetail_SelectedType] ~= nil;
+	if (buffSelected and RAB_Buffs[RAB_BarDetail_SelectedType].ignoreClass ~= nil) then
 		ignoreString = RAB_Buffs[RAB_BarDetail_SelectedType].ignoreClass;
 	end
 
-	for key, val in RAB_ClassShort do
-		--if ((val ~= "s" or UnitFactionGroup("player") == "Horde") and (val ~= "a" or UnitFactionGroup("player") == "Alliance")) then
-		if (string.find(ignoreString, val) == nil) then
-			fgc = fgc + 1;
-			if (RAB_BarDetail_SelectedClasses[val]) then
-				sb = (sb == "" and "" or (sb .. ", ")) .. key;
-				gc = gc + 1;
+	if buffSelected and RAB_Buffs[RAB_BarDetail_SelectedType].class then
+		local fullClass = RAB_Buffs[RAB_BarDetail_SelectedType].class
+		local shortClass = RAB_ClassShort[fullClass];
+		fgc = 1;
+		if (RAB_BarDetail_SelectedClasses[shortClass]) then
+			sb = (sb == "" and "" or (sb .. ", ")) .. fullClass;
+			gc = gc + 1;
+		end
+	else
+		for key, val in RAB_ClassShort do
+			--if ((val ~= "s" or UnitFactionGroup("player") == "Horde") and (val ~= "a" or UnitFactionGroup("player") == "Alliance")) then
+			if (string.find(ignoreString, val) == nil) then
+				fgc = fgc + 1;
+				if (RAB_BarDetail_SelectedClasses[val]) then
+					sb = (sb == "" and "" or (sb .. ", ")) .. key;
+					gc = gc + 1;
+				end
 			end
 		end
-		--end
 	end
+
 	if (gc == fgc or gc == 0) then
 		UIDropDownMenu_SetText(sRAB_Settings_BarDetail_ClassesAll, RAB_BarDetail_Classes);
 	elseif (fgc >= 1) then
@@ -703,9 +743,24 @@ end
 
 function RABui_BarDetail_BarClasses_Initialize()
 	local key, val;
+	local buffSelected = RAB_BarDetail_SelectedType ~= "" and RAB_BarDetail_SelectedType ~= nil and RAB_Buffs[RAB_BarDetail_SelectedType] ~= nil;
 	for key, val in RAB_ClassShort do
-		--if ((val ~= "s" or UnitFactionGroup("player") == "Horde") and (val ~= "a" or UnitFactionGroup("player") == "Alliance")) then
-		if (RAB_BarDetail_SelectedType == "" or RAB_BarDetail_SelectedType == nil or RAB_Buffs[RAB_BarDetail_SelectedType] == nil or RAB_Buffs[RAB_BarDetail_SelectedType].ignoreClass == nil or string.find(RAB_Buffs[RAB_BarDetail_SelectedType].ignoreClass, val) == nil) then
+		local addClass = true;
+		-- check for ignored classes
+		if (buffSelected and
+				RAB_Buffs[RAB_BarDetail_SelectedType].ignoreClass and
+				string.find(RAB_Buffs[RAB_BarDetail_SelectedType].ignoreClass, val)) then
+			-- skip ignored classes
+			addClass = nil;
+		elseif buffSelected and RAB_Buffs[RAB_BarDetail_SelectedType].class then
+			-- ignore all classes except the one specified
+			local shortClass = RAB_ClassShort[RAB_Buffs[RAB_BarDetail_SelectedType].class];
+			if shortClass and shortClass ~= val then
+				addClass = nil;
+			end
+		end
+
+		if addClass then
 			UIDropDownMenu_AddButton({
 				text = key .. "s",
 				value = val,
@@ -715,7 +770,6 @@ function RABui_BarDetail_BarClasses_Initialize()
 				justifyH = "CENTER"
 			});
 		end
-		--end
 	end
 	DropDownList1.maxWidth = 170;
 	UIDropDownMenu_AddButton({
@@ -814,19 +868,15 @@ function RABui_AddFrameDropDown_Prepare()
 	local id = 1;
 	for key, val in RAB_Buffs do
 		if (val.name ~= nil and val.noUI == nil and val.type ~= "dummy") then
-			buffs[id] = { name = val.name, castby = "Miscellaneous", key = key }
-			if (val.castClass ~= nil) then
-				buffs[id].castby = val.castClass;
+			buffs[id] = { name = val.name, grouping = "Miscellaneous", key = key }
+			if (val.grouping ~= nil) then
+				buffs[id].grouping = val.grouping;
 			end
 			if (val.type == "special") then
 				buffs[id].tooltip = val.description;
 				buffs[id].tooltitle = val.name;
 			elseif (val.type == "debuff") then
-				buffs[id].castby = "Debuff";
-			elseif (val.type == 'selfbuffonly' and val.castClass == nil) then
-				buffs[id].castby = 'Self Buff'
-			elseif (val.type == 'wepbuffonly' and val.castClass == nil) then
-				buffs[id].castby = 'Weapon Buff'
+				buffs[id].grouping = "Debuff";
 			end
 			id = id + 1;
 		end
@@ -837,12 +887,13 @@ function RABui_AddFrameDropDown_Prepare()
 	RAB_ADFDD_Buffs = buffs;
 	RAB_ADFDD_Categories = {};
 	for key, val in buffs do
-		if (RAB_ADFDD_Categories[val.castby] == nil) then
-			cb = val.castby;
-			if (cb == "Miscellaneous" or cb == "Debuff" or cb == "Item" or cb == "Item2" or cb == 'Item Tooltip' or cb == 'Self Buff' or cb == 'Self Wep Enchant') then
-				cb = "z" .. cb;
-			end
-			tinsert(RAB_ADFDD_Categories, cb);
+		local grp = val.grouping;
+		if not RAB_ClassShort[grp] then
+			grp = "z" .. grp; -- sort to the end
+		end
+
+		if (RAB_ADFDD_Categories[grp] == nil) then
+			tinsert(RAB_ADFDD_Categories, grp);
 		end
 	end
 	table.sort(RAB_ADFDD_Categories);
@@ -868,7 +919,7 @@ function RABui_BarDetail_BuffType_Initialize()
 		end
 	else
 		for key, val in RAB_ADFDD_Buffs do
-			if (val.castby == UIDROPDOWNMENU_MENU_VALUE) then
+			if (val.grouping == UIDROPDOWNMENU_MENU_VALUE) then
 				ischeck = nil;
 				if (val.key == RAB_BarDetail_SelectedType) then
 					ischeck = 1;
@@ -895,11 +946,11 @@ function RABui_AddFrameDropDown_OnClick()
 end
 
 function RABui_AddBar_Accept()
-	local i, group, class, alltrue, key, val = 0, "", "", true;
+	local i, groups, classes, alltrue, key, val = 0, "", "", true;
 	for i = 1, 8 do
 		alltrue = alltrue and RAB_BarDetail_SelectedGroups[i];
 		if (RAB_BarDetail_SelectedGroups[i] == true) then
-			group = (group == "" and " " or group) .. i;
+			groups = (groups == "" and " " or groups) .. i;
 		end
 	end
 	if (alltrue) then
@@ -909,23 +960,28 @@ function RABui_AddBar_Accept()
 	for key, val in RAB_ClassShort do
 		alltrue = alltrue and RAB_BarDetail_SelectedClasses[val];
 		if (RAB_BarDetail_SelectedClasses[val] == true) then
-			class = (class == "" and " " or class) .. val;
+			classes = (classes == "" and " " or classes) .. val;
 		end
 	end
 	if (alltrue) then
-		class = "";
+		classes = "";
 	end
 
 	if (RAB_BarDetail_SelectedType ~= nil and RAB_BarDetail_SelectedType ~= "" and RAB_Buffs[RAB_BarDetail_SelectedType] ~= nil) then
 		if (RAB_Buffs[RAB_BarDetail_SelectedType].ignoreClass ~= nil) then
-			class = string.gsub(class, "[" .. RAB_Buffs[RAB_BarDetail_SelectedType].ignoreClass .. "]", "");
+			classes = string.gsub(classes, "[" .. RAB_Buffs[RAB_BarDetail_SelectedType].ignoreClass .. "]", "");
 		end
+
 		RABui_AddBar(
-				RAB_BarDetail_SelectedType .. group .. class,
+				RAB_BarDetail_SelectedType,
+				RAB_BarDetail_SelfLimit:GetChecked(),
+				groups,
+				classes,
 				RAB_BarDetail_Label:GetText(),
 				11 - RAB_BarDetail_Priority:GetValue(),
 				RAB_BarDetail_Output,
-				RAB_BarDetail_PlayerExcludes:GetText());
+				RAB_BarDetail_PlayerExcludes:GetText(),
+				RAB_BarDetail_UseOnClick:GetChecked());
 	end
 end
 
@@ -937,10 +993,16 @@ function split(str, delimiter)
 	return result
 end
 
-function RABui_AddBar(command, barlabel, barpriority, outputTarget, excludeNamesStr)
+function RABui_AddBar(buffKey, selfLimit, groups, classes, barlabel, barpriority, outputTarget, excludeNamesStr, useOnClick)
 	local excludeNames = {};
 	if (excludeNamesStr ~= nil and excludeNamesStr ~= "") then
 		excludeNames = split(excludeNamesStr, ",")
+	end
+
+	if not useOnClick then
+		useOnClick = false;
+	elseif type(useOnClick) == "number" then
+		useOnClick = useOnClick == 1;
 	end
 
 	if (RAB_BarDetail_EditBarId == 0) then
@@ -949,27 +1011,35 @@ function RABui_AddBar(command, barlabel, barpriority, outputTarget, excludeNames
 			RAB_Print("Bar label cannot be nil.", "warn");
 			return ;
 		end
-		if (command == nil) then
-			RAB_Print("Bar command cannot be nil.", "warn");
+		if (buffKey == nil) then
+			RAB_Print("Buff key cannot be nil.", "warn");
 			return ;
 		end
 		tinsert(RABui_Bars,
 				{
 					label = barlabel,
-					cmd = command,
+					buffKey = buffKey,
+					selfLimit = selfLimit,
+					groups = groups,
+					classes = classes,
 					color = { 1, 1, 1 },
 					priority = barpriority,
 					extralabel = "",
 					out = outputTarget,
-					excludeNames = excludeNames
+					excludeNames = excludeNames,
+					useOnClick = useOnClick
 				});
 		RABui_SyncBars();
 	else
+		RABui_Bars[RAB_BarDetail_EditBarId].buffKey = buffKey;
+		RABui_Bars[RAB_BarDetail_EditBarId].selfLimit = selfLimit;
+		RABui_Bars[RAB_BarDetail_EditBarId].groups = groups;
+		RABui_Bars[RAB_BarDetail_EditBarId].classes = classes;
 		RABui_Bars[RAB_BarDetail_EditBarId].label = barlabel;
-		RABui_Bars[RAB_BarDetail_EditBarId].cmd = command;
 		RABui_Bars[RAB_BarDetail_EditBarId].priority = barpriority;
 		RABui_Bars[RAB_BarDetail_EditBarId].out = outputTarget;
 		RABui_Bars[RAB_BarDetail_EditBarId].excludeNames = excludeNames;
+		RABui_Bars[RAB_BarDetail_EditBarId].useOnClick = useOnClick;
 		RABui_SyncBars();
 	end
 end
@@ -1049,8 +1119,8 @@ function RAB_Settings_BL_Init()
 	local key, val, i, sort;
 	RAB_BL_Buffs = {};
 	for key, val in RAB_Buffs do
-		if (val.castClass ~= nil) then
-			sort = ((val.castClass == "Item" or val.castClass == "Item2") and "zItem" or (val.castClass == "Monster" and "zMonster" or val.castClass));
+		if (val.grouping ~= nil) then
+			sort = ((val.grouping == "Item" or val.grouping == "Item2") and "zItem" or (val.grouping == "Monster" and "zMonster" or val.grouping));
 		elseif (val.type == "special") then
 			sort = "zSpecial";
 		elseif (val.type == "debuff") then
@@ -1136,20 +1206,21 @@ function RAB_Settings_BL_Click()
 	RABui_Settings_BL_DetailFrame_SetBuff(bkey);
 end
 
-function RABui_Settings_BL_DetailFrame_SetBuff(cmd)
+function RABui_Settings_BL_DetailFrame_SetBuff(buffKey)
 	local key, val, usedTextureSlots;
-	RAB_BuffDetail_Header:SetText(RAB_Buffs[cmd].name);
+	local buffData = RAB_Buffs[buffKey];
+	RAB_BuffDetail_Header:SetText(buffData.name);
 	RAB_BuffDetail_SummaryText:SetText(RAB_Settings_BL_BuffType(bkey) ..
 			" " ..
-			(RAB_Buffs[bkey].castClass ~= nil and string.format(sRAB_Settings_BuffList_ToolTip_CastBy, (RAB_Chat_Colors[RAB_Buffs[bkey].castClass] ~= nil and RAB_Chat_Colors[RAB_Buffs[bkey].castClass] or NORMAL_FONT_COLOR_CODE) .. RAB_Buffs[bkey].castClass .. "|r") or ""));
+			(RAB_Buffs[bkey].grouping ~= nil and string.format(sRAB_Settings_BuffList_ToolTip_CastBy, (RAB_Chat_Colors[RAB_Buffs[bkey].grouping] ~= nil and RAB_Chat_Colors[RAB_Buffs[bkey].grouping] or NORMAL_FONT_COLOR_CODE) .. RAB_Buffs[bkey].grouping .. "|r") or ""));
 	usedTextureSlots = 0;
-	for _, identifier in ipairs(RAB_Buffs[cmd].identifiers) do
+	for _, identifier in ipairs(buffData.identifiers) do
 		if (identifier.texture) then
 			usedTextureSlots = usedTextureSlots + 1;
 			if (usedTextureSlots < 4) then
 				getglobal("RAB_BuffDetail_TexBut" .. usedTextureSlots .. "Tex"):SetTexture("Interface\\Icons\\" .. identifier.texture);
 				getglobal("RAB_BuffDetail_TexBut" .. usedTextureSlots).spellId = sRAB_SpellIDs
-				[(usedTextureSlots == 1 and cmd or (RAB_Buffs[cmd].bigcast ~= nil and RAB_Buffs[cmd].bigcast or "dummy"))];
+				[(usedTextureSlots == 1 and buffKey or (buffData.bigcast ~= nil and buffData.bigcast or "dummy"))];
 			end
 		end
 	end
@@ -1160,12 +1231,12 @@ function RABui_Settings_BL_DetailFrame_SetBuff(cmd)
 			getglobal("RAB_BuffDetail_TexBut" .. i):Show();
 		end
 	end
-	local detail = (RAB_Buffs[cmd].description ~= nil and "\n" .. RAB_Buffs[cmd].description or "") ..
-			(RAB_Buffs[cmd].type == "dummy" and sRAB_Settings_BuffList_DummyDesc .. "\n" or "") ..
-			(RAB_Buffs[cmd].noUI ~= nil and "\n" .. sRAB_Settings_BuffList_NoUI or "");
-	if (RAB_Buffs[cmd].priority ~= nil) then
+	local detail = (buffData.description ~= nil and "\n" .. buffData.description or "") ..
+			(buffData.type == "dummy" and sRAB_Settings_BuffList_DummyDesc .. "\n" or "") ..
+			(buffData.noUI ~= nil and "\n" .. sRAB_Settings_BuffList_NoUI or "");
+	if (buffData.priority ~= nil) then
 		local priarr = {};
-		for key, val in RAB_Buffs[cmd].priority do
+		for key, val in buffData.priority do
 			tinsert(priarr, { c = strupper(strsub(key, 1, 1)) .. strsub(key, 2), p = val });
 		end
 		table.sort(priarr, function(a, b)
@@ -1186,11 +1257,11 @@ function RABui_Settings_BL_DetailFrame_SetBuff(cmd)
 		end
 		detail = detail .. "\n\n" .. string.format(sRAB_Settings_BuffList_Detail_Priority, pribuff);
 	end
-	if (RAB_Buffs[cmd].bigcast ~= "") then
-		if (RAB_Buffs[cmd].bigsort == "group") then
-			detail = detail .. "\n\n" .. string.format(sRAB_Settings_BuffList_Detail_Group, RAB_Buffs[cmd].bigthreshold);
-		elseif (RAB_Buffs[cmd].bigsort == "class") then
-			detail = detail .. "\n\n" .. string.format(sRAB_Settings_BuffList_Detail_Class, RAB_Buffs[cmd].bigthreshold);
+	if (buffData.bigcast ~= "") then
+		if (buffData.bigsort == "group") then
+			detail = detail .. "\n\n" .. string.format(sRAB_Settings_BuffList_Detail_Group, buffData.bigthreshold);
+		elseif (buffData.bigsort == "class") then
+			detail = detail .. "\n\n" .. string.format(sRAB_Settings_BuffList_Detail_Class, buffData.bigthreshold);
 		end
 	end
 	RAB_BuffDetail_DetailText:SetText(detail);
@@ -1253,13 +1324,13 @@ function RABui_Settings_Layout_SetBar(ui, id)
 	if (id == -1) then
 		getglobal("RAB_Settings_BarLine" .. ui):Hide();
 	else
+		local userData = RABui_Bars[id];
 		getglobal("RAB_Settings_BarLine" .. ui):Show();
-		getglobal("RAB_Settings_BarLine" .. ui .. "Name"):SetText(RABui_Bars[id].label);
-		getglobal("RAB_Settings_BarLine" .. ui .. "SwatchNormalTexture"):SetVertexColor(RABui_Bars[id].color[1],
-				RABui_Bars[id].color[2], RABui_Bars[id].color[3]);
-		_, _, temp = string.find(RABui_Bars[id].cmd, "^(%a+)");
-		query = RAB_Buffs[temp] ~= nil and RAB_Buffs[temp].name or temp;
-		getglobal("RAB_Settings_BarLine" .. ui .. "Query"):SetText(query);
+		getglobal("RAB_Settings_BarLine" .. ui .. "Name"):SetText(userData.label);
+		getglobal("RAB_Settings_BarLine" .. ui .. "SwatchNormalTexture"):SetVertexColor(userData.color[1],
+				userData.color[2], userData.color[3]);
+		local buffKey = RAB_Buffs[userData.buffKey] ~= nil and RAB_Buffs[userData.buffKey].name or userData.buffKey;
+		getglobal("RAB_Settings_BarLine" .. ui .. "Query"):SetText(buffKey);
 		if (id == table.getn(RABui_Bars)) then
 			getglobal("RAB_Settings_BarLine" .. ui .. "MoveDown"):Disable();
 		else
@@ -1398,6 +1469,10 @@ function RABui_Localize()
 	RAB_BarDetail_PriorityText:SetText(sRAB_Settings_BarDetail_Priority);
 	RAB_BarDetail_PriorityLow:SetText(sRAB_Settings_BarDetail_PriorityLess);
 	RAB_BarDetail_PriorityHigh:SetText(sRAB_Settings_BarDetail_PriorityMore);
+	RAB_BarDetail_PlayerExcludesLabel:SetText(sRAB_Settings_BarDetail_PlayerExcludesLabel);
+	RAB_BarDetail_UseOnClickLabel:SetText(sRAB_Settings_BarDetail_UseOnClickLabel);
+	RAB_BarDetail_SelfLimitLabel:SetText(sRAB_Settings_BarDetail_SelfLimitLabel);
+
 	RAB_Title:SetText(sRAB_Settings_UIHeader);
 	StaticPopupDialogs["RAB_BARDETAIL_OUT_WHISPERTARGET"].text = sRAB_Settings_BarDetail_WhisperPrompt;
 

@@ -9,7 +9,8 @@
 RABuffs_strings.lua
 localization_en.lua
 RABuffs_core.lua
-RABuffs_data.lua
+RABuffs_queries.lua
+RABuffs_buffs.lua
 RABuffs_ctra.lua
 RABuffs_net.lua
 RABuffs_ui.lua

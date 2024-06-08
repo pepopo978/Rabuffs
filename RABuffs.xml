@@ -36,7 +36,7 @@
             <OnUpdate>if (RABui_Settings.enablefadingfx) then RABui_BarRedraw(); end</OnUpdate>
         </Scripts>
     </Button>
-    <Frame name="RAB_Settings_TabFrame" virtual="true" hidden="true" movable="true">
+    <Frame name="RAB_Settings_TabFrame" virtual="true" hidden="true" movable="true" enableMouse="true">
         <Size>
             <AbsDimension x="315" y="355"/>
         </Size>
@@ -856,10 +856,11 @@
         </Scripts>
     </Frame>
 
-    <Frame name="RAB_BarDetailFrame" hidden="true" toplevel="true" enableMouse="true" parent="RAB_Settings_TabFrame3"
+    <Frame name="RAB_BarDetailFrame" hidden="true" toplevel="true"
+           parent="RAB_Settings_TabFrame3"
            frameStrata="HIGH">
         <Size>
-            <AbsDimension x="250" y="340"/>
+            <AbsDimension x="250" y="400"/>
         </Size>
         <Anchors>
             <Anchor point="TOPLEFT" relativeTo="RAB_Settings_TabFrame3" relativePoint="TOPRIGHT">
@@ -954,15 +955,27 @@
                         </Anchor>
                     </Anchors>
                 </FontString>
-                <FontString name="PlayerExcludesLabel" inherits="GameFontNormal" justifyH="LEFT"
-                            text="Exclude names (separate with ,):">
+                <FontString name="RAB_BarDetail_SelfLimitLabel" inherits="GameFontNormal" justifyH="LEFT">
+                    <Size>
+                        <AbsDimension x="150" y="10"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeTo="RAB_BarDetail_LimitsText"
+                                relativePoint="BOTTOMLEFT">
+                            <Offset>
+                                <AbsDimension x="20" y="-11"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+                <FontString name="RAB_BarDetail_PlayerExcludesLabel" inherits="GameFontNormal" justifyH="LEFT">
                     <Size>
                         <AbsDimension x="220" y="16"/>
                     </Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeTo="RAB_BarDetailFrame" relativePoint="TOPLEFT">
                             <Offset>
-                                <AbsDimension x="20" y="-210"/>
+                                <AbsDimension x="20" y="-240"/>
                             </Offset>
                         </Anchor>
                     </Anchors>
@@ -1056,14 +1069,23 @@
                     </OnLoad>
                 </Scripts>
             </Button>
+            <CheckButton name="RAB_BarDetail_SelfLimit" inherits="OptionsCheckButtonTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="RAB_BarDetail_SelfLimitLabel" relativePoint="TOPRIGHT">
+                        <Offset>
+                            <AbsDimension x="16" y="10"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </CheckButton>
             <Button name="RAB_BarDetail_Groups" inherits="UIDropDownMenuTemplate">
                 <Size>
-                    <AbsDimension x="225" y="32"/>
+                    <AbsDimension x="235" y="32"/>
                 </Size>
                 <Anchors>
-                    <Anchor point="TOP">
+                    <Anchor point="TOPLEFT" relativeTo="RAB_BarDetail_SelfLimitLabel" relativePoint="BOTTOMLEFT">
                         <Offset>
-                            <AbsDimension x="0" y="-145"/>
+                            <AbsDimension x="-18" y="-10"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
@@ -1075,12 +1097,12 @@
             </Button>
             <Button name="RAB_BarDetail_Classes" inherits="UIDropDownMenuTemplate">
                 <Size>
-                    <AbsDimension x="225" y="32"/>
+                    <AbsDimension x="235" y="32"/>
                 </Size>
                 <Anchors>
-                    <Anchor point="TOP">
+                    <Anchor point="TOPLEFT" relativeTo="RAB_BarDetail_Groups" relativePoint="BOTTOMLEFT">
                         <Offset>
-                            <AbsDimension x="0" y="-175"/>
+                            <AbsDimension y="-2"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
@@ -1092,12 +1114,12 @@
             </Button>
             <EditBox name="RAB_BarDetail_PlayerExcludes" inherits="InputBoxTemplate" autoFocus="false">
                 <Size>
-                    <AbsDimension x="200" y="32"/>
+                    <AbsDimension x="215" y="32"/>
                 </Size>
                 <Anchors>
-                    <Anchor point="TOPLEFT">
+                    <Anchor point="TOPLEFT" relativeTo="RAB_BarDetail_PlayerExcludesLabel" relativePoint="BOTTOMLEFT">
                         <Offset>
-                            <AbsDimension x="25" y="-225"/>
+                            <AbsDimension y="-2"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
@@ -1108,9 +1130,9 @@
                     <AbsDimension x="220" y="16"/>
                 </Size>
                 <Anchors>
-                    <Anchor point="TOP">
+                    <Anchor point="TOPLEFT" relativeTo="RAB_BarDetail_PlayerExcludes" relativePoint="BOTTOMLEFT">
                         <Offset>
-                            <AbsDimension x="0" y="-275"/>
+                            <AbsDimension x="-5" y="-20"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
@@ -1133,6 +1155,31 @@
                     </OnLeave>
                 </Scripts>
             </Slider>
+            <CheckButton name="RAB_BarDetail_UseOnClick" inherits="OptionsCheckButtonTemplate">
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString name="RAB_BarDetail_UseOnClickLabel" inherits="GameFontNormal" justifyH="LEFT">
+                            <Size>
+                                <AbsDimension x="220" y="16"/>
+                            </Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeTo="RAB_BarDetail_UseOnClick" relativePoint="TOPRIGHT">
+                                    <Offset>
+                                        <AbsDimension x="5" y="-8"/>
+                                    </Offset>
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="RAB_BarDetail_Priority" relativePoint="BOTTOMLEFT">
+                        <Offset>
+                            <AbsDimension y="-10"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </CheckButton>
             <Button name="RAB_BarDetail_Accept" inherits="OptionsButtonTemplate">
                 <Size>
                     <AbsDimension x="75" y="22"/>
@@ -1174,7 +1221,8 @@
         </Scripts>
     </Frame>
 
-    <Frame name="RAB_BuffDetailFrame" hidden="true" toplevel="true" enableMouse="true" parent="RAB_Settings_TabFrame2"
+    <Frame name="RAB_BuffDetailFrame" hidden="true" toplevel="true"
+           parent="RAB_Settings_TabFrame2"
            frameStrata="HIGH">
         <Size>
             <AbsDimension x="235" y="170"/>
