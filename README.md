@@ -1,3 +1,8 @@
+# WARNING
+This version is not backwards compatible with the original - it uses a new format in the WTF file as the original was very impractical to work with.
+
+I would recommend backing up your WTF folder or SavedVariables\Rabuffs.lua in case you ever want to revert.
+
 # Pepo Changes
 
 - All buffs can be toggled self only rather than having two versions
