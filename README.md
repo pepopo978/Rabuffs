@@ -1,3 +1,12 @@
+# Pepo Changes
+
+- All buffs can be toggled self only rather than having two versions
+- Options for hiding in combat and hiding buffs that are active
+- Reorganized all the buff menus to make it easier to find things
+- Made settings window draggable
+- Ability to ignore player names on specific buffs
+- Better identification of buffs with the same texture/tooltip
+
 # RABuffs
 
 An addon to track raid wide and your personal buffs and personal weapon enchants.
