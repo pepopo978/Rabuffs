@@ -201,7 +201,7 @@ function RAB_StartUp()
 	end
 
 	-- set new selfLimit and useOnClick values
-	for _, bar in ipairs(RABui_Bars) do
+	for index, bar in ipairs(RABui_Bars) do
 		-- default useOnClick to true
 		if bar.useOnClick == nil then
 			bar.useOnClick = true;
@@ -251,11 +251,14 @@ function RAB_StartUp()
 			bar.groups = "";
 		end
 
-		RABui_DefBars = nil;
-
-		RAB_Versions = type(RABui_Settings.keepversions) == "table" and RABui_Settings.keepversions or {};
-
+		if not bar.buffKey or not RAB_Buffs[bar.buffKey] then
+			RAB_Print("Bar " .. index .. " has an invalid name: " .. tostring(bar.buffKey) .. " please readd that buff", "warn");
+			RABui_Bars[index] = nil;
+		end
 	end
+
+	RABui_DefBars = nil;
+	RAB_Versions = type(RABui_Settings.keepversions) == "table" and RABui_Settings.keepversions or {};
 
 	return "remove"; -- unsubscribe event
 end
@@ -566,7 +569,7 @@ end
 function RAB_RaidMemberInfo(name)
 	-- Is "Marvin" in raid?
 	local i, u;
-	for i, u in RAB_GroupMembers("all") do
+	for i, u in RAB_GroupMembers({ ["groups"] = "", ["classes"] = "", }) do
 		if (UnitName(u) == name) then
 			local rank = 0;
 			if (UnitInRaid("player")) then
