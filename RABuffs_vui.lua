@@ -482,7 +482,9 @@ function RABui_UpdateTooltip(id)
 	RAB_Tooltip:SetPoint(anchorPoint, "RAB_Bar" .. id, relativePoint, xOffset, 0);
 
 	local vcur, vmax = RABui_GetBarValue(id);
-	RABui_SetBarText(id, vcur .. " / " .. vmax .. (vmax > 0 and " (" .. floor(vcur * 100 / vmax) .. "%)" or ""));
+	if vcur and vmax then
+		RABui_SetBarText(id, vcur .. " / " .. vmax .. (vmax > 0 and " (" .. floor(vcur * 100 / vmax) .. "%)" or ""));
+	end
 end
 
 function RABui_Tooltip_FormatNick(name, c, u, append)
