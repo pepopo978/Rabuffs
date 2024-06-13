@@ -145,7 +145,8 @@ RAB_Buffs = {
 	sheenofzanza = { name = "Sheen of Zanza", identifiers = { { tooltip = "Sheen of Zanza", texture = "INV_Potion_29", spellId = 24417 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 20080 },
 	swiftnessofzanza = { name = "Swiftness of Zanza", identifiers = { { tooltip = "Swiftness of Zanza", texture = "INV_Potion_31", spellId = 24383 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 20081 },
 	elixirfortitude = { name = "Elixir of Fortitude", identifiers = { { tooltip = "Health II", texture = "INV_Potion_44", spellId = 3593 } }, buffFunc = RAB_UseItem, itemId = 3825 },
-	trollblood = { name = "Major Troll's Blood Potion", identifiers = { { tooltip = "Regeneration", texture = "INV_Potion_79" } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 20004 },
+	trollbloodmighty = { name = "Mighty Troll's Blood Potion", identifiers = { { tooltip = "Regeneration", texture = "INV_Potion_79", spellId = 3223 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 3826 },
+	trollblood = { name = "Major Troll's Blood Potion", identifiers = { { tooltip = "Regeneration", texture = "INV_Potion_79", spellId = 24361 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 20004 },
 	lesserstoneshield = { name = "Lesser Stoneshield Potion", identifiers = { { tooltip = "Stoneshield", texture = "INV_Potion_67", spellId = 4941 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 4623 },
 	stoneshield = { name = "Greater Stoneshield Potion", identifiers = { { tooltip = "Greater Stoneshield", texture = "INV_Potion_69", spellId = 17540 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 13455 },
 	supdef = { name = "Elixir of Superior Defense", identifiers = { { tooltip = "Greater Armor", texture = "INV_Potion_86", spellId = 11348 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 13445 },
@@ -154,6 +155,7 @@ RAB_Buffs = {
 	titans = { name = "Flask of the Titans", identifiers = { { tooltip = "Flask of the Titans", texture = "INV_Potion_62", spellId = 17626 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 13510 },
 	wisdom = { name = "Flask of Distilled Wisdom", identifiers = { { tooltip = "Distilled Wisdom", texture = "INV_Potion_97", spellId = 17627 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 13511 },
 	giftarthas = { name = "Gift of Arthas", identifiers = { { tooltip = "Gift of Arthas", texture = "Spell_Shadow_FingerOfDeath", spellId = 11371 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 9088 },
+	frozenrune = { name = "Frozen Rune", identifiers = { { tooltip = "Fire Protection", texture = "Spell_Fire_MasterOfElements", spellId = 29432 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 22682 },
 
 	-- Spell Consumes --
 	flask = { name = "Flask of Supreme Power", identifiers = { { tooltip = "Supreme Power", texture = "INV_Potion_41", spellId = 17628 } }, buffFunc = RAB_UseItem, itemId = 13512, grouping = "Spell" },
@@ -226,10 +228,13 @@ RAB_Buffs = {
 	mushroomstr = { name = "Magic Mushroom (str)", identifiers = { { tooltip = "Well Fed", texture = "Spell_Misc_Food", spellId = 24799 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 51720 },
 	desertdumpling = { name = "Smoked Desert Dumpling", identifiers = { { tooltip = "Well Fed", texture = "Spell_Misc_Food", spellId = 24799 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 20452 },
 	tenderwolf = { name = "Tender Wolf Steak", identifiers = { { tooltip = "Well Fed", texture = "Spell_Misc_Food", spellId = 19710 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 18045 },
+	juicystripedmelonstam = { name = "Juicy Striped Melon (stam)", identifiers = { { tooltip = "Well Fed", texture = "Spell_Misc_Food", spellId = 19710 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 51712 },
+	gilneashotstew = { name = "Gilneas Hot Stew", identifiers = { { tooltip = "Well Fed", texture = "Spell_Misc_Food", spellId = 45628 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 84041 },
 	telabimmedley = { name = "Danonzo's Tel'Abim Medley", identifiers = { { tooltip = "Well Fed", texture = "Spell_Misc_Food", spellId = 57046 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 60978 },
 	telabimdelight = { name = "Danonzo's Tel'Abim Delight", identifiers = { { tooltip = "Well Fed", texture = "Spell_Misc_Food", spellId = 57044 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 60977 },
 	telabimsurprise = { name = "Danonzo's Tel'Abim Surprise", identifiers = { { tooltip = "Well Fed", texture = "Spell_Misc_Food", spellId = 57042 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 60976 },
 	tuber = { name = "Runn Tum Tuber Surprise", identifiers = { { tooltip = "Runn Tum Tuber Surprise", texture = "INV_Misc_Organ_03", spellId = 22730 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 18254 },
+	juicystripedmelonint = { name = "Juicy Striped Melon (int)", identifiers = { { tooltip = "Runn Tum Tuber Surprise", texture = "INV_Misc_Organ_03", spellId = 22730 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 51718 },
 	squid = { name = "Winter Squid", identifiers = { { tooltip = "Winter Squid", texture = "INV_Gauntlets_19", spellId = 1127 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 13755 },
 	merlot = { name = "Medivh's Merlot", identifiers = {
 		{ tooltip = "Increased Stamina", texture = "INV_Drink_04", spellId = 57106 },
