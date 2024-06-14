@@ -64,6 +64,11 @@ RABui_CompleteBars = {}; -- track which bars to hide/show
 RAB_CastLog = {}; -- Spell targets out of LoS. [unit] = expires;
 RAB_CurrentGroupStatus = -1;
 
+RAB_BuffCache = {};
+RAB_BuffLastUpdated = {};
+RAB_DebuffCache = {};
+RAB_DebuffLastUpdated = {};
+
 local RestorSelfAutoCastTimeOut = 1;
 local RestorSelfAutoCast = false;
 
@@ -257,8 +262,9 @@ function RAB_StartUp()
 		end
 	end
 
-	RABui_DefBars = nil;
-	RAB_Versions = type(RABui_Settings.keepversions) == "table" and RABui_Settings.keepversions or {};
+		RABui_DefBars = nil;
+
+		RAB_Versions = type(RABui_Settings.keepversions) == "table" and RABui_Settings.keepversions or {};
 
 	return "remove"; -- unsubscribe event
 end
@@ -651,23 +657,40 @@ function isUnitBuffUp(unit, identifier)
 	if (unit == nil or not UnitExists(unit) or identifier == nil) then
 		return false;
 	end
-	for i = 1, 32 do
-		local texture, stacks, spellId = UnitBuff(unit, i);
-		if texture then
-			-- use spellID if available, requires superwow
-			if spellId and identifier.spellId and spellId == identifier.spellId then
-				return true;
+
+	if RAB_BuffCache[unit] == nil or (RAB_BuffLastUpdated[unit] and RAB_BuffLastUpdated[unit] < GetTime() - 3) then
+		RAB_BuffCache[unit] = {};
+		for i = 1, 32 do
+			local texture, stacks, spellId = UnitBuff(unit, i);
+			if texture then
+				RAB_BuffCache[unit][i] = {
+					texture = texture,
+					stacks = stacks,
+					spellId = spellId
+				};
 			else
-				-- fall back to texture + tooltip comparison, not perfect
-				RAB_TooltipScanner:ClearLines()
-				RAB_TooltipScanner:SetUnitBuff(unit, i)
-				local tooltip = RAB_TooltipScannerTextLeft1:GetText()
-				if tooltip and identifier.tooltip and identifier.texture and string.find(tooltip, identifier.tooltip) and string.find(texture, identifier.texture) then
-					return true;
-				end
+				break
 			end
+		end
+		RAB_BuffLastUpdated[unit] = GetTime();
+	end
+
+	local unitBuffs = RAB_BuffCache[unit];
+
+	local searchTexture = "";
+	if identifier.texture then
+		searchTexture = "Interface\\Icons\\" .. identifier.texture
+	end
+
+	for i, buffData in ipairs(unitBuffs) do
+		-- use spellID if available, requires superwow
+		if buffData.spellId and identifier.spellId and buffData.spellId == identifier.spellId then
+			return true;
 		else
-			break
+			-- fall back to texture scan, not perfect
+			if searchTexture and buffData.texture == searchTexture then
+				return true;
+			end
 		end
 	end
 	return false;
@@ -677,26 +700,43 @@ function isUnitDebuffUp(unit, identifier)
 	if (unit == nil or not UnitExists(unit) or identifier == nil) then
 		return false;
 	end
-	for i = 1, 16 do
-		local texture, stacks, spellSchool, spellId = UnitDebuff(unit, i);
-		if texture then
-			-- use spellID if available, requires superwow
-			if spellId and identifier.spellId then
-				return spellId == identifier.spellId;
+
+	if RAB_DebuffCache[unit] == nil or (RAB_DebuffLastUpdated[unit] and RAB_DebuffLastUpdated[unit] < GetTime() - 3) then
+		RAB_DebuffCache[unit] = {};
+		for i = 1, 32 do
+			local texture, stacks, spellSchool, spellId = UnitDebuff(unit, i);
+			if texture then
+				RAB_DebuffCache[unit][i] = {
+					texture = texture,
+					stacks = stacks,
+					spellSchool = spellSchool,
+					spellId = spellId
+				};
 			else
-				-- fall back to texture + tooltip comparison, not perfect
-				RAB_TooltipScanner:ClearLines()
-				RAB_TooltipScanner:SetUnitDebuff(unit, i)
-				local tooltip = RAB_TooltipScannerTextLeft1:GetText()
-				if tooltip and identifier.tooltip and identifier.texture then
-					return string.find(tooltip, identifier.tooltip) and string.find(texture, identifier.texture);
-				end
+				break
 			end
+		end
+		RAB_DebuffLastUpdated[unit] = GetTime();
+	end
+
+	local unitDebuffs = RAB_DebuffCache[unit];
+
+	local searchTexture = "";
+	if identifier.texture then
+		searchTexture = "Interface\\Icons\\" .. identifier.texture
+	end
+
+	for i, debuffData in ipairs(unitDebuffs) do
+		-- use spellID if available, requires superwow
+		if debuffData.spellId and identifier.spellId and debuffData.spellId == identifier.spellId then
+			return true;
 		else
-			break
+			-- fall back to texture scan, not perfect
+			if searchTexture and debuffData.texture == searchTexture then
+				return true;
+			end
 		end
 	end
-	return false;
 end
 
 function strrpos(str, chr)
