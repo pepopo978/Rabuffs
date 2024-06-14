@@ -159,12 +159,12 @@ RAB_Buffs = {
 
 	-- Spell Consumes --
 	flask = { name = "Flask of Supreme Power", identifiers = { { tooltip = "Supreme Power", texture = "INV_Potion_41", spellId = 17628 } }, buffFunc = RAB_UseItem, itemId = 13512, grouping = "Spell" },
-	arcaneelixir = { name = "Greater Arcane Elixir", identifiers = { { tooltip = "Greater Arcane Elixir", texture = "INV_Potion_30", spellId = 11390 } }, buffFunc = RAB_UseItem, itemId = 13454, grouping = "Spell" },
+	greaterarcane = { name = "Greater Arcane Elixir", identifiers = { { tooltip = "Greater Arcane Elixir", texture = "INV_Potion_30", spellId = 17539 } }, buffFunc = RAB_UseItem, itemId = 13454, grouping = "Spell" },
 	greaterfirepower = { name = "Elixir of Greater Firepower", identifiers = { { tooltip = "Greater Firepower", texture = "INV_Potion_60", spellId = 26276 } }, buffFunc = RAB_UseItem, itemId = 21546, grouping = "Spell" },
 	greaternaturepower = { name = "Elixir of Greater Nature Power", identifiers = { { tooltip = "Greater Nature Power", texture = "Spell_Nature_SpiritArmor", spellId = 45988 } }, buffFunc = RAB_UseItem, itemId = 50237, grouping = "Spell" },
 	shadowpower = { name = "Elixir of Shadow Power", identifiers = { { tooltip = "Shadow Power", texture = "INV_Potion_46", spellId = 11474 } }, buffFunc = RAB_UseItem, itemId = 9264, grouping = "Spell" },
 	frostpower = { name = "Elixir of Frost Power", identifiers = { { tooltip = "Frost Power", texture = "INV_Potion_03", spellId = 21920 } }, buffFunc = RAB_UseItem, itemId = 17708, grouping = "Spell" },
-	greaterarcane = { name = "Arcane Elixir", identifiers = { { tooltip = "Arcane Elixir", texture = "INV_Potion_25", spellId = 17539 } }, buffFunc = RAB_UseItem, itemId = 13454, grouping = "Spell" },
+	arcaneelixir = { name = "Arcane Elixir", identifiers = { { tooltip = "Arcane Elixir", texture = "INV_Potion_25", spellId = 11390 } }, buffFunc = RAB_UseItem, itemId = 9155, grouping = "Spell" },
 	firepowerelixir = { name = "Elixir of Firepower", identifiers = { { tooltip = "Fire Power", texture = "INV_Potion_60", spellId = 7844 } }, buffFunc = RAB_UseItem, itemId = 6373, grouping = "Spell" },
 	dreamshard = { name = "Dreamshard Elixir", identifiers = { { tooltip = "Dreamshard Elixir", texture = "INV_Potion_25", spellId = 45427 } }, buffFunc = RAB_UseItem, itemId = 61224, grouping = "Spell" },
 	dreamtonic = { name = "Dreamtonic", identifiers = { { tooltip = "Dreamtonic", texture = "INV_Potion_30", spellId = 45489 } }, buffFunc = RAB_UseItem, itemId = 61423, grouping = "Spell" },
