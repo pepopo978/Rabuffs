@@ -653,26 +653,84 @@ function RAB_UnitIsDead(unit)
 	return (UnitIsDeadOrGhost(unit) and not isUnitBuffUp(unit, { tooltip = "Feign Death", texture = "Ability_Rogue_FeignDeath", spellId = 5384 }));
 end
 
+local function gatherCacheData(unit, texture, stacks, spellId, buff)
+	local tooltip = nil
+	if spellId and SpellInfo then
+		tooltip = SpellInfo(spellId)
+	elseif UnitName(unit) == UnitName("player") then
+		-- get tooltips as well but only for player as it hurts performance
+		-- fall back to texture + tooltip comparison, not perfect
+		RAB_TooltipScanner:ClearLines()
+		if buff == true then
+			RAB_TooltipScanner:SetUnitBuff(unit, i)
+		else
+			RAB_TooltipScanner:SetUnitDebuff(unit, i)
+		end
+		tooltip = RAB_TooltipScannerTextLeft1:GetText()
+	end
+	return {
+		texture = texture,
+		spellId = spellId,
+		stacks = stacks,
+		tooltip = tooltip
+	};
+end
+
+local function cacheUnitBuffs(unit)
+	RAB_BuffCache[unit] = {};
+
+	for i = 1, 32 do
+		RAB_BuffCache[unit][i] = true
+	end
+	--RAB_BuffLastUpdated[unit] = GetTime();
+end
+
+local function cacheUnitDebuffs(unit)
+	RAB_DebuffCache[unit] = {};
+	for i = 1, 16 do
+		local texture, stacks, spellSchool, spellId = UnitDebuff(unit, i);
+		if texture then
+			RAB_DebuffCache[unit][i] = gatherCacheData(unit, texture, stacks, spellId, true);
+			RAB_DebuffCache[unit][i].spellSchool = spellSchool;
+		else
+			break
+		end
+	end
+	RAB_DebuffLastUpdated[unit] = GetTime();
+end
+
+local function checkForMatch(buffData, searchTexture, identifier)
+	-- use spellID if available, requires superwow
+	if buffData.spellId and identifier.spellId then
+		if buffData.spellId == identifier.spellId then
+			return true;
+		end
+	else
+		-- fall back to texture scan, not perfect
+		if searchTexture and buffData.texture == searchTexture then
+			-- check for tooltip if available
+			if identifier.tooltip and buffData.tooltip then
+				if identifier.tooltip == buffData.tooltip then
+					return true;
+				end
+			else
+				-- no tooltip, default to returning true for matching texture
+				return true;
+			end
+		end
+	end
+
+	return nil;
+end
+
 function isUnitBuffUp(unit, identifier)
 	if (unit == nil or not UnitExists(unit) or identifier == nil) then
 		return false;
 	end
 
-	if RAB_BuffCache[unit] == nil or RAB_BuffLastUpdated[unit] == nil or RAB_BuffLastUpdated[unit] < GetTime() - 1 then
-		RAB_BuffCache[unit] = {};
-		for i = 1, 32 do
-			local texture, stacks, spellId = UnitBuff(unit, i);
-			if texture then
-				RAB_BuffCache[unit][i] = {
-					texture = texture,
-					stacks = stacks,
-					spellId = spellId
-				};
-			else
-				break
-			end
-		end
-		RAB_BuffLastUpdated[unit] = GetTime();
+	if RAB_BuffCache[unit] == nil or RAB_BuffLastUpdated[unit] == nil or RAB_BuffLastUpdated[unit] < GetTime() - 5 then
+		cacheUnitBuffs(unit)
+		return
 	end
 
 	local unitBuffs = RAB_BuffCache[unit];
@@ -682,17 +740,9 @@ function isUnitBuffUp(unit, identifier)
 		searchTexture = "Interface\\Icons\\" .. identifier.texture
 	end
 
-	for i, buffData in ipairs(unitBuffs) do
-		-- use spellID if available, requires superwow
-		if buffData.spellId and identifier.spellId then
-			if buffData.spellId == identifier.spellId then
-				return true;
-			end
-		else
-			-- fall back to texture scan, not perfect
-			if searchTexture and buffData.texture == searchTexture then
-				return true;
-			end
+	for i, buffData in pairs(unitBuffs) do
+		if checkForMatch(buffData, searchTexture, identifier) then
+			return true;
 		end
 	end
 	return false;
@@ -704,21 +754,7 @@ function isUnitDebuffUp(unit, identifier)
 	end
 
 	if RAB_DebuffCache[unit] == nil or (RAB_DebuffLastUpdated[unit] and RAB_DebuffLastUpdated[unit] < GetTime() - 1) then
-		RAB_DebuffCache[unit] = {};
-		for i = 1, 32 do
-			local texture, stacks, spellSchool, spellId = UnitDebuff(unit, i);
-			if texture then
-				RAB_DebuffCache[unit][i] = {
-					texture = texture,
-					stacks = stacks,
-					spellSchool = spellSchool,
-					spellId = spellId
-				};
-			else
-				break
-			end
-		end
-		RAB_DebuffLastUpdated[unit] = GetTime();
+		cacheUnitDebuffs(unit)
 	end
 
 	local unitDebuffs = RAB_DebuffCache[unit];
@@ -728,17 +764,9 @@ function isUnitDebuffUp(unit, identifier)
 		searchTexture = "Interface\\Icons\\" .. identifier.texture
 	end
 
-	for i, debuffData in ipairs(unitDebuffs) do
-		-- use spellID if available, requires superwow
-		if debuffData.spellId and identifier.spellId then
-			if debuffData.spellId == identifier.spellId then
-				return true;
-			end
-		else
-			-- fall back to texture scan, not perfect
-			if searchTexture and debuffData.texture == searchTexture then
-				return true;
-			end
+	for i, debuffData in pairs(unitDebuffs) do
+		if checkForMatch(debuffData, searchTexture, identifier) then
+			return true;
 		end
 	end
 end
