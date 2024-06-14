@@ -262,9 +262,9 @@ function RAB_StartUp()
 		end
 	end
 
-		RABui_DefBars = nil;
+	RABui_DefBars = nil;
 
-		RAB_Versions = type(RABui_Settings.keepversions) == "table" and RABui_Settings.keepversions or {};
+	RAB_Versions = type(RABui_Settings.keepversions) == "table" and RABui_Settings.keepversions or {};
 
 	return "remove"; -- unsubscribe event
 end
@@ -703,7 +703,7 @@ function isUnitDebuffUp(unit, identifier)
 		return false;
 	end
 
-	if RAB_DebuffCache[unit] == nil or (RAB_DebuffLastUpdated[unit] and RAB_DebuffLastUpdated[unit] < GetTime() - 3) then
+	if RAB_DebuffCache[unit] == nil or (RAB_DebuffLastUpdated[unit] and RAB_DebuffLastUpdated[unit] < GetTime() - 1) then
 		RAB_DebuffCache[unit] = {};
 		for i = 1, 32 do
 			local texture, stacks, spellSchool, spellId = UnitDebuff(unit, i);
@@ -730,8 +730,10 @@ function isUnitDebuffUp(unit, identifier)
 
 	for i, debuffData in ipairs(unitDebuffs) do
 		-- use spellID if available, requires superwow
-		if debuffData.spellId and identifier.spellId and debuffData.spellId == identifier.spellId then
-			return true;
+		if debuffData.spellId and identifier.spellId then
+			if debuffData.spellId == identifier.spellId then
+				return true;
+			end
 		else
 			-- fall back to texture scan, not perfect
 			if searchTexture and debuffData.texture == searchTexture then
