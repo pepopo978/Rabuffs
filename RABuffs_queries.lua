@@ -1182,6 +1182,8 @@ function RAB_DefaultCastingHandler(mode, userData)
 	if (mode == "cast") then
 		RAB_CastSpell_Target(people[1].u);
 		RAB_ResetRecastTimer(people[1].u, userData);
+		-- clear buff cache for people[1].u
+		RAB_BuffCache[people[1].u] = nil
 		RAB_Print(string.format(sRAB_CastBuff_Cast,
 				sRAB_SpellNames[userData.buffKey] ~= nil and sRAB_SpellNames[userData.buffKey] or buffData.name,
 				RAB_Chat_Colors[RAB_UnitClass(people[1].u)] .. UnitName(people[1].u)));

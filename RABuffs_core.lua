@@ -658,7 +658,7 @@ function isUnitBuffUp(unit, identifier)
 		return false;
 	end
 
-	if RAB_BuffCache[unit] == nil or (RAB_BuffLastUpdated[unit] and RAB_BuffLastUpdated[unit] < GetTime() - 3) then
+	if RAB_BuffCache[unit] == nil or RAB_BuffLastUpdated[unit] == nil or RAB_BuffLastUpdated[unit] < GetTime() - 1 then
 		RAB_BuffCache[unit] = {};
 		for i = 1, 32 do
 			local texture, stacks, spellId = UnitBuff(unit, i);
