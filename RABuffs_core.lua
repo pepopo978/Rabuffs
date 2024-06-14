@@ -684,8 +684,10 @@ function isUnitBuffUp(unit, identifier)
 
 	for i, buffData in ipairs(unitBuffs) do
 		-- use spellID if available, requires superwow
-		if buffData.spellId and identifier.spellId and buffData.spellId == identifier.spellId then
-			return true;
+		if buffData.spellId and identifier.spellId then
+			if buffData.spellId == identifier.spellId then
+				return true;
+			end
 		else
 			-- fall back to texture scan, not perfect
 			if searchTexture and buffData.texture == searchTexture then
