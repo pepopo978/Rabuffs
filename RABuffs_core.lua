@@ -547,6 +547,8 @@ function RAB_CastSpell_IsCastable(spellkey, mute, muteobvious)
 end
 
 function RAB_CastSpell_Target(targ)
+	RAB_BuffCache[targ] = nil
+
 	if (SpellIsTargeting()) then
 		SpellTargetUnit(targ);
 		if (RAB_SpellCast_ShouldRetarget) then
@@ -711,9 +713,6 @@ end
 local function checkForMatch(buffData, searchTexture, identifier)
 	-- use spellID if available, requires superwow
 	if buffData.spellId and identifier.spellId then
-		if identifier.tooltip == "Dreamshard Elixir" then
-			--print(searchTexture .. " " .. buffData.spellId .. " " .. identifier.spellId)
-		end
 		if buffData.spellId == identifier.spellId then
 			return true;
 		end

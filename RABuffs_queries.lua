@@ -1036,6 +1036,15 @@ function RAB_DefaultCastingHandler(mode, userData)
 				return false
 			end
 			CastSpellByName(buff, true);
+			RAB_BuffCache["player"] = nil
+			-- clear raidx cache for player as well
+			for i = 1, 40 do
+				if (UnitIsUnit("raid" .. i, "player")) then
+					RAB_BuffCache["raid" .. i] = nil
+					break ;
+				end
+			end
+
 			RAB_ResetRecastTimer("player", userData);
 			RAB_Print(string.format(sRAB_CastBuff_CastNeutral, buff));
 			return true;
@@ -1183,7 +1192,6 @@ function RAB_DefaultCastingHandler(mode, userData)
 		RAB_CastSpell_Target(people[1].u);
 		RAB_ResetRecastTimer(people[1].u, userData);
 		-- clear buff cache for people[1].u
-		RAB_BuffCache[people[1].u] = nil
 		RAB_Print(string.format(sRAB_CastBuff_Cast,
 				sRAB_SpellNames[userData.buffKey] ~= nil and sRAB_SpellNames[userData.buffKey] or buffData.name,
 				RAB_Chat_Colors[RAB_UnitClass(people[1].u)] .. UnitName(people[1].u)));
