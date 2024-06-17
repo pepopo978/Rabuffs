@@ -133,9 +133,10 @@ function RAB_DefaultQueryHandler(userData, needraw, needtxt)
 	"", "", "", (buffData.invert ~= nil);
 	local buffname = buffData.name;
 	local i, u, key, val, group, isbuffed;
+	local hasSpecialFunc = buffData.sfunc ~= nil
 	local sfunc = buffData.sfunc
 
-	if (buffData.sfunc == nil) then
+	if (hasSpecialFunc == false) then
 		if (buffData.type ~= "debuff") then
 			sfunc = isUnitBuffUp;
 		else
@@ -158,11 +159,19 @@ function RAB_DefaultQueryHandler(userData, needraw, needtxt)
 			local appl, fadetime, isFading = 0;
 			if (RAB_IsEligible(u, userData)) then
 				isbuffed = false;
-				for _, identifier in ipairs(buffData.identifiers) do
-					if (sfunc(u, identifier)) then
+
+				if hasSpecialFunc then
+					if sfunc(u) then
 						isbuffed = true
-						_, appl = sfunc(u, identifier);
-						break ;
+					end
+				else
+					-- check all identifiers
+					for _, identifier in ipairs(buffData.identifiers) do
+						if (sfunc(u, identifier)) then
+							isbuffed = true
+							_, appl = sfunc(u, identifier);
+							break ;
+						end
 					end
 				end
 
