@@ -730,7 +730,6 @@ local function checkForMatch(buffData, searchTexture, identifier)
 			end
 		end
 	end
-
 	return nil;
 end
 
@@ -741,7 +740,6 @@ function isUnitBuffUp(unit, identifier)
 
 	if RAB_BuffCache[unit] == nil or RAB_BuffLastUpdated[unit] == nil or RAB_BuffLastUpdated[unit] < GetTime() - 5 then
 		cacheUnitBuffs(unit)
-		return
 	end
 
 	local unitBuffs = RAB_BuffCache[unit];
