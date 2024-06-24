@@ -317,13 +317,13 @@ function RABui_OnUpdate(elapsed)
 		end
 		RABui_NextUpdate = GetTime() + RABui_Settings.updateInterval;
 	end
-	local shiftstate = (IsShiftKeyDown() and 1 or 0) + (IsAltKeyDown() and 2 or 0);
-	if (shiftstate ~= RABui_LastShiftState) then
-		RABui_LastShiftState = shiftstate;
-		if (RABui_TooltipBar ~= nil and RABui_TooltipBar ~= 0) then
-			RABui_UpdateTooltip(RABui_TooltipBar);
-		end
-	end
+	-- local shiftstate = (IsShiftKeyDown() and 1 or 0) + (IsAltKeyDown() and 2 or 0);
+	-- if (shiftstate ~= RABui_LastShiftState) then
+	-- 	RABui_LastShiftState = shiftstate;
+	-- 	if (RABui_TooltipBar ~= nil and RABui_TooltipBar ~= 0) then
+	-- 		RABui_UpdateTooltip(RABui_TooltipBar);
+	-- 	end
+	-- end
 end
 
 function RABui_UpdateBar(barid)
