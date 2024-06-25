@@ -535,6 +535,7 @@ function RABui_BarDetail_SetBarData(id)
 		RAB_BarDetail_Remove:Hide();
 		RAB_BarDetail_Output = "RAID";
 		RAB_BarDetail_UseOnClick:SetChecked(true);
+		RAB_BarDetail_SelfLimit:SetChecked(false);
 	else
 		RAB_BarDetail_Header:SetText(sRAB_AddBarFrame_EditBar);
 		RAB_BarDetail_Accept:SetText(sRAB_AddBarFrame_Edit);
