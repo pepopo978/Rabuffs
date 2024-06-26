@@ -655,7 +655,7 @@ function RAB_UnitIsDead(unit)
 	return (UnitIsDeadOrGhost(unit) and not isUnitBuffUp(unit, { tooltip = "Feign Death", texture = "Ability_Rogue_FeignDeath", spellId = 5384 }));
 end
 
-local function gatherCacheData(unit, texture, stacks, spellId, buff)
+local function gatherCacheData(unit, index, texture, stacks, spellId, buff)
 	local tooltip = nil
 	if spellId and SpellInfo then
 		tooltip = SpellInfo(spellId)
@@ -664,14 +664,14 @@ local function gatherCacheData(unit, texture, stacks, spellId, buff)
 		-- fall back to texture + tooltip comparison, not perfect
 		RAB_TooltipScanner:ClearLines()
 		if buff == true then
-			RAB_TooltipScanner:SetUnitBuff(unit, i)
+			RAB_TooltipScanner:SetUnitBuff(unit, index)
 		else
-			RAB_TooltipScanner:SetUnitDebuff(unit, i)
+			RAB_TooltipScanner:SetUnitDebuff(unit, index)
 		end
 		tooltip = RAB_TooltipScannerTextLeft1:GetText()
 	end
 
-	if spellId < 0 then
+	if spellId and spellId < 0 then
 		spellId = spellId + 65536 -- correct integer overflow from previous versions of superwow
 	end
 
@@ -688,7 +688,7 @@ local function cacheUnitBuffs(unit)
 	for i = 1, 32 do
 		local texture, stacks, spellId = UnitBuff(unit, i);
 		if texture then
-			RAB_BuffCache[unit][i] = gatherCacheData(unit, texture, stacks, spellId, true);
+			RAB_BuffCache[unit][i] = gatherCacheData(unit, i, texture, stacks, spellId, true);
 		else
 			break
 		end
@@ -701,7 +701,7 @@ local function cacheUnitDebuffs(unit)
 	for i = 1, 16 do
 		local texture, stacks, spellSchool, spellId = UnitDebuff(unit, i);
 		if texture then
-			RAB_DebuffCache[unit][i] = gatherCacheData(unit, texture, stacks, spellId, true);
+			RAB_DebuffCache[unit][i] = gatherCacheData(unit, i, texture, stacks, spellId, true);
 			RAB_DebuffCache[unit][i].spellSchool = spellSchool;
 		else
 			break
