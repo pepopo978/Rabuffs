@@ -40,6 +40,7 @@ RAB_Buffs = {
 	priestres = { name = "Resurrection", identifiers = { { tooltip = "Resurrection", texture = "Spell_Holy_Resurrection" } }, grouping = "Priest", ctraid = 22, recast = 3 },
 
 	motw = { name = "Mark of the Wild", identifiers = { { tooltip = "Mark of the Wild", texture = "Spell_Nature_Regeneration" }, { tooltip = "Gift of the Wild", texture = "Spell_Nature_Regeneration", bigcast = "gotw" } }, bigcast = "gotw", bigsort = "group", bigthreshold = 3, grouping = "Druid", ctraid = 2, recast = 5 },
+	emeraldblessing = { name = "Emerald Blessing", identifiers = { { tooltip = "Emerald Blessing", texture = "Spell_Nature_ProtectionformNature", spellId = 57108 } }, grouping = "Druid", recast = 3 },
 	thorns = { name = "Thorns", identifiers = { { tooltip = "Thorns", texture = "Spell_Nature_Thorns" } }, grouping = "Druid", ctraid = 9, recast = 3 },
 	clarity = { name = "Omen of Clarity", identifiers = { { tooltip = "Omen of Clarity", texture = "Spell_Nature_CrystalBall" } }, type = "self", grouping = "Druid", class = "Druid", recast = 2 },
 	druidshift = {
@@ -87,7 +88,10 @@ RAB_Buffs = {
 	hawk = { name = "Aspect of the Hawk", identifiers = { { tooltip = "Aspect of the Hawk", texture = "Spell_Nature_RavenForm" } }, type = "self", grouping = "Hunter", class = "Hunter", recast = 5 },
 	cheetah = { name = "Aspect of the Cheetah", identifiers = { { tooltip = "Aspect of the Cheetah", texture = "Ability_Mount_JungleTiger" } }, type = "self", grouping = "Hunter", class = "Hunter", recast = 5 },
 	beast = { name = "Aspect of the Beast", identifiers = { { tooltip = "Aspect of the Beast", texture = "Ability_Mount_PinkTiger" } }, type = "self", grouping = "Hunter", class = "Hunter", recast = 5 },
-	aspectwild = { name = "Aspect of the Wild", identifiers = { { tooltip = "Aspect of the Wild", texture = "Spell_Nature_ProtectionformNature" } }, grouping = "Hunter", class = "Hunter", type = "aura", recast = 5 },
+	aspectwild = { name = "Aspect of the Wild", identifiers = {
+		{ tooltip = "Aspect of the Wild", texture = "Spell_Nature_ProtectionformNature", spellId = 20043 },
+		{ tooltip = "Aspect of the Wild", texture = "Spell_Nature_ProtectionformNature", spellId = 20190 }
+	}, grouping = "Hunter", class = "Hunter", type = "aura", recast = 5 },
 	pack = { name = "Aspect of the Pack", identifiers = { { tooltip = "Aspect of the Pack", texture = "Ability_Mount_WhiteTiger" } }, grouping = "Hunter", class = "Hunter", type = "aura", recast = 5 },
 	monkey = { name = "Aspect of the Monkey", identifiers = { { tooltip = "Aspect of the Monkey", texture = "Ability_Hunter_AspectOfTheMonkey" } }, type = "self", grouping = "Hunter", class = "Hunter", recast = 5 },
 	trueshot = { name = "True Shot Aura", identifiers = { { tooltip = "True Shot Aura", texture = "Ability_TrueShot" } }, grouping = "Hunter", type = "aura", recast = 5 },
