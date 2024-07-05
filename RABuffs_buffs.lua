@@ -211,6 +211,9 @@ RAB_Buffs = {
 	shadowoil = { grouping = "Weapon", name = "Shadow Oil", identifiers = {}, type = "wepbuffonly", buffFunc = RAB_UseItem, itemId = 3824, useOn = 'weapon' },
 	shadowoiloh = { grouping = "Weapon", name = "Shadow Oil (offhand)", identifiers = {}, type = "wepbuffonly", buffFunc = RAB_UseItem, itemId = 3824, useOn = 'weaponOH' },
 
+	frostoil = { grouping = "Weapon", name = "Frost Oil", identifiers = {}, type = "wepbuffonly", buffFunc = RAB_UseItem, itemId = 3829, useOn = 'weapon' },
+	frostoiloh = { grouping = "Weapon", name = "Frost Oil (offhand)", identifiers = {}, type = "wepbuffonly", buffFunc = RAB_UseItem, itemId = 3829, useOn = 'weaponOH' },
+
 	consecratedstone = { grouping = "Weapon", name = "Consecrated Sharpening Stone", identifiers = {}, type = "wepbuffonly", buffFunc = RAB_UseItem, itemId = 23122, useOn = 'weapon' },
 	consecratedstoneoh = { grouping = "Weapon", name = "Consecrated Sharpening Stone (offhand)", identifiers = {}, type = "wepbuffonly", buffFunc = RAB_UseItem, itemId = 23122, useOn = 'weaponOH' },
 
