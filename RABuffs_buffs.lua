@@ -174,7 +174,7 @@ RAB_Buffs = {
 	mongoose = { name = "Elixir of the Mongoose", identifiers = { { tooltip = "Elixir of the Mongoose", texture = "INV_Potion_32", spellId = 17538 } }, grouping = "Melee", buffFunc = RAB_UseItem, itemId = 13452 },
 	agilityelixir = { name = "Elixir of Agility", identifiers = { { tooltip = "Agility", texture = "INV_Potion_93", spellId = 11328 } }, grouping = "Melee", buffFunc = RAB_UseItem, itemId = 8949 },
 	greateragilityelixir = { name = "Elixir of Greater Agility", identifiers = { { tooltip = "Greater Agility", texture = "INV_Potion_93", spellId = 11334 } }, grouping = "Melee", buffFunc = RAB_UseItem, itemId = 9187 },
-	firewater = { name = "Winterfall Firewater", identifiers = { { tooltip = "Winterfall Firewater", texture = "INV_Potion_79", spellId = 24361 } }, grouping = "Melee", buffFunc = RAB_UseItem, itemId = 12820 },
+	firewater = { name = "Winterfall Firewater", identifiers = { { tooltip = "Winterfall Firewater", texture = "INV_Potion_92", spellId = 17038 } }, grouping = "Melee", buffFunc = RAB_UseItem, itemId = 12820 },
 	jujupower = { name = "Juju Power", identifiers = { { tooltip = "Juju Power", texture = "INV_Misc_MonsterScales_11", spellId = 16323 } }, grouping = "Melee", buffFunc = RAB_UseItem, itemId = 12451, useOn = 'player' },
 	jujumight = { name = "Juju Might", identifiers = { { tooltip = "Juju Might", texture = "INV_Misc_MonsterScales_07", spellId = 16329 } }, grouping = "Melee", buffFunc = RAB_UseItem, itemId = 12460, useOn = 'player' },
 	jujuchill = { name = "Juju Chill", identifiers = { { tooltip = "Juju Chill", texture = "INV_Misc_MonsterScales_09", spellId = 16325 } }, grouping = "Melee", buffFunc = RAB_UseItem, itemId = 12457, useOn = 'player' },
