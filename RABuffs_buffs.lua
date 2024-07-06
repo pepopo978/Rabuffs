@@ -237,6 +237,7 @@ RAB_Buffs = {
 	tenderwolf = { name = "Tender Wolf Steak", identifiers = { { tooltip = "Well Fed", texture = "Spell_Misc_Food", spellId = 19710 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 18045 },
 	juicystripedmelonstam = { name = "Juicy Striped Melon (stam)", identifiers = { { tooltip = "Well Fed", texture = "Spell_Misc_Food", spellId = 19710 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 51712 },
 	gilneashotstew = { name = "Gilneas Hot Stew", identifiers = { { tooltip = "Well Fed", texture = "Spell_Misc_Food", spellId = 45628 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 84041 },
+	sweetmountainberry = { name = "Sweet Mountain Berry", identifiers = { { tooltip = "Increased Agility", texture = "INV_Gauntlets_19", spellId = 18192 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 51711 },
 	telabimmedley = { name = "Danonzo's Tel'Abim Medley", identifiers = { { tooltip = "Well Fed", texture = "Spell_Misc_Food", spellId = 57046 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 60978 },
 	telabimdelight = { name = "Danonzo's Tel'Abim Delight", identifiers = { { tooltip = "Well Fed", texture = "Spell_Misc_Food", spellId = 57044 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 60977 },
 	telabimsurprise = { name = "Danonzo's Tel'Abim Surprise", identifiers = { { tooltip = "Well Fed", texture = "Spell_Misc_Food", spellId = 57042 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 60976 },
