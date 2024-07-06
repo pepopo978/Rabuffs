@@ -243,6 +243,9 @@ RAB_Buffs = {
 	tuber = { name = "Runn Tum Tuber Surprise", identifiers = { { tooltip = "Increased Intellect", texture = "INV_Misc_Organ_03", spellId = 22730 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 18254 },
 	juicystripedmelonint = { name = "Juicy Striped Melon (int)", identifiers = { { tooltip = "Increased Intellect", texture = "INV_Misc_Organ_03", spellId = 22730 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 51718 },
 	squid = { name = "Winter Squid", identifiers = { { tooltip = "Winter Squid", texture = "INV_Gauntlets_19", spellId = 1127 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 13755 },
+	merlotblue = { name = "Medivh's Merlot Blue", identifiers = {
+		{ tooltip = "Increased Intellect", texture = "INV_Drink_04", spellId = 57107 },
+	}, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 61175 },
 	merlot = { name = "Medivh's Merlot", identifiers = {
 		{ tooltip = "Increased Stamina", texture = "INV_Drink_04", spellId = 57106 },
 		{ tooltip = "Rumsey Rum Black Label", texture = "INV_Drink_04", spellId = 25804 }, -- doesn't stack with rum
