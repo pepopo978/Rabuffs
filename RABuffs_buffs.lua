@@ -189,6 +189,7 @@ RAB_Buffs = {
 	bogling = { name = "Bogling Root", identifiers = { { tooltip = "Fury of the Bogling", texture = "Spell_Nature_Strength", spellId = 5665 } }, buffFunc = RAB_UseItem, itemId = 5206 },
 	roids = { name = "R.O.I.D.S.", identifiers = { { tooltip = "Rage of Ages", texture = "Spell_Nature_Strength", spellId = 10667 } }, grouping = "Melee", buffFunc = RAB_UseItem, itemId = 8410 },
 	scorpok = { name = "Ground Scorpok Assay", identifiers = { { tooltip = "Strike of the Scorpok", texture = "Spell_Nature_ForceOfNature", spellId = 10669 } }, buffFunc = RAB_UseItem, itemId = 8412 },
+	oilofimmolation = { name = "Oil of Immolation", identifiers = { { tooltip = "Fire Shield", texture = "Spell_Fire_Immolation", spellId = 11350 } }, grouping = "Melee", buffFunc = RAB_UseItem, itemId = 8956 },
 
 	anyagi = { name = "Mongoose/Greater Agility", identifiers = { { tooltip = "Elixir of the Mongoose", texture = "INV_Potion_32", spellId = 17538 }, { tooltip = "Elixir of Greater Agility", texture = "INV_Potion_94" } }, grouping = "Melee" },
 
