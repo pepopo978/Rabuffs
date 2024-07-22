@@ -64,6 +64,11 @@ RABui_CompleteBars = {}; -- track which bars to hide/show
 RAB_CastLog = {}; -- Spell targets out of LoS. [unit] = expires;
 RAB_CurrentGroupStatus = -1;
 
+RAB_BuffCache = {};
+RAB_BuffLastUpdated = {};
+RAB_DebuffCache = {};
+RAB_DebuffLastUpdated = {};
+
 local RestorSelfAutoCastTimeOut = 1;
 local RestorSelfAutoCast = false;
 
@@ -258,6 +263,7 @@ function RAB_StartUp()
 	end
 
 	RABui_DefBars = nil;
+
 	RAB_Versions = type(RABui_Settings.keepversions) == "table" and RABui_Settings.keepversions or {};
 
 	return "remove"; -- unsubscribe event
@@ -541,6 +547,8 @@ function RAB_CastSpell_IsCastable(spellkey, mute, muteobvious)
 end
 
 function RAB_CastSpell_Target(targ)
+	RAB_BuffCache[targ] = nil
+
 	if (SpellIsTargeting()) then
 		SpellTargetUnit(targ);
 		if (RAB_SpellCast_ShouldRetarget) then
@@ -647,27 +655,103 @@ function RAB_UnitIsDead(unit)
 	return (UnitIsDeadOrGhost(unit) and not isUnitBuffUp(unit, { tooltip = "Feign Death", texture = "Ability_Rogue_FeignDeath", spellId = 5384 }));
 end
 
+local function gatherCacheData(unit, index, texture, stacks, spellId, buff)
+	local tooltip = nil
+	if spellId and SpellInfo then
+		tooltip = SpellInfo(spellId)
+	elseif UnitName(unit) == UnitName("player") then
+		-- get tooltips as well but only for player as it hurts performance
+		-- fall back to texture + tooltip comparison, not perfect
+		RAB_TooltipScanner:ClearLines()
+		if buff == true then
+			RAB_TooltipScanner:SetUnitBuff(unit, index)
+		else
+			RAB_TooltipScanner:SetUnitDebuff(unit, index)
+		end
+		tooltip = RAB_TooltipScannerTextLeft1:GetText()
+	end
+
+	if spellId and spellId < 0 then
+		spellId = spellId + 65536 -- correct integer overflow from previous versions of superwow
+	end
+
+	return {
+		texture = texture,
+		spellId = spellId,
+		stacks = stacks,
+		tooltip = tooltip
+	};
+end
+
+local function cacheUnitBuffs(unit)
+	RAB_BuffCache[unit] = {};
+	for i = 1, 32 do
+		local texture, stacks, spellId = UnitBuff(unit, i);
+		if texture then
+			RAB_BuffCache[unit][i] = gatherCacheData(unit, i, texture, stacks, spellId, true);
+		else
+			break
+		end
+	end
+	RAB_BuffLastUpdated[unit] = GetTime();
+end
+
+local function cacheUnitDebuffs(unit)
+	RAB_DebuffCache[unit] = {};
+	for i = 1, 16 do
+		local texture, stacks, spellSchool, spellId = UnitDebuff(unit, i);
+		if texture then
+			RAB_DebuffCache[unit][i] = gatherCacheData(unit, i, texture, stacks, spellId, true);
+			RAB_DebuffCache[unit][i].spellSchool = spellSchool;
+		else
+			break
+		end
+	end
+	RAB_DebuffLastUpdated[unit] = GetTime();
+end
+
+local function checkForMatch(buffData, searchTexture, identifier)
+	-- use spellID if available, requires superwow
+	if buffData.spellId and identifier.spellId then
+		if buffData.spellId == identifier.spellId then
+			return true;
+		end
+	else
+		-- fall back to texture scan, not perfect
+		if searchTexture and buffData.texture == searchTexture then
+			-- check for tooltip if available
+			if identifier.tooltip and buffData.tooltip then
+				if identifier.tooltip == buffData.tooltip then
+					return true;
+				end
+			else
+				-- no tooltip, default to returning true for matching texture
+				return true;
+			end
+		end
+	end
+	return nil;
+end
+
 function isUnitBuffUp(unit, identifier)
 	if (unit == nil or not UnitExists(unit) or identifier == nil) then
 		return false;
 	end
-	for i = 1, 32 do
-		local texture, stacks, spellId = UnitBuff(unit, i);
-		if texture then
-			-- use spellID if available, requires superwow
-			if spellId and identifier.spellId and spellId == identifier.spellId then
-				return true;
-			else
-				-- fall back to texture + tooltip comparison, not perfect
-				RAB_TooltipScanner:ClearLines()
-				RAB_TooltipScanner:SetUnitBuff(unit, i)
-				local tooltip = RAB_TooltipScannerTextLeft1:GetText()
-				if tooltip and identifier.tooltip and identifier.texture and string.find(tooltip, identifier.tooltip) and string.find(texture, identifier.texture) then
-					return true;
-				end
-			end
-		else
-			break
+
+	if RAB_BuffCache[unit] == nil or RAB_BuffLastUpdated[unit] == nil or RAB_BuffLastUpdated[unit] < GetTime() - 5 then
+		cacheUnitBuffs(unit)
+	end
+
+	local unitBuffs = RAB_BuffCache[unit];
+
+	local searchTexture = "";
+	if identifier.texture then
+		searchTexture = "Interface\\Icons\\" .. identifier.texture
+	end
+
+	for i, buffData in pairs(unitBuffs) do
+		if checkForMatch(buffData, searchTexture, identifier) then
+			return true;
 		end
 	end
 	return false;
@@ -677,26 +761,23 @@ function isUnitDebuffUp(unit, identifier)
 	if (unit == nil or not UnitExists(unit) or identifier == nil) then
 		return false;
 	end
-	for i = 1, 16 do
-		local texture, stacks, spellSchool, spellId = UnitDebuff(unit, i);
-		if texture then
-			-- use spellID if available, requires superwow
-			if spellId and identifier.spellId then
-				return spellId == identifier.spellId;
-			else
-				-- fall back to texture + tooltip comparison, not perfect
-				RAB_TooltipScanner:ClearLines()
-				RAB_TooltipScanner:SetUnitDebuff(unit, i)
-				local tooltip = RAB_TooltipScannerTextLeft1:GetText()
-				if tooltip and identifier.tooltip and identifier.texture then
-					return string.find(tooltip, identifier.tooltip) and string.find(texture, identifier.texture);
-				end
-			end
-		else
-			break
+
+	if RAB_DebuffCache[unit] == nil or (RAB_DebuffLastUpdated[unit] and RAB_DebuffLastUpdated[unit] < GetTime() - 1) then
+		cacheUnitDebuffs(unit)
+	end
+
+	local unitDebuffs = RAB_DebuffCache[unit];
+
+	local searchTexture = "";
+	if identifier.texture then
+		searchTexture = "Interface\\Icons\\" .. identifier.texture
+	end
+
+	for i, debuffData in pairs(unitDebuffs) do
+		if checkForMatch(debuffData, searchTexture, identifier) then
+			return true;
 		end
 	end
-	return false;
 end
 
 function strrpos(str, chr)

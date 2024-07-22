@@ -16,30 +16,33 @@ RAB_Buffs = {
 	darnassusgof = { name = "Darnassus Gift of Friendship", identifiers = { { tooltip = "Darnassus Gift of Friendship", texture = "INV_Misc_Gift_02" } }, type = "special", grouping = "Special" },
 	orgrimmargof = { name = "Orgrimmar Gift of Friendship", identifiers = { { tooltip = "Orgrimmar Gift of Friendship", texture = "INV_Misc_Gift_01" } }, type = "special", grouping = "Special" },
 	thunderbluffgof = { name = "Thunder Bluff Gift of Friendship", identifiers = { { tooltip = "Thunder Bluff of Friendship", texture = "INV_Misc_Gift_05" } }, type = "special", grouping = "Special" },
+	incombat = { name = "In Combat", sfunc = UnitAffectingCombat, havebuff = "In Combat", missbuff = "Out of combat", invert = true, grouping = "Special" },
+	pvp = { name = "PvP Enabled", sfunc = UnitIsPVP, havebuff = "PvP Enabled", missbuff = "Not PvP Enabled", invert = true, grouping = "Special" },
 
 	-- Buffs
 	ai = { name = "Arcane Intellect", identifiers = { { tooltip = "Arcane Intellect", texture = "Spell_Holy_MagicalSentry" }, { tooltip = "Arcane Brilliance", texture = "Spell_Holy_ArcaneIntellect", bigcast = "ab" } }, bigcast = "ab", bigsort = "group", bigthreshold = 3, ignoreClass = "wr", grouping = "Mage", priority = { priest = 0.5, druid = 0.5, paladin = 0.4, shaman = 0.4, warlock = 0.3 }, ctraid = 3, recast = 5 },
 
 	dampen = { name = "Dampen Magic", identifiers = { { tooltip = "Dampen Magic", texture = "Spell_Nature_AbolishMagic" } }, grouping = "Mage", ctraid = 21, recast = 3 },
 	amplify = { name = "Amplify Magic", identifiers = { { tooltip = "Amplify Magic", texture = "Spell_Holy_FlashHeal" } }, grouping = "Mage", ctraid = 20, recast = 3 },
-	barrier = { name = "Ice Barrier", identifiers = { { tooltip = "Ice Barrier", texture = "Spell_Ice_Lament" } }, type="self", grouping = "Mage", class = "Mage", invert = true },
-	block = { name = "Ice Block", identifiers = { { tooltip = "Ice Block", texture = "Spell_Frost_Frost" } }, type="self", grouping = "Mage", class = "Mage", invert = true },
-	magearmor = { name = "Mage Armor", identifiers = { { tooltip = "Mage Armor", texture = "Spell_MageArmor" } }, type="self", grouping = "Mage", class = "Mage", recast = 5 },
-	frostarmor = { name = "Frost Armor", identifiers = { { tooltip = "Frost Armor", texture = "Spell_Frost_FrostArmor02" } }, type="self", grouping = "Mage", class = "Mage", recast = 5 },
+	barrier = { name = "Ice Barrier", identifiers = { { tooltip = "Ice Barrier", texture = "Spell_Ice_Lament" } }, type = "self", grouping = "Mage", class = "Mage", invert = true },
+	block = { name = "Ice Block", identifiers = { { tooltip = "Ice Block", texture = "Spell_Frost_Frost" } }, type = "self", grouping = "Mage", class = "Mage", invert = true },
+	magearmor = { name = "Mage Armor", identifiers = { { tooltip = "Mage Armor", texture = "Spell_MageArmor" } }, type = "self", grouping = "Mage", class = "Mage", recast = 5 },
+	frostarmor = { name = "Frost Armor", identifiers = { { tooltip = "Frost Armor", texture = "Spell_Frost_FrostArmor02" } }, type = "self", grouping = "Mage", class = "Mage", recast = 5 },
 	water = { name = "Water", identifiers = { { tooltip = "Water", texture = "INV_Drink_18" } }, grouping = "Mage", queryFunc = RAB_QueryWater, buffFunc = RAB_CastWater, description = "H2O data as reported by RABuffs.", ignoreClass = "rw" },
 
 	pwf = { name = "Fortitude", identifiers = { { tooltip = "Power Word: Fortitude", texture = "Spell_Holy_WordFortitude" }, { tooltip = "Prayer of Fortitude", texture = "Spell_Holy_PrayerOfFortitude", bigcast = "pof" } }, bigcast = "pof", bigsort = "group", bigthreshold = 2, grouping = "Priest", ctraid = 1, recast = 5 },
-	sprot = { name = "Shadow Protection", identifiers = { { tooltip = "Shadow Protection", texture = "Spell_Shadow_AntiShadow" }, { tooltip = "Prayer of Shadow Protection", texture = "Spell_Holy_PrayerofShadowProtection",bigcast = "posprot" } }, bigcast = "posprot", bigsort = "group", bigthreshold = 2,  grouping = "Priest", ctraid = 5, recast = 3 },
+	sprot = { name = "Shadow Protection", identifiers = { { tooltip = "Shadow Protection", texture = "Spell_Shadow_AntiShadow" }, { tooltip = "Prayer of Shadow Protection", texture = "Spell_Holy_PrayerofShadowProtection", bigcast = "posprot" } }, bigcast = "posprot", bigsort = "group", bigthreshold = 2, grouping = "Priest", ctraid = 5, recast = 3 },
 	ds = { name = "Divine Spirit", identifiers = { { tooltip = "Divine Spirit", texture = "Spell_Holy_DivineSpirit" }, { tooltip = "Prayer of Spirit", texture = "Spell_Holy_PrayerofSpirit", bigcast = "pos" } }, bigcast = "pos", bigsort = "group", bigthreshold = 2, grouping = "Priest", ctraid = 8, recast = 5 },
 	pws = { name = "Power Word: Shield", identifiers = { { tooltip = "Power Word: Shield", texture = "Spell_Holy_PowerWordShield" } }, grouping = "Priest", invert = true, ctraid = 6, recast = 3 },
 	fearward = { name = "Fear Ward", identifiers = { { tooltip = "Fear Ward", texture = "Spell_Holy_Excorcism" } }, grouping = "Priest", invert = true, ctraid = 10, recast = 3 },
-	innerfire = { name = "Inner Fire", identifiers = { { tooltip = "Inner Fire", texture = "Spell_Holy_InnerFire" } }, type="self", grouping = "Priest", class = "Priest", recast = 3 },
+	innerfire = { name = "Inner Fire", identifiers = { { tooltip = "Inner Fire", texture = "Spell_Holy_InnerFire" } }, type = "self", grouping = "Priest", class = "Priest", recast = 3 },
 	pi = { name = "Power Infusion", identifiers = { { tooltip = "Power Infusion", texture = "Spell_Holy_PowerInfusion" } }, grouping = "Priest", ignoreClass = "wrh", priority = { priest = 0.2, druid = 0.2, mage = 0.5, warlock = 0.5 }, selfPriority = 0 },
 	priestres = { name = "Resurrection", identifiers = { { tooltip = "Resurrection", texture = "Spell_Holy_Resurrection" } }, grouping = "Priest", ctraid = 22, recast = 3 },
 
 	motw = { name = "Mark of the Wild", identifiers = { { tooltip = "Mark of the Wild", texture = "Spell_Nature_Regeneration" }, { tooltip = "Gift of the Wild", texture = "Spell_Nature_Regeneration", bigcast = "gotw" } }, bigcast = "gotw", bigsort = "group", bigthreshold = 3, grouping = "Druid", ctraid = 2, recast = 5 },
+	emeraldblessing = { name = "Emerald Blessing", identifiers = { { tooltip = "Emerald Blessing", texture = "Spell_Nature_ProtectionformNature", spellId = 57108 } }, grouping = "Druid", recast = 3 },
 	thorns = { name = "Thorns", identifiers = { { tooltip = "Thorns", texture = "Spell_Nature_Thorns" } }, grouping = "Druid", ctraid = 9, recast = 3 },
-	clarity = { name = "Omen of Clarity", identifiers = { { tooltip = "Omen of Clarity", texture = "Spell_Nature_CrystalBall" } }, type="self", grouping = "Druid", class = "Druid", recast = 2 },
+	clarity = { name = "Omen of Clarity", identifiers = { { tooltip = "Omen of Clarity", texture = "Spell_Nature_CrystalBall" } }, type = "self", grouping = "Druid", class = "Druid", recast = 2 },
 	druidshift = {
 		name = "Shapeshifted",
 		identifiers = {
@@ -59,7 +62,7 @@ RAB_Buffs = {
 	bom = { name = "Blessing of Might", identifiers = { { tooltip = "Blessing of Might", texture = "Spell_Holy_FistOfJustice" }, { tooltip = "Greater Blessing of Might", texture = "Spell_Holy_GreaterBlessingofKings" } }, bigcast = "gbom", bigsort = "class", bigthreshold = 3, grouping = "Paladin", ignoreClass = "mplh", sort = "class", ctraid = 11, recast = 3 },
 	bosanc = { name = "Blessing of Sanctuary", identifiers = { { tooltip = "Blessing of Sanctuary", texture = "Spell_Nature_LightningShield" }, { tooltip = "Greater Blessing of Sanctuary", texture = "Spell_Holy_GreaterBlessingofSanctuary" } }, bigcast = "gbosanc", bigsort = "class", bigthreshold = 3, grouping = "Paladin", sort = "class", ctraid = 16, recast = 3 },
 	bop = { name = "Blessing of Protection", identifiers = { { tooltip = "Blessing of Protection", texture = "Spell_Holy_SealOfProtection" } }, grouping = "Paladin", unique = true },
-	command = { name = "Seal of Command", identifiers = { { tooltip = "Seal of Command", texture = "Ability_Warrior_InnerRage" } }, type="self", grouping = "Paladin", class = "Paladin" },
+	command = { name = "Seal of Command", identifiers = { { tooltip = "Seal of Command", texture = "Ability_Warrior_InnerRage" } }, type = "self", grouping = "Paladin", class = "Paladin" },
 	devotion = { name = "Devotion Aura", identifiers = { { tooltip = "Devotion Aura", texture = "Spell_Holy_DevotionAura" } }, grouping = "Paladin", type = "aura" },
 	concentration = { name = "Concentration Aura", identifiers = { { tooltip = "Concentration Aura", texture = "Spell_Holy_MindSooth" } }, grouping = "Paladin", type = "aura" },
 	fireaura = { name = "Fire Resistance Aura", identifiers = { { tooltip = "Fire Resistance Aura", texture = "Spell_Fire_SealOfFire" } }, grouping = "Paladin", type = "aura" },
@@ -74,7 +77,7 @@ RAB_Buffs = {
 	ss = { name = "Soulstone", identifiers = { { tooltip = "Soulstone", texture = "Spell_Shadow_SoulGem" } }, grouping = "Warlock", buffFunc = RAB_CastSoulstone, priority = { priest = 2, paladin = 2, shaman = 2, druid = 1 }, selfPriority = 1.2, invert = true, unique = true, ctraid = 7, recast = 5 },
 	ub = { name = "Unending Breath", identifiers = { { tooltip = "Unending Breath", texture = "Spell_Shadow_DemonBreath" } }, grouping = "Warlock", recast = 3 },
 	detectinvisibility = { name = "Detect Invisibility", identifiers = { { tooltip = "Detect Invisibility", texture = "Spell_Shadow_DetectInvisibility" }, { tooltip = "Detect Lesser Invisibility", texture = "Spell_Shadow_DetectLesserInvisibility" } }, grouping = "Warlock", recast = 3 },
-	demonarmor = { name = "Demon Armor", identifiers = { { tooltip = "Demon Armor", texture = "Spell_Shadow_RagingScream" } }, type="self", grouping = "Warlock", class = "Warlock", recast = 5 },
+	demonarmor = { name = "Demon Armor", identifiers = { { tooltip = "Demon Armor", texture = "Spell_Shadow_RagingScream" } }, type = "self", grouping = "Warlock", class = "Warlock", recast = 5 },
 	bloodpact = { name = "Blood Pact", identifiers = { { tooltip = "Blood Pact", texture = "Spell_Shadow_BloodBoil" } }, grouping = "Warlock", type = "aura" },
 	paranoia = { name = "Paranoia", identifiers = { { tooltip = "Paranoia", texture = "Spell_Shadow_AuraOfDarkness" } }, grouping = "Warlock", invert = true, type = "aura" },
 	touchofshadow = { name = "Sacrifice: Succubus", identifiers = { { tooltip = "Touch of Shadow", texture = "Spell_Shadow_PsychicScream" } }, grouping = "Warlock", class = "Warlock", type = "aura" },
@@ -82,12 +85,15 @@ RAB_Buffs = {
 	felstamina = { name = "Sacrifice: Voidwalker", identifiers = { { tooltip = "Fel Stamina", texture = "Spell_Shadow_PsychicScream" } }, grouping = "Warlock", class = "Warlock", type = "aura" },
 	burningwish = { name = "Sacrifice: Imp", identifiers = { { tooltip = "Burning Wish", texture = "Spell_Shadow_PsychicScream" } }, grouping = "Warlock", class = "Warlock", type = "aura" },
 
-	hawk = { name = "Aspect of the Hawk", identifiers = { { tooltip = "Aspect of the Hawk", texture = "Spell_Nature_RavenForm" } }, type="self", grouping = "Hunter", class = "Hunter", recast = 5 },
-	cheetah = { name = "Aspect of the Cheetah", identifiers = { { tooltip = "Aspect of the Cheetah", texture = "Ability_Mount_JungleTiger" } }, type="self", grouping = "Hunter", class = "Hunter", recast = 5 },
-	beast = { name = "Aspect of the Beast", identifiers = { { tooltip = "Aspect of the Beast", texture = "Ability_Mount_PinkTiger" } }, type="self", grouping = "Hunter", class = "Hunter", recast = 5 },
-	aspectwild = { name = "Aspect of the Wild", identifiers = { { tooltip = "Aspect of the Wild", texture = "Spell_Nature_ProtectionformNature" } }, grouping = "Hunter", class = "Hunter", type = "aura", recast = 5 },
+	hawk = { name = "Aspect of the Hawk", identifiers = { { tooltip = "Aspect of the Hawk", texture = "Spell_Nature_RavenForm" } }, type = "self", grouping = "Hunter", class = "Hunter", recast = 5 },
+	cheetah = { name = "Aspect of the Cheetah", identifiers = { { tooltip = "Aspect of the Cheetah", texture = "Ability_Mount_JungleTiger" } }, type = "self", grouping = "Hunter", class = "Hunter", recast = 5 },
+	beast = { name = "Aspect of the Beast", identifiers = { { tooltip = "Aspect of the Beast", texture = "Ability_Mount_PinkTiger" } }, type = "self", grouping = "Hunter", class = "Hunter", recast = 5 },
+	aspectwild = { name = "Aspect of the Wild", identifiers = {
+		{ tooltip = "Aspect of the Wild", texture = "Spell_Nature_ProtectionformNature", spellId = 20043 },
+		{ tooltip = "Aspect of the Wild", texture = "Spell_Nature_ProtectionformNature", spellId = 20190 }
+	}, grouping = "Hunter", class = "Hunter", type = "aura", recast = 5 },
 	pack = { name = "Aspect of the Pack", identifiers = { { tooltip = "Aspect of the Pack", texture = "Ability_Mount_WhiteTiger" } }, grouping = "Hunter", class = "Hunter", type = "aura", recast = 5 },
-	monkey = { name = "Aspect of the Monkey", identifiers = { { tooltip = "Aspect of the Monkey", texture = "Ability_Hunter_AspectOfTheMonkey" } }, type="self", grouping = "Hunter", class = "Hunter", recast = 5 },
+	monkey = { name = "Aspect of the Monkey", identifiers = { { tooltip = "Aspect of the Monkey", texture = "Ability_Hunter_AspectOfTheMonkey" } }, type = "self", grouping = "Hunter", class = "Hunter", recast = 5 },
 	trueshot = { name = "True Shot Aura", identifiers = { { tooltip = "True Shot Aura", texture = "Ability_TrueShot" } }, grouping = "Hunter", type = "aura", recast = 5 },
 
 	battleshout = { name = "Battle Shout", identifiers = { { tooltip = "Battle Shout", texture = "Ability_Warrior_BattleShout" } }, grouping = "Warrior", type = "aura", recast = 5 },
@@ -116,9 +122,6 @@ RAB_Buffs = {
 	battlestandard = { name = "Battle Standard", identifiers = { { tooltip = "Battle Standard", texture = "INV_Banner_02" }, { tooltip = "Battle Standard", texture = "INV_Banner_01" } }, grouping = "Miscellaneous", invert = true, type = "aura" },
 	regen = { name = "Regenerating", identifiers = { { tooltip = "Regenerating", texture = "INV_Drink_18" }, { tooltip = "Regenerating", texture = "INV_Drink_07" }, { tooltip = "Regenerating", texture = "INV_Misc_Fork&Knife" } }, grouping = "Miscellaneous", invert = true, havebuff = "Regenerating", missbuff = "Not Regenerating" },
 	hat = { name = "Admiral's Hat", identifiers = { { tooltip = "Admiral's Hat", texture = "INV_Misc_Horn_03" } }, grouping = "Miscellaneous", type = "aura" },
-
-	incombat = { name = "In Combat", identifiers = { { tooltip = "In Combat", texture = "Spell_Shadow_DeathPact" } }, grouping = "Miscellaneous", invert = true },
-	pvp = { name = "PvP Enabled", identifiers = { { tooltip = "PvP Enabled", texture = "Spell_Shadow_DeathPact" } }, grouping = "Miscellaneous", invert = true },
 
 	anyflask = { name = "Any Flask", identifiers = {
 		{ tooltip = "Supreme Power", texture = "INV_Potion_41" },
@@ -175,7 +178,7 @@ RAB_Buffs = {
 	mongoose = { name = "Elixir of the Mongoose", identifiers = { { tooltip = "Elixir of the Mongoose", texture = "INV_Potion_32", spellId = 17538 } }, grouping = "Melee", buffFunc = RAB_UseItem, itemId = 13452 },
 	agilityelixir = { name = "Elixir of Agility", identifiers = { { tooltip = "Agility", texture = "INV_Potion_93", spellId = 11328 } }, grouping = "Melee", buffFunc = RAB_UseItem, itemId = 8949 },
 	greateragilityelixir = { name = "Elixir of Greater Agility", identifiers = { { tooltip = "Greater Agility", texture = "INV_Potion_93", spellId = 11334 } }, grouping = "Melee", buffFunc = RAB_UseItem, itemId = 9187 },
-	firewater = { name = "Winterfall Firewater", identifiers = { { tooltip = "Winterfall Firewater", texture = "INV_Potion_79", spellId = 24361 } }, grouping = "Melee", buffFunc = RAB_UseItem, itemId = 12820 },
+	firewater = { name = "Winterfall Firewater", identifiers = { { tooltip = "Winterfall Firewater", texture = "INV_Potion_92", spellId = 17038 } }, grouping = "Melee", buffFunc = RAB_UseItem, itemId = 12820 },
 	jujupower = { name = "Juju Power", identifiers = { { tooltip = "Juju Power", texture = "INV_Misc_MonsterScales_11", spellId = 16323 } }, grouping = "Melee", buffFunc = RAB_UseItem, itemId = 12451, useOn = 'player' },
 	jujumight = { name = "Juju Might", identifiers = { { tooltip = "Juju Might", texture = "INV_Misc_MonsterScales_07", spellId = 16329 } }, grouping = "Melee", buffFunc = RAB_UseItem, itemId = 12460, useOn = 'player' },
 	jujuchill = { name = "Juju Chill", identifiers = { { tooltip = "Juju Chill", texture = "INV_Misc_MonsterScales_09", spellId = 16325 } }, grouping = "Melee", buffFunc = RAB_UseItem, itemId = 12457, useOn = 'player' },
@@ -186,6 +189,7 @@ RAB_Buffs = {
 	bogling = { name = "Bogling Root", identifiers = { { tooltip = "Fury of the Bogling", texture = "Spell_Nature_Strength", spellId = 5665 } }, buffFunc = RAB_UseItem, itemId = 5206 },
 	roids = { name = "R.O.I.D.S.", identifiers = { { tooltip = "Rage of Ages", texture = "Spell_Nature_Strength", spellId = 10667 } }, grouping = "Melee", buffFunc = RAB_UseItem, itemId = 8410 },
 	scorpok = { name = "Ground Scorpok Assay", identifiers = { { tooltip = "Strike of the Scorpok", texture = "Spell_Nature_ForceOfNature", spellId = 10669 } }, buffFunc = RAB_UseItem, itemId = 8412 },
+	oilofimmolation = { name = "Oil of Immolation", identifiers = { { tooltip = "Fire Shield", texture = "Spell_Fire_Immolation", spellId = 11350 } }, grouping = "Melee", buffFunc = RAB_UseItem, itemId = 8956 },
 
 	anyagi = { name = "Mongoose/Greater Agility", identifiers = { { tooltip = "Elixir of the Mongoose", texture = "INV_Potion_32", spellId = 17538 }, { tooltip = "Elixir of Greater Agility", texture = "INV_Potion_94" } }, grouping = "Melee" },
 
@@ -207,6 +211,9 @@ RAB_Buffs = {
 
 	shadowoil = { grouping = "Weapon", name = "Shadow Oil", identifiers = {}, type = "wepbuffonly", buffFunc = RAB_UseItem, itemId = 3824, useOn = 'weapon' },
 	shadowoiloh = { grouping = "Weapon", name = "Shadow Oil (offhand)", identifiers = {}, type = "wepbuffonly", buffFunc = RAB_UseItem, itemId = 3824, useOn = 'weaponOH' },
+
+	frostoil = { grouping = "Weapon", name = "Frost Oil", identifiers = {}, type = "wepbuffonly", buffFunc = RAB_UseItem, itemId = 3829, useOn = 'weapon' },
+	frostoiloh = { grouping = "Weapon", name = "Frost Oil (offhand)", identifiers = {}, type = "wepbuffonly", buffFunc = RAB_UseItem, itemId = 3829, useOn = 'weaponOH' },
 
 	consecratedstone = { grouping = "Weapon", name = "Consecrated Sharpening Stone", identifiers = {}, type = "wepbuffonly", buffFunc = RAB_UseItem, itemId = 23122, useOn = 'weapon' },
 	consecratedstoneoh = { grouping = "Weapon", name = "Consecrated Sharpening Stone (offhand)", identifiers = {}, type = "wepbuffonly", buffFunc = RAB_UseItem, itemId = 23122, useOn = 'weaponOH' },
@@ -230,12 +237,16 @@ RAB_Buffs = {
 	tenderwolf = { name = "Tender Wolf Steak", identifiers = { { tooltip = "Well Fed", texture = "Spell_Misc_Food", spellId = 19710 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 18045 },
 	juicystripedmelonstam = { name = "Juicy Striped Melon (stam)", identifiers = { { tooltip = "Well Fed", texture = "Spell_Misc_Food", spellId = 19710 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 51712 },
 	gilneashotstew = { name = "Gilneas Hot Stew", identifiers = { { tooltip = "Well Fed", texture = "Spell_Misc_Food", spellId = 45628 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 84041 },
+	sweetmountainberry = { name = "Sweet Mountain Berry", identifiers = { { tooltip = "Increased Agility", texture = "INV_Gauntlets_19", spellId = 18192 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 51711 },
 	telabimmedley = { name = "Danonzo's Tel'Abim Medley", identifiers = { { tooltip = "Well Fed", texture = "Spell_Misc_Food", spellId = 57046 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 60978 },
 	telabimdelight = { name = "Danonzo's Tel'Abim Delight", identifiers = { { tooltip = "Well Fed", texture = "Spell_Misc_Food", spellId = 57044 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 60977 },
 	telabimsurprise = { name = "Danonzo's Tel'Abim Surprise", identifiers = { { tooltip = "Well Fed", texture = "Spell_Misc_Food", spellId = 57042 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 60976 },
 	tuber = { name = "Runn Tum Tuber Surprise", identifiers = { { tooltip = "Increased Intellect", texture = "INV_Misc_Organ_03", spellId = 22730 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 18254 },
 	juicystripedmelonint = { name = "Juicy Striped Melon (int)", identifiers = { { tooltip = "Increased Intellect", texture = "INV_Misc_Organ_03", spellId = 22730 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 51718 },
 	squid = { name = "Winter Squid", identifiers = { { tooltip = "Winter Squid", texture = "INV_Gauntlets_19", spellId = 1127 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 13755 },
+	merlotblue = { name = "Medivh's Merlot Blue", identifiers = {
+		{ tooltip = "Increased Intellect", texture = "INV_Drink_04", spellId = 57107 },
+	}, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 61175 },
 	merlot = { name = "Medivh's Merlot", identifiers = {
 		{ tooltip = "Increased Stamina", texture = "INV_Drink_04", spellId = 57106 },
 		{ tooltip = "Rumsey Rum Black Label", texture = "INV_Drink_04", spellId = 25804 }, -- doesn't stack with rum

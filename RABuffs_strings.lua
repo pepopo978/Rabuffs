@@ -2,7 +2,7 @@
 --  Non-code storage for various code/title strings. Do not localize this file.
 -- Version 0.10.3
 
-sRAB_DownloadURL = "https://github.com/Lexiebean/Rabuffs/";
+sRAB_DownloadURL = "https://github.com/Pepopo/Rabuffs/";
 
 sRAB_Settings_UIHeader = "RABuffs";
 sRAB_Settings_ReleaseNotes = "<h2 align=\"left\">Release notes</h2><p>- Issue: GoTW is mis-identified as MoTW on non-enUS clients.</p><p>- Issue: Failed casting of resurrection spells bans the target from further attempts for 70 seconds.</p><br/><br/>";
