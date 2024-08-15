@@ -8,6 +8,7 @@ RABui_Settings_TabCount = 4;
 RABui_ccBarColorId = 0; -- Bar ID of the change color dialog bar.
 RABui_MenuBar = nil;    -- Bar ID of the bar menu bar.
 
+RABui_LastBuffEvent = 0;
 RABui_UpdateId = 0;
 RABui_NextUpdate = 0;
 RABui_LastShiftState = 0; -- Shift*1+Alt*2

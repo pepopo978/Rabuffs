@@ -499,6 +499,15 @@ function RAB_CastSpell_Start(spellkey, muteobvious, mute)
 		end
 		return false;
 	end
+
+	local target = "target";
+	if UnitName("target") == nil then
+		target = "player";
+	end
+
+	RABui_LastBuffEvent = GetTime();
+	RAB_ClearUnitBuffCache(target)
+
 	if (not SpellIsTargeting()) then
 		if (RAB_SpellCast_ShouldRetarget and not SpellIsTargeting()) then
 			TargetLastTarget();
@@ -683,7 +692,22 @@ local function gatherCacheData(unit, index, texture, stacks, spellId, buff)
 	};
 end
 
-local function cacheUnitBuffs(unit)
+function RAB_ClearUnitBuffCache(unit)
+	RAB_BuffCache[unit] = nil;
+	RAB_BuffLastUpdated[unit] = nil;
+
+	if unit == "player" or unit == "target" then
+		-- clear raid cache
+		for i = 1, GetNumRaidMembers() do
+			if (UnitIsUnit("raid" .. i, unit)) then
+				RAB_BuffCache["raid" .. i] = nil;
+				RAB_BuffLastUpdated["raid" .. i] = nil;
+			end
+		end
+	end
+end
+
+function RAB_CacheUnitBuffs(unit)
 	RAB_BuffCache[unit] = {};
 	for i = 1, 32 do
 		local texture, stacks, spellId = UnitBuff(unit, i);
@@ -696,7 +720,7 @@ local function cacheUnitBuffs(unit)
 	RAB_BuffLastUpdated[unit] = GetTime();
 end
 
-local function cacheUnitDebuffs(unit)
+function RAB_CacheUnitDebuffs(unit)
 	RAB_DebuffCache[unit] = {};
 	for i = 1, 16 do
 		local texture, stacks, spellSchool, spellId = UnitDebuff(unit, i);
@@ -738,8 +762,14 @@ function isUnitBuffUp(unit, identifier)
 		return false;
 	end
 
-	if RAB_BuffCache[unit] == nil or RAB_BuffLastUpdated[unit] == nil or RAB_BuffLastUpdated[unit] < GetTime() - 5 then
-		cacheUnitBuffs(unit)
+	local cTime = GetTime();
+
+	if RAB_BuffCache[unit] == nil or
+			RAB_BuffLastUpdated[unit] == nil or
+			RAB_BuffLastUpdated[unit] < cTime - 5 or -- cache for 5 sec
+			RABui_LastBuffEvent < cTime - 1 -- unless we casted a buff in the last second
+	then
+		RAB_CacheUnitBuffs(unit)
 	end
 
 	local unitBuffs = RAB_BuffCache[unit];
@@ -763,7 +793,7 @@ function isUnitDebuffUp(unit, identifier)
 	end
 
 	if RAB_DebuffCache[unit] == nil or (RAB_DebuffLastUpdated[unit] and RAB_DebuffLastUpdated[unit] < GetTime() - 1) then
-		cacheUnitDebuffs(unit)
+		RAB_CacheUnitDebuffs(unit)
 	end
 
 	local unitDebuffs = RAB_DebuffCache[unit];

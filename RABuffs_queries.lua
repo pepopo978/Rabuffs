@@ -1020,6 +1020,7 @@ function RAB_DefaultCastingHandler(mode, userData)
 	end
 
 	if (buffData.type == "self" or buffData.type == "aura") then
+		RAB_ClearUnitBuffCache("player")
 		local isup = RAB_IsBuffUp("player", userData.buffKey);
 		if (RAB_ShouldRecast("player", userData.buffKey, isup)) then
 			if userData.useOnClick == true then
@@ -1045,14 +1046,10 @@ function RAB_DefaultCastingHandler(mode, userData)
 				return false
 			end
 			CastSpellByName(buff, true);
-			RAB_BuffCache["player"] = nil
-			-- clear raidx cache for player as well
-			for i = 1, 40 do
-				if (UnitIsUnit("raid" .. i, "player")) then
-					RAB_BuffCache["raid" .. i] = nil
-					break ;
-				end
-			end
+
+			-- clear player cache
+			RABui_LastBuffEvent = GetTime()
+			RAB_ClearUnitBuffCache("player")
 
 			RAB_ResetRecastTimer("player", userData);
 			RAB_Print(string.format(sRAB_CastBuff_CastNeutral, buff));
@@ -1112,6 +1109,7 @@ function RAB_DefaultCastingHandler(mode, userData)
 					buffData.priority[strlower(RAB_UnitClass(u))];
 		end
 		if (RAB_IsEligible(u, userData) and RAB_IsSanePvP(u) and RAB_RangeCheck(mode, u) and pri > 0) then
+			RAB_ClearUnitBuffCache(u) -- clear cache to get most recent data for u
 			if (not RAB_IsBuffUp(u, userData.buffKey)) then
 				tinsert(people, { u = u, group = g, class = RAB_UnitClass(u), p = pri });
 			elseif (RAB_ShouldRecast(u, userData.buffKey, true) and pri > 0) then
@@ -1122,6 +1120,7 @@ function RAB_DefaultCastingHandler(mode, userData)
 				tinsert(faderenew, { u = u, group = g, class = RAB_UnitClass(u), p = pri })
 			end
 		elseif (RAB_IsEligible(u, userData) and pri > 0) then
+			RAB_ClearUnitBuffCache(u) -- clear cache to get most recent data for u
 			if (not RAB_IsSanePvP(u)) then
 				pvpfail = pvpfail + 1;
 			elseif (not RAB_IsBuffUp(u, userData.buffKey) and not RAB_RangeCheck(mode, u, userData.buffKey)) then
