@@ -160,6 +160,14 @@ RAB_Buffs = {
 	giftarthas = { name = "Gift of Arthas", identifiers = { { tooltip = "Gift of Arthas", texture = "Spell_Shadow_FingerOfDeath", spellId = 11371 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 9088 },
 	frozenrune = { name = "Frozen Rune", identifiers = { { tooltip = "Fire Protection", texture = "Spell_Fire_MasterOfElements", spellId = 29432 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 22682 },
 
+	agilscroll = { name = "Scroll of Agility IV", identifiers = { { tooltip = "Agility", texture = "Spell_Holy_BlessingOfAgility", spellId = 12174 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 10309, useOn = 'player' },
+	protscroll = { name = "Scroll of Protection IV", identifiers = { { tooltip = "Armor", texture = "Ability_Warrior_DefensiveStance", spellId = 12175 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 10305, useOn = 'player' },
+	-- protscrollone = { name = "Scroll of Protection", identifiers = { { tooltip = "Armor", texture = "Ability_Warrior_DefensiveStance", spellId = 8091 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 3013, useOn = 'player' },
+	intscroll = { name = "Scroll of Intellect IV", identifiers = { { tooltip = "Intellect", texture = "Spell_Holy_MagicalSentry", spellId = 12176 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 10308, useOn = 'player' },
+	spirscroll = { name = "Scroll of Spirit IV", identifiers = { { tooltip = "Spirit", texture = "Spell_Shadow_BurningSpirit", spellId = 12177 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 10306, useOn = 'player' },
+	stamscroll = { name = "Scroll of Stamina IV", identifiers = { { tooltip = "Stamina", texture = "Spell_Nature_UnyeildingStamina", spellId = 12178 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 10307, useOn = 'player' },
+	strscroll = { name = "Scroll of Strength IV", identifiers = { { tooltip = "Strength", texture = "Spell_Nature_Strength", spellId = 12179 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 10310, useOn = 'player' },
+
 	-- Spell Consumes --
 	flask = { name = "Flask of Supreme Power", identifiers = { { tooltip = "Supreme Power", texture = "INV_Potion_41", spellId = 17628 } }, buffFunc = RAB_UseItem, itemId = 13512, grouping = "Spell" },
 	greaterarcane = { name = "Greater Arcane Elixir", identifiers = { { tooltip = "Greater Arcane Elixir", texture = "INV_Potion_25", spellId = 17539 } }, buffFunc = RAB_UseItem, itemId = 13454, grouping = "Spell" },
