@@ -252,6 +252,7 @@ RAB_Buffs = {
 	tuber = { name = "Runn Tum Tuber Surprise", identifiers = { { tooltip = "Increased Intellect", texture = "INV_Misc_Organ_03", spellId = 22730 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 18254 },
 	juicystripedmelonint = { name = "Juicy Striped Melon (int)", identifiers = { { tooltip = "Increased Intellect", texture = "INV_Misc_Organ_03", spellId = 22730 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 51718 },
 	squid = { name = "Winter Squid", identifiers = { { tooltip = "Winter Squid", texture = "INV_Gauntlets_19", spellId = 1127 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 13755 },
+	dragonbreathchili = { name = "Dragonbreath Chili", identifiers = { { tooltip = "Dragonbreath Chili", texture = "Spell_Fire_Incinerate", spellId = 15852 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 12217 },
 	merlotblue = { name = "Medivh's Merlot Blue", identifiers = {
 		{ tooltip = "Increased Intellect", texture = "INV_Drink_04", spellId = 57107 },
 	}, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 61175 },
