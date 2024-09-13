@@ -237,6 +237,7 @@ RAB_Buffs = {
 
 	-- Food/drink
 	blessedsunfruit = { name = "Blessed Sunfruit", identifiers = { { tooltip = "Blessed Sunfruit", texture = "Spell_Misc_Food", spellId = 18125 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 13810 },
+	blessedsunfruitjuice = { name = "Blessed Sunfruit Juice", identifiers = { { tooltip = "Blessed Sunfruit Juice", texture = "Spell_Holy_LayOnHands", spellId = 18141 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 13813 },
 	nightfinsoup = { name = "Nightfin Soup", identifiers = { { tooltip = "Mana Regeneration", texture = "Spell_Nature_ManaRegenTotem", spellId = 18194 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 13931 },
 	sagefish = { name = "Sagefish Delight", identifiers = { { tooltip = "Mana Regeneration", texture = "inv_misc_fish_21", spellId = 25889 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 21217 },
 	mushroomstam = { name = "Hardened Mushroom", identifiers = { { tooltip = "Increased Stamina", texture = "INV_Boots_Plate_03", spellId = 25661 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 51717 },
@@ -252,6 +253,7 @@ RAB_Buffs = {
 	tuber = { name = "Runn Tum Tuber Surprise", identifiers = { { tooltip = "Increased Intellect", texture = "INV_Misc_Organ_03", spellId = 22730 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 18254 },
 	juicystripedmelonint = { name = "Juicy Striped Melon (int)", identifiers = { { tooltip = "Increased Intellect", texture = "INV_Misc_Organ_03", spellId = 22730 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 51718 },
 	squid = { name = "Winter Squid", identifiers = { { tooltip = "Winter Squid", texture = "INV_Gauntlets_19", spellId = 1127 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 13755 },
+	dragonbreathchili = { name = "Dragonbreath Chili", identifiers = { { tooltip = "Dragonbreath Chili", texture = "Spell_Fire_Incinerate", spellId = 15852 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 12217 },
 	merlotblue = { name = "Medivh's Merlot Blue", identifiers = {
 		{ tooltip = "Increased Intellect", texture = "INV_Drink_04", spellId = 57107 },
 	}, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 61175 },
