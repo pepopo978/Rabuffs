@@ -239,6 +239,30 @@ RAB_Buffs = {
 	elementalsharpeningstone = { grouping = "Weapon", name = "Elemental Sharpening Stone", identifiers = {}, type = "wepbuffonly", buffFunc = RAB_UseItem, itemId = 18262, useOn = 'weapon' },
 	elementalsharpeningstoneoh = { grouping = "Weapon", name = "Elemental Sharpening Stone (offhand)", identifiers = {}, type = "wepbuffonly", buffFunc = RAB_UseItem, itemId = 18262, useOn = 'weaponOH' },
 
+	--Deadly Poison V 20844
+	deadlypoison = {grouping = "Poisons", name = "Deadly Poison", identifiers = {}, type = "wepbuffonly", buffFunc = RAB_UseItem, itemId = 20844, useOn = 'weapon' },
+	deadlypoisonoh = {grouping = "Poisons", name = "Deadly Poison (offhand)", identifiers = {}, type = "wepbuffonly", buffFunc = RAB_UseItem, itemId = 20844, useOn = 'weaponOH' },
+
+	--Instant Poison VI 8928
+	instantpoison = {grouping = "Poisons", name = "Instant Poison", identifiers = {}, type = "wepbuffonly", buffFunc = RAB_UseItem, itemId = 8928, useOn = 'weapon' },
+	instantpoisonoh = {grouping = "Poisons", name = "Instant Poison (offhand)", identifiers = {}, type = "wepbuffonly", buffFunc = RAB_UseItem, itemId = 8928, useOn = 'weaponOH' },
+
+	--Mind-numbing Poison III 9186
+	mindnumbingpoison = {grouping = "Poisons", name = "Mind-numbing Poison", identifiers = {}, type = "wepbuffonly", buffFunc = RAB_UseItem, itemId = 9186, useOn = 'weapon' },
+	mindnumbingpoisonoh = {grouping = "Poisons", name = "Mind-numbing Poison (offhand)", identifiers = {}, type = "wepbuffonly", buffFunc = RAB_UseItem, itemId = 9186, useOn = 'weaponOH' },
+
+	--Wound Poison IV 10922
+	woundpoison = {grouping = "Poisons", name = "Wound Poison", identifiers = {}, type = "wepbuffonly", buffFunc = RAB_UseItem, itemId = 10922, useOn = 'weapon' },
+	woundpoisonoh = {grouping = "Poisons", name = "Wound Poison (offhand)", identifiers = {}, type = "wepbuffonly", buffFunc = RAB_UseItem, itemId = 10922, useOn = 'weaponOH' },
+
+	--Crippling Poison II 3776
+	cripplingpoison = {grouping = "Poisons", name = "Crippling Poison", identifiers = {}, type = "wepbuffonly", buffFunc = RAB_UseItem, itemId = 3776, useOn = 'weapon' },
+	cripplingpoisonoh = {grouping = "Poisons", name = "Crippling Poison (offhand)", identifiers = {}, type = "wepbuffonly", buffFunc = RAB_UseItem, itemId = 3776, useOn = 'weaponOH' },
+
+	--Corrosive Poison II 47409
+	corrosivepoison = {grouping = "Poisons", name = "Corrosive Poison", identifiers = {}, type = "wepbuffonly", buffFunc = RAB_UseItem, itemId = 47409, useOn = 'weapon' },
+	corrosivepoisonoh = {grouping = "Poisons", name = "Corrosive Poison (offhand)", identifiers = {}, type = "wepbuffonly", buffFunc = RAB_UseItem, itemId = 47409, useOn = 'weaponOH' },
+
 	-- Food/drink
 	blessedsunfruit = { name = "Blessed Sunfruit", identifiers = { { tooltip = "Blessed Sunfruit", texture = "Spell_Misc_Food", spellId = 18125 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 13810 },
 	blessedsunfruitjuice = { name = "Blessed Sunfruit Juice", identifiers = { { tooltip = "Blessed Sunfruit Juice", texture = "Spell_Holy_LayOnHands", spellId = 18141 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 13813 },
