@@ -280,7 +280,7 @@ RAB_Buffs = {
 	telabimsurprise = { name = "Danonzo's Tel'Abim Surprise", identifiers = { { tooltip = "Well Fed", texture = "Spell_Misc_Food", spellId = 57042 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 60976 },
 	tuber = { name = "Runn Tum Tuber Surprise", identifiers = { { tooltip = "Increased Intellect", texture = "INV_Misc_Organ_03", spellId = 22730 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 18254 },
 	juicystripedmelonint = { name = "Juicy Striped Melon (int)", identifiers = { { tooltip = "Increased Intellect", texture = "INV_Misc_Organ_03", spellId = 22730 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 51718 },
-	squid = { name = "Winter Squid", identifiers = { { tooltip = "Winter Squid", texture = "INV_Gauntlets_19", spellId = 1127 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 13755 },
+	squid = { name = "Grilled Squid", identifiers = { { tooltip = "Increased Agility", texture = "INV_Gauntlets_19", spellId = 18192 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 13928 },
 	dragonbreathchili = { name = "Dragonbreath Chili", identifiers = { { tooltip = "Dragonbreath Chili", texture = "Spell_Fire_Incinerate", spellId = 15852 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 12217 },
 	merlotblue = { name = "Medivh's Merlot Blue", identifiers = {
 		{ tooltip = "Increased Intellect", texture = "INV_Drink_04", spellId = 57107 },
@@ -301,7 +301,7 @@ RAB_Buffs = {
 		{ tooltip = "Well Fed", texture = "Spell_Misc_Food" },
 		{ tooltip = "Increased Stamina", texture = "INV_Boots_Plate_03" },
 		{ tooltip = "Mana Regeneration", texture = "Spell_Nature_ManaRegenTotem" },
-		{ tooltip = "Winter Squid", texture = "INV_Gauntlets_19" },
-		{ tooltip = "Runn Tum Tuber Surprise", texture = "INV_Misc_Organ_03" }
+		{ tooltip = "Increased Agility", texture = "INV_Gauntlets_19" },
+		{ tooltip = "Increased Intellect", texture = "INV_Misc_Organ_03" }
 	}, grouping = "Food/Drink" },
 };
