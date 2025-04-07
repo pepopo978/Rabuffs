@@ -131,7 +131,7 @@ RAB_Buffs = {
 		{ tooltip = "Supreme Power", texture = "INV_Potion_41" },
 		{ tooltip = "Distilled Wisdom", texture = "INV_Potion_97" },
 		{ tooltip = "Flask of the Titans", texture = "INV_Potion_62" },
-		{ tooltip = "Chromatic Resistance", texture = "INV_Potion_48" }
+		{ tooltip = "Chromatic Resistance", texture = "INV_Potion_128" }
 	}, grouping = "Miscellaneous" },
 
 	-- Protection potions --
