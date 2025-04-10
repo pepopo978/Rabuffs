@@ -128,10 +128,10 @@ RAB_Buffs = {
 	hat = { name = "Admiral's Hat", identifiers = { { tooltip = "Admiral's Hat", texture = "INV_Misc_Horn_03" } }, grouping = "Miscellaneous", type = "aura" },
 
 	anyflask = { name = "Any Flask", identifiers = {
-		{ tooltip = "Supreme Power", texture = "INV_Potion_41" },
-		{ tooltip = "Distilled Wisdom", texture = "INV_Potion_97" },
-		{ tooltip = "Flask of the Titans", texture = "INV_Potion_62" },
-		{ tooltip = "Chromatic Resistance", texture = "INV_Potion_128" }
+		{ tooltip = "Supreme Power", texture = "INV_Potion_41", spellId=17628 },
+		{ tooltip = "Distilled Wisdom", texture = "INV_Potion_97", spellId=17627 },
+		{ tooltip = "Flask of the Titans", texture = "INV_Potion_62", spellId=17626 },
+		{ tooltip = "Chromatic Resistance", texture = "INV_Potion_48", spellId=17629 }
 	}, grouping = "Miscellaneous" },
 
 	-- Protection potions --
