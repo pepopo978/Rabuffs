@@ -162,9 +162,13 @@ RAB_Buffs = {
 	mageblood = { name = "Mageblood Potion", identifiers = { { tooltip = "Mana Regeneration", texture = "INV_Potion_45", spellId = 24363 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 20007 },
 	titans = { name = "Flask of the Titans", identifiers = { { tooltip = "Flask of the Titans", texture = "INV_Potion_62", spellId = 17626 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 13510 },
 	wisdom = { name = "Flask of Distilled Wisdom", identifiers = { { tooltip = "Distilled Wisdom", texture = "INV_Potion_97", spellId = 17627 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 13511 },
+	chromaticres = { name = "Flask of Chromatic Resistance", identifiers = { { tooltip = "Chromatic Resistance", texture = "INV_Potion_48", spellId = 17629 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 13513 },
 	giftarthas = { name = "Gift of Arthas", identifiers = { { tooltip = "Gift of Arthas", texture = "Spell_Shadow_FingerOfDeath", spellId = 11371 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 9088 },
 	frozenrune = { name = "Frozen Rune", identifiers = { { tooltip = "Fire Protection", texture = "Spell_Fire_MasterOfElements", spellId = 29432 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 22682 },
 	magicresistancepotion = { name = "Magic Resistance Potion", identifiers = { { tooltip = "Resistance", texture = "INV_Potion_08", spellId = 11364 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 9036 },
+	restorativepotion = { name = "Restorative Potion", identifiers = { { tooltip = "Restoration", texture = "Spell_Holy_DispelMagic", spellId = 11359 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 9030 },
+	invisibilitypotion = { name = "Invisibility Potion", identifiers = { { tooltip = "Invisibility", texture = "INV_Potion_18", spellId = 11392 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 9172 },
+	lesserinvisibilitypotion = { name = "Lesser Invisibility Potion", identifiers = { { tooltip = "Lesser Invisibility", texture = "INV_Potion_18", spellId = 3680 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 3823 },
 
 	agilscroll = { name = "Scroll of Agility IV", identifiers = { { tooltip = "Agility", texture = "Spell_Holy_BlessingOfAgility", spellId = 12174 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 10309, useOn = 'player' },
 	protscroll = { name = "Scroll of Protection IV", identifiers = { { tooltip = "Armor", texture = "Ability_Warrior_DefensiveStance", spellId = 12175 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 10305, useOn = 'player' },
