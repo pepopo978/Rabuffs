@@ -666,7 +666,7 @@ function RAB_UnitIsDead(unit)
 	return (UnitIsDeadOrGhost(unit) and not isUnitBuffUp(unit, { tooltip = "Feign Death", texture = "Ability_Rogue_FeignDeath", spellId = 5384 }));
 end
 
-local function updateSpellTooltip(spellId, isBuff)
+local function updateSpellTooltip(unit, spellId, isBuff)
 	local tooltip = nil
 	if spellId and SpellInfo then
 		tooltip = SpellInfo(spellId)
@@ -718,7 +718,7 @@ function RAB_CacheUnitBuffs(unit)
 			end
 
 			if not RAB_BuffCache[unit][i].tooltip or spellId ~= RAB_BuffCache[unit][i].spellId then
-				RAB_BuffCache[unit][i].tooltip = updateSpellTooltip(spellId, true);
+				RAB_BuffCache[unit][i].tooltip = updateSpellTooltip(unit, spellId, true);
 			end
 			RAB_BuffCache[unit][i].texture = texture
 			RAB_BuffCache[unit][i].stacks = stacks
@@ -750,7 +750,7 @@ function RAB_CacheUnitDebuffs(unit)
 				spellId = spellId + 65536 -- correct integer overflow from previous versions of superwow
 			end
 			if not RAB_DebuffCache[unit][i].tooltip or spellId ~= RAB_DebuffCache[unit][i].spellId then
-				RAB_DebuffCache[unit][i].tooltip = updateSpellTooltip(spellId, false);
+				RAB_DebuffCache[unit][i].tooltip = updateSpellTooltip(unit, spellId, false);
 			end
 			RAB_DebuffCache[unit][i].texture = texture
 			RAB_DebuffCache[unit][i].stacks = stacks
