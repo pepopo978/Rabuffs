@@ -302,6 +302,7 @@ RAB_Buffs = {
 		{ tooltip = "Increased Stamina", texture = "INV_Drink_04", spellId = 57106 }, -- doesn't stack with merlot
 		{ tooltip = "Increased Intellect", texture = "INV_Drink_04", spellId = 57107 }, -- doesn't stack with merlot blue
 	}, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 21151 },
+	gordokgreengrog = { name = "Gordok Green Grog", identifiers = { { tooltip = "Gordok Green Grog", texture = "INV_Drink_03", spellId = 22789 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 18269 },
 
 	wellfed = { name = "Well Fed", identifiers = { { tooltip = "Well Fed", texture = "Spell_Misc_Food" } }, grouping = "Food/Drink" },
 	anyfood = { name = "Any Food", identifiers = {
