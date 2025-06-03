@@ -169,6 +169,8 @@ RAB_Buffs = {
 	restorativepotion = { name = "Restorative Potion", identifiers = { { tooltip = "Restoration", texture = "Spell_Holy_DispelMagic", spellId = 11359 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 9030 },
 	invisibilitypotion = { name = "Invisibility Potion", identifiers = { { tooltip = "Invisibility", texture = "INV_Potion_18", spellId = 11392 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 9172 },
 	lesserinvisibilitypotion = { name = "Lesser Invisibility Potion", identifiers = { { tooltip = "Lesser Invisibility", texture = "INV_Potion_18", spellId = 3680 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 3823 },
+	livingactionpotion = { name = "Living Action Potion", identifiers = { { tooltip = "Living Free Action", texture = "INV_Potion_07", spellId = 24364 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 20008 },
+	swiftnesspotion = { name = "Swiftness Potion", identifiers = { { tooltip = "Speed", texture = "Ability_Kick", spellId = 2379 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 2459 },
 
 	agilscroll = { name = "Scroll of Agility IV", identifiers = { { tooltip = "Agility", texture = "Spell_Holy_BlessingOfAgility", spellId = 12174 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 10309, useOn = 'player' },
 	protscroll = { name = "Scroll of Protection IV", identifiers = { { tooltip = "Armor", texture = "Ability_Warrior_DefensiveStance", spellId = 12175 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 10305, useOn = 'player' },
