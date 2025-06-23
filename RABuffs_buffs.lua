@@ -133,6 +133,10 @@ RAB_Buffs = {
 		{ tooltip = "Flask of the Titans", texture = "INV_Potion_62", spellId=17626 },
 		{ tooltip = "Chromatic Resistance", texture = "INV_Potion_48", spellId=17629 }
 	}, grouping = "Miscellaneous" },
+	midsummersausage = { name = "Midsummer Sausage", identifiers = { { tooltip = "Midsummer Sausage", texture = "INV_Misc_Food_53", spellId = 29333 } }, grouping = "Miscellaneous", buffFunc = RAB_UseItem, itemId = 23326 },
+	toastedsmorc = { name = "Toasted Smorc", identifiers = { { tooltip = "Toasted Smorc", texture = "INV_SummerFest_Smorc", spellId = 29334 } }, grouping = "Miscellaneous", buffFunc = RAB_UseItem, itemId = 23211 },
+	elderberrypie = { name = "Elderberry Pie", identifiers = { { tooltip = "Elderberry Pie", texture = "INV_Misc_Food_10", spellId = 29335 } }, grouping = "Miscellaneous", buffFunc = RAB_UseItem, itemId = 23435 },
+	firetoastedbun = { name = "Fire-toasted Bun", identifiers = { { tooltip = "Fire-toasted Bun", texture = "INV_Misc_Food_11", spellId = 29332 } }, grouping = "Miscellaneous", buffFunc = RAB_UseItem, itemId = 23327 },
 
 	-- Protection potions --
 	lessernaturepot = { name = "Nature Protection Potion", identifiers = { { tooltip = "Nature Protection", texture = "Spell_Nature_SpiritArmor", spellId = 7254 } }, grouping = "Protection", buffFunc = RAB_UseItem, itemId = 6052 },
