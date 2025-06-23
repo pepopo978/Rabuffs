@@ -619,65 +619,61 @@ function RAB_QueryHealth(userData, needraw, needtxt)
 end
 
 function RAB_QueryInventoryItem(userData, needraw, needtxt)
-	local _, _, slot, match = string.find(RAB_Buffs[userData.buffKey].ext, "(%d+):(%d+)");
-	slot, match = tonumber(slot), tonumber(match);
-	local itemName = GetItemInfo(match);
-	if (itemName == nil) then
-		itemName = string.format(sRAB_BuffOutput_Item_Unknown, match);
-	end
+    local _, _, slots, items = string.find(RAB_Buffs[userData.buffKey].ext, "([%d,]+):([%d,]+)");
+    local slotList, itemList = {}, {}
+    for slotNum in string.gmatch(slots, "%d+") do
+        table.insert(slotList, tonumber(slotNum))
+    end
+    for itemNum in string.gmatch(items, "%d+") do
+        table.insert(itemList, tonumber(itemNum))
+    end
 
-	local buffed, total, misc, txthead, hashead, txt, hastxt, invert, raw, rawsort = 0, 0, "",
-	string.format(sRAB_BuffOutput_Item_Missing, itemName), string.format(sRAB_BuffOutput_Item_Have, itemName), "", "",
-	false;
-	if (needraw) then
-		raw = {};
-	end
-	local i, u, group, isbuffed, item;
+    local itemNames = {}
+    for _, id in ipairs(itemList) do
+        local name = GetItemInfo(id)
+        table.insert(itemNames, name or ("Item "..id))
+    end
+    local itemNamesStr = table.concat(itemNames, " or ")
 
-	for i, u, group in RAB_GroupMembers(userData) do
-		if (CheckInteractDistance(u, 1) and GetInventoryItemLink(u, slot)) then
-			total = total + 1;
-			isbuffed = false;
-			_, _, item = string.find(tostring(GetInventoryItemLink(u, slot)), "item:(%d+):");
-			if (tonumber(item) == match) then
-				isbuffed = true;
-				buffed = buffed + 1;
-				hastxt = hastxt .. UnitName(u) .. ", ";
-			else
-				txt = txt .. UnitName(u) .. ", ";
-			end
-			if (needraw) then
-				tinsert(raw,
-						{
-							name = UnitName(u),
-							class = RAB_UnitClass(u),
-							group = group,
-							buffed = isbuffed,
-							unit = u,
-							append = append
-						});
-			end
-		end
-	end
-	if (total > 1 and UnitInRaid("player") and needraw) then
-		table.sort(raw, function(a, b)
-			return a.group < b.group
-		end);
-	end
+    local buffed, total, txt, hastxt = 0, 0, "", ""
+    for i, u, group in RAB_GroupMembers(userData) do
+        if CheckInteractDistance(u, 1) then
+            local found = false
+            for _, slot in ipairs(slotList) do
+                local link = GetInventoryItemLink(u, slot)
+                if link then
+                    for _, id in ipairs(itemList) do
+                        if string.find(link, "item:"..id..":") then
+                            found = true
+                            break
+                        end
+                    end
+                end
+                if found then break end
+            end
+            total = total + 1
+            if found then
+                buffed = buffed + 1
+                hastxt = hastxt .. UnitName(u) .. ", "
+            else
+                txt = txt .. UnitName(u) .. ", "
+            end
+        end
+    end
 
-	if (needtxt) then
-		if (buffed == total) then
-			txt = string.format(sRAB_BuffOutput_Item_Everyone, itemName);
-			hastxt = string.format(sRAB_BuffOutput_Item_Everyone, itemName);
-		elseif (buffed > 0) then
-			txt = txthead .. " " .. strsub(txt, 1, -3) .. ".";
-			hastxt = hashead .. " " .. strsub(hastxt, 1, -3) .. ".";
-		else
-			txt = string.format(sRAB_BuffOutput_Item_NoOne, itemName);
-			hastxt = string.format(sRAB_BuffOutput_Item_NoOne, itemName);
-		end
-	end
-	return buffed, 0, total, misc, txthead, hashead, txt, hastxt, invert, raw, "group", sRAB_Core_GroupFormat;
+    if needtxt then
+        if buffed == total then
+            txt = "Everyone has " .. itemNamesStr
+            hastxt = txt
+        elseif buffed == 0 then
+            txt = "No one has " .. itemNamesStr
+            hastxt = txt
+        else
+            txt = "Missing " .. itemNamesStr .. ": " .. string.sub(txt, 1, -3) .. "."
+            hastxt = "Has " .. itemNamesStr .. ": " .. string.sub(hastxt, 1, -3) .. "."
+        end
+    end
+    return buffed, 0, total, "", "", "", txt, hastxt, false
 end
 
 function RAB_QueryMana(userData, needraw, needtxt)
