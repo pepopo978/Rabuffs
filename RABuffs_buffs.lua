@@ -173,6 +173,7 @@ RAB_Buffs = {
 	restorativepotion = { name = "Restorative Potion", identifiers = { { tooltip = "Restoration", texture = "Spell_Holy_DispelMagic", spellId = 11359 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 9030 },
 	invisibilitypotion = { name = "Invisibility Potion", identifiers = { { tooltip = "Invisibility", texture = "INV_Potion_18", spellId = 11392 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 9172 },
 	lesserinvisibilitypotion = { name = "Lesser Invisibility Potion", identifiers = { { tooltip = "Lesser Invisibility", texture = "INV_Potion_18", spellId = 3680 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 3823 },
+	freeactionpotion = { name = "Free Action Potion", identifiers = { { tooltip = "Free Action", texture = "INV_Potion_04", spellId = 6615 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 5634 },
 	livingactionpotion = { name = "Living Action Potion", identifiers = { { tooltip = "Living Free Action", texture = "INV_Potion_07", spellId = 24364 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 20008 },
 	swiftnesspotion = { name = "Swiftness Potion", identifiers = { { tooltip = "Speed", texture = "Ability_Kick", spellId = 2379 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 2459 },
 
