@@ -10,7 +10,7 @@ RABuffs_DeciVersion = 0.100300;
 RABui_Settings = {};
 RABui_DefSettings = {
 	Layout = {},
-	updateInterval = 0.3,
+	updateInterval = 0.5,
 	firstRun = true,
 	enableGreeting = true,
 	lastVersion = RABuffs_Version,
@@ -64,8 +64,10 @@ RABui_CompleteBars = {}; -- track which bars to hide/show
 RAB_CastLog = {}; -- Spell targets out of LoS. [unit] = expires;
 RAB_CurrentGroupStatus = -1;
 
+RAB_NumBuffsCache = {};
 RAB_BuffCache = {};
 RAB_BuffLastUpdated = {};
+RAB_NumDebuffsCache = {};
 RAB_DebuffCache = {};
 RAB_DebuffLastUpdated = {};
 
@@ -556,7 +558,7 @@ function RAB_CastSpell_IsCastable(spellkey, mute, muteobvious)
 end
 
 function RAB_CastSpell_Target(targ)
-	RAB_BuffCache[targ] = nil
+	RAB_BuffLastUpdated[targ] = nil
 
 	if (SpellIsTargeting()) then
 		SpellTargetUnit(targ);
@@ -664,7 +666,7 @@ function RAB_UnitIsDead(unit)
 	return (UnitIsDeadOrGhost(unit) and not isUnitBuffUp(unit, { tooltip = "Feign Death", texture = "Ability_Rogue_FeignDeath", spellId = 5384 }));
 end
 
-local function gatherCacheData(unit, index, texture, stacks, spellId, buff)
+local function updateSpellTooltip(unit, index, spellId, isBuff)
 	local tooltip = nil
 	if spellId and SpellInfo then
 		tooltip = SpellInfo(spellId)
@@ -672,7 +674,7 @@ local function gatherCacheData(unit, index, texture, stacks, spellId, buff)
 		-- get tooltips as well but only for player as it hurts performance
 		-- fall back to texture + tooltip comparison, not perfect
 		RAB_TooltipScanner:ClearLines()
-		if buff == true then
+		if isBuff == true then
 			RAB_TooltipScanner:SetUnitBuff(unit, index)
 		else
 			RAB_TooltipScanner:SetUnitDebuff(unit, index)
@@ -680,27 +682,16 @@ local function gatherCacheData(unit, index, texture, stacks, spellId, buff)
 		tooltip = RAB_TooltipScannerTextLeft1:GetText()
 	end
 
-	if spellId and spellId < 0 then
-		spellId = spellId + 65536 -- correct integer overflow from previous versions of superwow
-	end
-
-	return {
-		texture = texture,
-		spellId = spellId,
-		stacks = stacks,
-		tooltip = tooltip
-	};
+	return tooltip
 end
 
 function RAB_ClearUnitBuffCache(unit)
-	RAB_BuffCache[unit] = nil;
 	RAB_BuffLastUpdated[unit] = nil;
 
 	if unit == "player" or unit == "target" then
 		-- clear raid cache
 		for i = 1, GetNumRaidMembers() do
 			if (UnitIsUnit("raid" .. i, unit)) then
-				RAB_BuffCache["raid" .. i] = nil;
 				RAB_BuffLastUpdated["raid" .. i] = nil;
 			end
 		end
@@ -708,26 +699,64 @@ function RAB_ClearUnitBuffCache(unit)
 end
 
 function RAB_CacheUnitBuffs(unit)
-	RAB_BuffCache[unit] = {};
+	if not RAB_BuffCache[unit] then
+		RAB_BuffCache[unit] = {};
+	end
+
+	if not RAB_NumBuffsCache[unit] then
+		RAB_NumBuffsCache[unit] = 0;
+	end
+
 	for i = 1, 32 do
 		local texture, stacks, spellId = UnitBuff(unit, i);
 		if texture then
-			RAB_BuffCache[unit][i] = gatherCacheData(unit, i, texture, stacks, spellId, true);
+			if not RAB_BuffCache[unit][i] then
+				RAB_BuffCache[unit][i] = {};
+			end
+			if spellId and spellId < 0 then
+				spellId = spellId + 65536 -- correct integer overflow from previous versions of superwow
+			end
+
+			if not RAB_BuffCache[unit][i].tooltip or spellId ~= RAB_BuffCache[unit][i].spellId then
+				RAB_BuffCache[unit][i].tooltip = updateSpellTooltip(unit, i, spellId, true);
+			end
+			RAB_BuffCache[unit][i].texture = texture
+			RAB_BuffCache[unit][i].stacks = stacks
+			RAB_BuffCache[unit][i].spellId = spellId
 		else
-			break
+			RAB_NumBuffsCache[unit] = i - 1;
+			break ;
 		end
 	end
 	RAB_BuffLastUpdated[unit] = GetTime();
 end
 
 function RAB_CacheUnitDebuffs(unit)
-	RAB_DebuffCache[unit] = {};
+	if not RAB_DebuffCache[unit] then
+		RAB_DebuffCache[unit] = {};
+	end
+
+	if not RAB_NumDebuffsCache[unit] then
+		RAB_NumDebuffsCache[unit] = 0;
+	end
+
 	for i = 1, 16 do
 		local texture, stacks, spellSchool, spellId = UnitDebuff(unit, i);
 		if texture then
-			RAB_DebuffCache[unit][i] = gatherCacheData(unit, i, texture, stacks, spellId, true);
-			RAB_DebuffCache[unit][i].spellSchool = spellSchool;
+			if not RAB_DebuffCache[unit][i] then
+				RAB_DebuffCache[unit][i] = {};
+			end
+			if spellId and spellId < 0 then
+				spellId = spellId + 65536 -- correct integer overflow from previous versions of superwow
+			end
+			if not RAB_DebuffCache[unit][i].tooltip or spellId ~= RAB_DebuffCache[unit][i].spellId then
+				RAB_DebuffCache[unit][i].tooltip = updateSpellTooltip(unit, i, spellId, false);
+			end
+			RAB_DebuffCache[unit][i].texture = texture
+			RAB_DebuffCache[unit][i].stacks = stacks
+			RAB_DebuffCache[unit][i].spellId = spellId
 		else
+			RAB_NumDebuffsCache[unit] = i - 1;
 			break
 		end
 	end
@@ -764,10 +793,16 @@ function isUnitBuffUp(unit, identifier)
 
 	local cTime = GetTime();
 
+	local recentlyCastBuffUpdate = RABui_LastBuffEvent > 0 and RABui_LastBuffEvent > cTime - 3 -- unless we casted a buff in the last 3 second
+	if recentlyCastBuffUpdate and RAB_BuffLastUpdated[unit] and RAB_BuffLastUpdated[unit] > RABui_LastBuffEvent then
+		-- unit already updated, don't update again
+		recentlyCastBuffUpdate = false;
+	end
+
 	if RAB_BuffCache[unit] == nil or
 			RAB_BuffLastUpdated[unit] == nil or
 			RAB_BuffLastUpdated[unit] < cTime - 5 or -- cache for 5 sec
-			RABui_LastBuffEvent < cTime - 1 -- unless we casted a buff in the last second
+			recentlyCastBuffUpdate
 	then
 		RAB_CacheUnitBuffs(unit)
 	end
@@ -780,6 +815,10 @@ function isUnitBuffUp(unit, identifier)
 	end
 
 	for i, buffData in pairs(unitBuffs) do
+		if i > RAB_NumBuffsCache[unit] then
+			break ;
+		end
+
 		if checkForMatch(buffData, searchTexture, identifier) then
 			return true;
 		end
@@ -804,10 +843,14 @@ function isUnitDebuffUp(unit, identifier)
 	end
 
 	for i, debuffData in pairs(unitDebuffs) do
+		if i > RAB_NumDebuffsCache[unit] then
+			break ;
+		end
 		if checkForMatch(debuffData, searchTexture, identifier) then
 			return true;
 		end
 	end
+	return false;
 end
 
 function strrpos(str, chr)
