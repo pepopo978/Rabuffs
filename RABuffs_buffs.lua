@@ -176,6 +176,7 @@ RAB_Buffs = {
 	freeactionpotion = { name = "Free Action Potion", identifiers = { { tooltip = "Free Action", texture = "INV_Potion_04", spellId = 6615 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 5634 },
 	livingactionpotion = { name = "Living Action Potion", identifiers = { { tooltip = "Living Free Action", texture = "INV_Potion_07", spellId = 24364 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 20008 },
 	swiftnesspotion = { name = "Swiftness Potion", identifiers = { { tooltip = "Speed", texture = "Ability_Kick", spellId = 2379 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 2459 },
+	elixirofthesages = { name = "Elixir of the Sages", identifiers = { { tooltip = "Elixir of the Sages", texture = "INV_Potion_29", spellId = 17535 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 13447 },
 
 	agilscroll = { name = "Scroll of Agility IV", identifiers = { { tooltip = "Agility", texture = "Spell_Holy_BlessingOfAgility", spellId = 12174 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 10309, useOn = 'player' },
 	protscroll = { name = "Scroll of Protection IV", identifiers = { { tooltip = "Armor", texture = "Ability_Warrior_DefensiveStance", spellId = 12175 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 10305, useOn = 'player' },
