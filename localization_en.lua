@@ -104,6 +104,7 @@ sRAB_LOCALIZATION["enUS"] = function(ui, output, spells)
         sRAB_Settings_Layout_Description =
         "The list below shows the currently displayed bars. To modify or remove a bar, click on its entry in the list.";
         sRAB_Settings_Layout_AddNewBar = "(Click here to add a new bar)";
+        sRAB_Settings_Layout_ClearAllBars = "Clear all bars";
 
         sRAB_Settings_BarDetail_Label = "Label:";
         sRAB_Settings_BarDetail_Query = "Query:";
@@ -194,6 +195,7 @@ sRAB_LOCALIZATION["enUS"] = function(ui, output, spells)
             "/rab show -- shows the UI frame.",
             "/rab info -- displays texture names of the buffs and debuffs on your current target.",
             "/rab versioncheck (raid|party|guild|PlayerName) -- checks RABuffs version used by the raid (default), party, guild or a specific player.",
+            "/rab profile (save|load|delete|list|current) [name] -- manage profiles.",
             "/rabq {buffquery} -- runs a buff query. Run /rabq for specific syntax help."
         };
         sRAB_Slash_QHelp = {

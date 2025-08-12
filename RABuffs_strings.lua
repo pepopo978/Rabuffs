@@ -4,18 +4,19 @@
 
 sRAB_DownloadURL = "https://github.com/Pepopo/Rabuffs/";
 
-sRAB_Settings_UIHeader = "RABuffs";
-sRAB_Settings_ReleaseNotes = "<h2 align=\"left\">Release notes</h2><p>- Issue: GoTW is mis-identified as MoTW on non-enUS clients.</p><p>- Issue: Failed casting of resurrection spells bans the target from further attempts for 70 seconds.</p><br/><br/>";
+sRAB_Settings_UIHeader = "RAB";
+sRAB_Settings_ReleaseNotes = "<h2 align=\"left\">Release notes</h2><p>- Aug 12th 2025 - Added profile system.</p><br/><br/>";
 
 sRAB_LOCALIZATION, sRAB_Localization_UI, sRAB_Localization_Output, sRAB_Localization_SpellLayer = {}, "", "",
 "|c00ff9922Automatic spellbook|r";
 
 sRAB_ChangeLog2 = [[<html><body>
-			<h1 align="center">RABuffs Version 0.11.0</h1>
+			<h1 align="center">RABuffs Version 0.12.0</h1>
 			<h2>General</h2>
 			<p> - Hide in combat option.</p>
 			<p> - Hide active buffs/consumes option.</p>
 			<p> - Exclude player names for buffs.</p>
+			<p> - Add profile system.</p>
 			<br/><br/></body></html>]];
 
 sRAB_SpellNames = {};

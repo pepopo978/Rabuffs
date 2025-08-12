@@ -582,11 +582,26 @@
                     </Layer>
                 </Layers>
                 <Frames>
+                    <Button name="RAB_Settings_ClearAllBars" inherits="UIPanelButtonTemplate">
+                        <Size>
+                            <AbsDimension x="100" y="26"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeTo="RAB_Settings_TabFrame3Description" relativePoint="BOTTOMLEFT">
+                                <Offset>
+                                    <AbsDimension x="0" y="-5"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>RABui_Settings_Layout_ClearAllBars();</OnClick>
+                        </Scripts>
+                    </Button>
                     <Button name="RAB_Settings_BarLine0" inherits="RAB_Settings_BarLine">
                         <Anchors>
-                            <Anchor point="TOPLEFT">
+                            <Anchor point="TOPLEFT" relativeTo="RAB_Settings_ClearAllBars" relativePoint="BOTTOMLEFT">
                                 <Offset>
-                                    <AbsDimension x="0" y="-64"/>
+                                    <AbsDimension x="0" y="-10"/>
                                 </Offset>
                             </Anchor>
                         </Anchors>
