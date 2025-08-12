@@ -326,6 +326,11 @@ function RAB_GetAllProfiles()
 	local profiles = {};
 	local playerPrefix = GetCVar("realmName") .. "." .. UnitName("player") .. ".";
 	
+	-- Safety check: ensure Layout table exists
+	if not RABui_Settings or not RABui_Settings.Layout then
+		return profiles;
+	end
+	
 	for key, val in pairs(RABui_Settings.Layout) do
 		if string.find(key, "^" .. string.gsub(playerPrefix, "([%^%$%(%)%%%.%[%]%*%+%-%?])", "%%%1")) then
 			local profileName = string.sub(key, string.len(playerPrefix) + 1);
@@ -342,6 +347,14 @@ function RAB_SaveProfile(profileName)
 	if not profileName or profileName == "" then
 		RAB_Print("Error: Profile name cannot be empty");
 		return false;
+	end
+	
+	-- Safety check: ensure Layout table exists
+	if not RABui_Settings then
+		RABui_Settings = {};
+	end
+	if not RABui_Settings.Layout then
+		RABui_Settings.Layout = {};
 	end
 	
 	local profileKey = RAB_GetProfileKey(profileName);
@@ -363,6 +376,14 @@ function RAB_CreateNewProfile(profileName)
 	if not profileName or profileName == "" then
 		RAB_Print("Error: Profile name cannot be empty");
 		return false;
+	end
+	
+	-- Safety check: ensure Layout table exists
+	if not RABui_Settings then
+		RABui_Settings = {};
+	end
+	if not RABui_Settings.Layout then
+		RABui_Settings.Layout = {};
 	end
 	
 	local profileKey = RAB_GetProfileKey(profileName);
@@ -393,6 +414,12 @@ end
 function RAB_LoadProfile(profileName)
 	if not profileName or profileName == "" then
 		RAB_Print("Error: Profile name cannot be empty");
+		return false;
+	end
+	
+	-- Safety check: ensure Layout table exists
+	if not RABui_Settings or not RABui_Settings.Layout then
+		RAB_Print("Error: No profiles available");
 		return false;
 	end
 	
@@ -436,6 +463,12 @@ function RAB_DeleteProfile(profileName)
 	
 	if profileName == "Default" then
 		RAB_Print("Error: Cannot delete the Default profile");
+		return false;
+	end
+	
+	-- Safety check: ensure Layout table exists
+	if not RABui_Settings or not RABui_Settings.Layout then
+		RAB_Print("Error: No profiles available");
 		return false;
 	end
 	
