@@ -1236,7 +1236,7 @@ function RAB_Settings_BL_Update()
 	if (RAB_BL_Buffs == nil) then
 		RAB_Settings_BL_Init();
 	end
-	FauxScrollFrame_Update(RAB_Settings_BuffListScrollBar, table.getn(RAB_BL_Buffs), RAB_BL_Count, 16);
+	FauxScrollFrame_Update(RAB_Settings_BuffListScrollBar, table.getn(RAB_BL_Buffs), RAB_BL_Count, 14);
 	local offset, i = FauxScrollFrame_GetOffset(RAB_Settings_BuffListScrollBar), 0;
 
 	for i = offset + 1, offset + RAB_BL_Count do
@@ -1434,7 +1434,7 @@ function RABui_Settings_Layout_SetBar(ui, id)
 end
 
 function RABui_Settings_Layout_SyncList()
-	FauxScrollFrame_Update(RAB_Settings_LayoutScrollBar, table.getn(RABui_Bars) + 1, RAB_BarList_Count, 16);
+	FauxScrollFrame_Update(RAB_Settings_LayoutScrollBar, table.getn(RABui_Bars) + 1, RAB_BarList_Count, 14);
 	local offset, i = FauxScrollFrame_GetOffset(RAB_Settings_LayoutScrollBar), 0;
 
 	for i = offset + 1, offset + RAB_BarList_Count do

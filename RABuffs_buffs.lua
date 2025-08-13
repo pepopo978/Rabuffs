@@ -156,7 +156,7 @@ RAB_Buffs = {
 	spiritofzanza = { name = "Spirit of Zanza", identifiers = { { tooltip = "Spirit of Zanza", texture = "INV_Potion_30", spellId = 24382 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 20079 },
 	sheenofzanza = { name = "Sheen of Zanza", identifiers = { { tooltip = "Sheen of Zanza", texture = "INV_Potion_29", spellId = 24417 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 20080 },
 	swiftnessofzanza = { name = "Swiftness of Zanza", identifiers = { { tooltip = "Swiftness of Zanza", texture = "INV_Potion_31", spellId = 24383 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 20081 },
-	elixirfortitude = { name = "Elixir of Fortitude", identifiers = { { tooltip = "Health II", texture = "INV_Potion_44", spellId = 3593 } }, buffFunc = RAB_UseItem, itemId = 3825 },
+	elixirfortitude = { name = "Elixir of Fortitude", identifiers = { { tooltip = "Health II", texture = "INV_Potion_44", spellId = 3593 } }, grouping = "HP/Mana/Utility",buffFunc = RAB_UseItem, itemId = 3825 },
 	trollbloodmighty = { name = "Mighty Troll's Blood Potion", identifiers = { { tooltip = "Regeneration", texture = "INV_Potion_79", spellId = 3223 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 3826 },
 	trollblood = { name = "Major Troll's Blood Potion", identifiers = { { tooltip = "Regeneration", texture = "INV_Potion_79", spellId = 24361 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 20004 },
 	lesserstoneshield = { name = "Lesser Stoneshield Potion", identifiers = { { tooltip = "Stoneshield", texture = "INV_Potion_67", spellId = 4941 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 4623 },
