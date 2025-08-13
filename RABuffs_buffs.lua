@@ -284,6 +284,7 @@ RAB_Buffs = {
 	herbalsalad = { name = "Herbal Salad", identifiers = { { tooltip = "Increased Healing Bonus", texture = "Spell_Nature_HealingWay", spellId = 49553 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 83309 },
 	sagefish = { name = "Sagefish Delight", identifiers = { { tooltip = "Mana Regeneration", texture = "inv_misc_fish_21", spellId = 25889 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 21217 },
 	mushroomstam = { name = "Hardened Mushroom", identifiers = { { tooltip = "Increased Stamina", texture = "INV_Boots_Plate_03", spellId = 25661 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 51717 },
+	gurubashigumbo = { name = "Gurubashi Gumbo", identifiers = { { tooltip = "Well Fed", texture = "Spell_Misc_Food", spellId = 46083 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 53015 },
 	mushroomstr = { name = "Power Mushroom", identifiers = { { tooltip = "Well Fed", texture = "Spell_Misc_Food", spellId = 24799 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 51720 },
 	desertdumpling = { name = "Smoked Desert Dumpling", identifiers = { { tooltip = "Well Fed", texture = "Spell_Misc_Food", spellId = 24799 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 20452 },
 	tenderwolf = { name = "Tender Wolf Steak", identifiers = { { tooltip = "Well Fed", texture = "Spell_Misc_Food", spellId = 19710 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 18045 },
