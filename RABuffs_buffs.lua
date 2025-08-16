@@ -198,6 +198,8 @@ RAB_Buffs = {
 	dreamshard = { name = "Dreamshard Elixir", identifiers = { { tooltip = "Dreamshard Elixir", texture = "INV_Potion_25", spellId = 45427 } }, buffFunc = RAB_UseItem, itemId = 61224, grouping = "Spell" },
 	dreamtonic = { name = "Dreamtonic", identifiers = { { tooltip = "Dreamtonic", texture = "INV_Potion_30", spellId = 45489 } }, buffFunc = RAB_UseItem, itemId = 61423, grouping = "Spell" },
 	cerebralcortex = { name = "Cerebral Cortex Compound", identifiers = { { tooltip = "Infallible Mind", texture = "Spell_Ice_Lament", spellId = 10692 } }, buffFunc = RAB_UseItem, itemId = 8423, grouping = "Spell" },
+	greaterarcanepowerelixir = { name = "Elixir of Greater Arcane Power", identifiers = { { tooltip = "Greater Arcane Power", texture = "Spell_Holy_FlashHeal" } }, buffFunc = RAB_UseItem, itemId = 55048, grouping = "Spell" },
+	greaterfrostpowerelixir = { name = "Elixir of Greater Frost Power", identifiers = { { tooltip = "Greater Frost Power", texture = "INV_Potion_03" } }, buffFunc = RAB_UseItem, itemId = 55046, grouping = "Spell" },
 
 	-- Melee Consumes --
 	giants = { name = "Elixir of Giants", identifiers = { { tooltip = "Elixir of the Giants", texture = "INV_Potion_61", spellId = 11405 } }, grouping = "Melee", buffFunc = RAB_UseItem, itemId = 9206 },
