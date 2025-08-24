@@ -88,6 +88,7 @@ RAB_Buffs = {
 	wrathstone = { name = "Wrathstone", identifiers = { { tooltip = "Wrathstone", texture = "INV_Misc_Gem_Bloodstone_02", spellId = 51700 } }, grouping = "Warlock", class = "Warlock", buffFunc = RAB_UseItem, itemId = 51935 },
 	firestone = { name = "Firestone", identifiers = { { tooltip = "Firestone", texture = "INV_Ammo_FireTar", spellId = 51690 } }, grouping = "Warlock", class = "Warlock", buffFunc = RAB_UseItem, itemId = 51932 },
 	felstone = { name = "Felstone", identifiers = { { tooltip = "Felstone", texture = "inv_misc_gem_felstone", spellId = 51697 } }, grouping = "Warlock", class = "Warlock", buffFunc = RAB_UseItem, itemId = 51934 },
+	voidstone = { name = "Voidstone", identifiers = { { tooltip = "Voidstone", texture = "inv_enchant_voidsphere", spellId = 52751 } }, grouping = "Warlock", class = "Warlock", buffFunc = RAB_UseItem, itemId = 51936 },
 
 	hawk = { name = "Aspect of the Hawk", identifiers = { { tooltip = "Aspect of the Hawk", texture = "Spell_Nature_RavenForm" } }, type = "self", grouping = "Hunter", class = "Hunter", recast = 5 },
 	cheetah = { name = "Aspect of the Cheetah", identifiers = { { tooltip = "Aspect of the Cheetah", texture = "Ability_Mount_JungleTiger" } }, type = "self", grouping = "Hunter", class = "Hunter", recast = 5 },
