@@ -222,6 +222,11 @@ RAB_Buffs = {
 
 	anyagi = { name = "Mongoose/Greater Agility", identifiers = { { tooltip = "Elixir of the Mongoose", texture = "INV_Potion_32", spellId = 17538 }, { tooltip = "Elixir of Greater Agility", texture = "INV_Potion_94" } }, grouping = "Melee" },
 
+	-- Concoction --
+	arcanegiants = { name = "Conconction of the Arcane Giant", identifiers = { { tooltip = "Conconction of the Arcane Giant", texture = "inv_yellow_purple_elixir_2", spellId = 36931 } }, grouping = "Concoction", buffFunc = RAB_UseItem, itemId = 47412 },
+	emeraldmongoose = { name = "Concoction of the Emerald Mongoose", identifiers = { { tooltip = "Concoction of the Emerald Mongoose", texture = "inv_blue_gold_elixir_2", spellId = 36928 } }, grouping = "Concoction", buffFunc = RAB_UseItem, itemId = 47410 },
+	dreamwater = { name = "Concoction of the Dreamwater", identifiers = { { tooltip = "Concoction of the Dreamwater", texture = "inv_green_pink_elixir_1", spellId = 36934 } }, grouping = "Concoction", buffFunc = RAB_UseItem, itemId = 47414 },
+
 	-- Weapon consumes --
 	brillmanaoil = { grouping = "Weapon", name = "Brilliant Mana Oil", identifiers = {}, type = "wepbuffonly", buffFunc = RAB_UseItem, itemId = 20748, useOn = 'weapon' },
 	brillmanaoiloh = { grouping = "Weapon", name = "Brilliant Mana Oil (offhand)", identifiers = {}, type = "wepbuffonly", buffFunc = RAB_UseItem, itemId = 20748, useOn = 'weaponOH' },
