@@ -104,6 +104,9 @@ RAB_Buffs = {
 	battleshout = { name = "Battle Shout", identifiers = { { tooltip = "Battle Shout", texture = "Ability_Warrior_BattleShout" } }, grouping = "Warrior", type = "aura", recast = 5 },
 
 	-- Debuffs --
+	medivh = { name = "Doom of Medivh", identifiers = { { tooltip = "Doom of Medivh", texture = "Spell_Nature_Drowsy" } }, type = "debuff", grouping = "Debuffs" },
+	mephdoom = { name = "Doom of Outland", identifiers = { { tooltip = "Doom of Outland", texture = "Spell_Shadow_NightOfTheDead" } }, type = "debuff", grouping = "Debuffs" },
+	mephdread = { name = "Dread of Outland", identifiers = { { tooltip = "Dread of Outland", texture = "Spell_Shadow_CurseOfTounges" } }, type = "debuff", grouping = "Debuffs" },
 	frostmark = { name = "Mark of Frost", identifiers = { { tooltip = "Mark of Frost", texture = "Spell_Frost_ChainsOfIce" } }, type = "debuff", grouping = "Debuffs" },
 	naturemark = { name = "Mark of Nature", identifiers = { { tooltip = "Mark of Nature", texture = "Spell_Nature_SpiritArmor" } }, type = "debuff", grouping = "Debuffs" },
 	shazz = { name = "Amplify Magic [Shazzrah]", identifiers = { { tooltip = "Amplify Magic [Shazzrah]", texture = "Spell_Arcane_StarFire" } }, type = "debuff", grouping = "Debuffs" },
