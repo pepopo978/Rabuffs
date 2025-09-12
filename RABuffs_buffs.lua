@@ -116,6 +116,7 @@ RAB_Buffs = {
 	dpoison = { name = "Type: Poison", identifiers = { { tooltip = "Type: Poison", texture = "Spell_Shadow_AntiShadow" }, { tooltip = "Type: Poison", texture = "Spell_Shadow_CurseOfAchimonde" } }, type = "debuff", grouping = "Debuffs" },
 	dtypeless = { name = "Type: Typeless", identifiers = { { tooltip = "Type: Typeless", texture = "Spell_Shadow_AntiShadow" }, { tooltip = "Type: Typeless", texture = "Spell_Shadow_CurseOfAchimonde" } }, type = "debuff", grouping = "Debuffs" },
 	dicanremove = { name = "Type: You can remove", identifiers = { { tooltip = "Type: You can remove", texture = "Spell_Shadow_AntiShadow" }, { tooltip = "Type: You can remove", texture = "Spell_Shadow_CurseOfAchimonde" } }, type = "debuff", grouping = "Debuffs" },
+	medivh = { name = "Doom of Medivh", identifiers = { { tooltip = "Doom of Medivh", texture = "Spell_Nature_Drowsy", spellId=40006 } }, type = "debuff", grouping = "Debuffs" },
 
 	-- Miscellaneous --
 	zandalarbuff = { name = "Spirit of Zandalar", identifiers = { { tooltip = "Spirit of Zandalar", texture = "Ability_Creature_Poison_05" } }, grouping = "Miscellaneous", type = "special" },
