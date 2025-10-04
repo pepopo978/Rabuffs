@@ -532,7 +532,7 @@
                         </Anchors>
                         <Scripts>
                             <OnVerticalScroll>
-                                FauxScrollFrame_OnVerticalScroll(16, RAB_Settings_BL_Update);
+                                FauxScrollFrame_OnVerticalScroll(14, RAB_Settings_BL_Update);
                             </OnVerticalScroll>
                             <OnShow>
                                 RAB_Settings_BL_Update();
@@ -582,18 +582,33 @@
                     </Layer>
                 </Layers>
                 <Frames>
+                    <Button name="RAB_Settings_ClearAllBars" inherits="UIPanelButtonTemplate">
+                        <Size>
+                            <AbsDimension x="100" y="26"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeTo="RAB_Settings_TabFrame3Description" relativePoint="BOTTOMLEFT">
+                                <Offset>
+                                    <AbsDimension x="0" y="-5"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <Scripts>
+                            <OnClick>RABui_Settings_Layout_ClearAllBars();</OnClick>
+                        </Scripts>
+                    </Button>
                     <Button name="RAB_Settings_BarLine0" inherits="RAB_Settings_BarLine">
                         <Anchors>
-                            <Anchor point="TOPLEFT">
+                            <Anchor point="TOPLEFT" relativeTo="RAB_Settings_ClearAllBars" relativePoint="BOTTOMLEFT">
                                 <Offset>
-                                    <AbsDimension x="0" y="-64"/>
+                                    <AbsDimension x="0" y="-10"/>
                                 </Offset>
                             </Anchor>
                         </Anchors>
                     </Button>
                     <ScrollFrame name="RAB_Settings_LayoutScrollBar" inherits="FauxScrollFrameTemplate">
                         <Size>
-                            <AbsDimension x="315" y="270"/>
+                            <AbsDimension x="315" y="240"/>
                         </Size>
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativeTo="RAB_Settings_BarLine0" relativePoint="BOTTOMRIGHT"/>
@@ -602,7 +617,7 @@
                         </Anchors>
                         <Scripts>
                             <OnVerticalScroll>
-                                FauxScrollFrame_OnVerticalScroll(16, RABui_Settings_Layout_SyncList);
+                                FauxScrollFrame_OnVerticalScroll(14, RABui_Settings_Layout_SyncList);
                             </OnVerticalScroll>
                             <OnShow>
                                 RABui_Settings_Layout_SyncList();
@@ -629,7 +644,7 @@
                         RAB_Settings_BarLine0MoveUp:Hide();
                         RAB_Settings_BarLine0Swatch:Hide();
                         RAB_Settings_BarLine0MoveDown:Hide();
-                        RAB_BarList_Count = 17;
+                        RAB_BarList_Count = 15;
                         local i, ptr;
                         for i=1,RAB_BarList_Count do
                         ptr = CreateFrame("BUTTON","RAB_Settings_BarLine" .. i,this,"RAB_Settings_BarLine");

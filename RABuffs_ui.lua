@@ -29,6 +29,120 @@ StaticPopupDialogs["RAB_MSG"] = {
     hideOnEscape = 1
 };
 
+RAB_ProfileToDelete = nil; -- Global variable to store profile name
+
+StaticPopupDialogs["RAB_PROFILE_DELETE_CONFIRM"] = {
+    text = "Are you sure you want to delete profile '%s'?",
+    button1 = TEXT(YES),
+    button2 = TEXT(NO),
+    OnAccept = function()
+        if RAB_ProfileToDelete then
+            RAB_DeleteProfile(RAB_ProfileToDelete);
+            RAB_ProfileToDelete = nil;
+            if RAB_Settings_ProfileSelector_UpdateText then
+                RAB_Settings_ProfileSelector_UpdateText();
+            end
+        end
+    end,
+    whileDead = 1,
+    timeout = 0,
+    hideOnEscape = 1
+};
+
+StaticPopupDialogs["RAB_PROFILE_CREATE_PROMPT"] = {
+    text = "Enter name for new profile:",
+    button1 = TEXT(OKAY),
+    button2 = TEXT(CANCEL),
+    hasEditBox = 1,
+    maxLetters = 20,
+    OnAccept = function()
+        local profileName = getglobal(this:GetParent():GetName().."EditBox"):GetText();
+        if profileName and profileName ~= "" then
+            if RAB_CreateNewProfile(profileName) then
+                RABui_Settings.currentProfile = profileName;
+                if RABui_UpdateTitle then
+                    RABui_UpdateTitle();
+                end
+                if RAB_Settings_ProfileSelector_UpdateText then
+                    RAB_Settings_ProfileSelector_UpdateText();
+                end
+            end
+        end
+    end,
+    EditBoxOnEnterPressed = function()
+        local profileName = this:GetText();
+        if profileName and profileName ~= "" then
+            if RAB_CreateNewProfile(profileName) then
+                RABui_Settings.currentProfile = profileName;
+                if RABui_UpdateTitle then
+                    RABui_UpdateTitle();
+                end
+                if RAB_Settings_ProfileSelector_UpdateText then
+                    RAB_Settings_ProfileSelector_UpdateText();
+                end
+            end
+            this:GetParent():Hide();
+        end
+    end,
+    EditBoxOnEscapePressed = function()
+        this:GetParent():Hide();
+    end,
+    whileDead = 1,
+    timeout = 0,
+    hideOnEscape = 1
+};
+
+StaticPopupDialogs["RAB_PROFILE_SAVE_PROMPT"] = {
+    text = "Enter profile name:",
+    button1 = TEXT(OKAY),
+    button2 = TEXT(CANCEL),
+    hasEditBox = 1,
+    maxLetters = 20,
+    OnAccept = function()
+        local profileName = getglobal(this:GetParent():GetName().."EditBox"):GetText();
+        if profileName and profileName ~= "" then
+            if RAB_SaveProfile(profileName) then
+                RABui_Settings.currentProfile = profileName;
+                if RAB_Settings_ProfileSelector_UpdateText then
+                    RAB_Settings_ProfileSelector_UpdateText();
+                end
+            end
+        else
+            RAB_Print("Error: Please enter a profile name");
+        end
+    end,
+    EditBoxOnEnterPressed = function()
+        local profileName = this:GetText();
+        if profileName and profileName ~= "" then
+            if RAB_SaveProfile(profileName) then
+                RABui_Settings.currentProfile = profileName;
+                if RAB_Settings_ProfileSelector_UpdateText then
+                    RAB_Settings_ProfileSelector_UpdateText();
+                end
+            end
+            this:GetParent():Hide();
+        end
+    end,
+    EditBoxOnEscapePressed = function()
+        this:GetParent():Hide();
+    end,
+    whileDead = 1,
+    timeout = 0,
+    hideOnEscape = 1
+};
+
+StaticPopupDialogs["RAB_CLEAR_ALL_BARS_CONFIRM"] = {
+    text = "This will instantly save empty bars to (%s). Save a new profile first if you haven't already so you don't lose your current bars. Continue?",
+    button1 = TEXT(YES),
+    button2 = TEXT(NO),
+    OnAccept = function()
+        RABui_Settings_Layout_ClearAllBars_Confirmed();
+    end,
+    whileDead = 1,
+    timeout = 0,
+    hideOnEscape = 1
+};
+
 function RAB_Print(text, type)
     local r, g, b = 0.3, 0.5, 1;
     if (type == "warn") then r, g, b = 1, 0.8, 0; end
@@ -267,6 +381,39 @@ SlashCmdList["RABUFFS"] = function(msg)
             (fail > 0 and "warn" or "ok"));
     elseif (cmd == "coreinfo") then
         RAB_Core_List();
+    elseif (cmd == "profile") then
+        if (param == nil or param == "") then
+            RAB_Print("Profile commands: save <name>, load <name>, delete <name>, list, current");
+        else
+            local _, _, subcmd, profileName = string.find(param, "(%a+) (.+)");
+            if (subcmd == nil) then
+                subcmd = param;
+            end
+            
+            if (subcmd == "list") then
+                local profiles = RAB_GetAllProfiles();
+                local current = RABui_Settings.currentProfile or "Default";
+                RAB_Print("Available profiles:");
+                for i, profile in ipairs(profiles) do
+                    local marker = (profile == current) and " (current)" or "";
+                    RAB_Print("  " .. profile .. marker);
+                end
+                if (table.getn(profiles) == 0) then
+                    RAB_Print("  Default (current)");
+                end
+            elseif (subcmd == "current") then
+                local current = RABui_Settings.currentProfile or "Default";
+                RAB_Print("Current profile: " .. current);
+            elseif (subcmd == "save" and profileName) then
+                RAB_SaveProfile(profileName);
+            elseif (subcmd == "load" and profileName) then
+                RAB_LoadProfile(profileName);
+            elseif (subcmd == "delete" and profileName) then
+                RAB_DeleteProfile(profileName);
+            else
+                RAB_Print("Usage: /rab profile <save|load|delete|list|current> [name]", "warn");
+            end
+        end
     else
         RAB_Print(sRAB_Slash_UnrecognizedCommand, "warn");
     end

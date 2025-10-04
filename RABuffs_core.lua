@@ -4,7 +4,7 @@
 
 RAB_Lock = 1;
 
-RABuffs_Version = "0.11.0";
+RABuffs_Version = "0.12.0";
 RABuffs_DeciVersion = 0.100300;
 
 RABui_Settings = {};
@@ -12,6 +12,7 @@ RABui_DefSettings = {
 	Layout = {},
 	updateInterval = 0.5,
 	firstRun = true,
+	currentProfile = "Default",
 	enableGreeting = true,
 	lastVersion = RABuffs_Version,
 	stoppvp = true,
@@ -192,10 +193,14 @@ function RAB_StartUp()
 	end
 	RABui_DefSettings = nil;
 
+	-- Migrate old profile system
+	RAB_MigrateOldProfiles();
+
 	if (RABui_Bars == nil) then
 		-- First run, populate.
-		if (RABui_Settings.Layout[GetCVar("realmName") .. "." .. UnitName("player") .. ".current"] ~= nil) then
-			RABui_Bars = RABui_Settings.Layout[GetCVar("realmName") .. "." .. UnitName("player") .. ".current"];
+		local profileKey = RAB_GetProfileKey();
+		if (RABui_Settings.Layout[profileKey] ~= nil) then
+			RABui_Bars = RABui_Settings.Layout[profileKey];
 		else
 			local _, uc = UnitClass("player");
 			RABui_Bars = {};
@@ -277,7 +282,8 @@ function RAB_CleanUp()
 	end
 	RABui_IsUIShown = (RABFrame:IsShown() == 1);
 
-	RABui_Settings.Layout[GetCVar("realmName") .. "." .. UnitName("player") .. ".current"] = RABui_Bars;
+	local profileKey = RAB_GetProfileKey();
+	RABui_Settings.Layout[profileKey] = RABui_Bars;
 	RABui_Bars = nil;
 	RABui_Settings.keepversions = type(RABui_Settings.keepversions) == "table" and RAB_Versions or false;
 end
@@ -307,6 +313,199 @@ RAB_Core_Register("PLAYER_ENTERING_WORLD", "groupStatus", RAB_GroupStatusChange)
 RAB_Core_Register("CHAT_MSG_SYSTEM", "groupStatus", RAB_GroupStatusChange);
 RAB_Core_Register("VARIABLES_LOADED", "load", RAB_StartUp);
 RAB_Core_Register("PLAYER_LOGOUT", "unload", RAB_CleanUp);
+
+-- Profile Management Functions
+function RAB_GetProfileKey(profileName)
+	if not profileName then
+		profileName = RABui_Settings.currentProfile or "Default";
+	end
+	return GetCVar("realmName") .. "." .. UnitName("player") .. "." .. profileName;
+end
+
+function RAB_GetAllProfiles()
+	local profiles = {};
+	local playerPrefix = GetCVar("realmName") .. "." .. UnitName("player") .. ".";
+	
+	-- Safety check: ensure Layout table exists
+	if not RABui_Settings or not RABui_Settings.Layout then
+		return profiles;
+	end
+	
+	for key, val in pairs(RABui_Settings.Layout) do
+		if string.find(key, "^" .. string.gsub(playerPrefix, "([%^%$%(%)%%%.%[%]%*%+%-%?])", "%%%1")) then
+			local profileName = string.sub(key, string.len(playerPrefix) + 1);
+			if profileName ~= "" then
+				table.insert(profiles, profileName);
+			end
+		end
+	end
+	
+	return profiles;
+end
+
+function RAB_SaveProfile(profileName)
+	if not profileName or profileName == "" then
+		RAB_Print("Error: Profile name cannot be empty");
+		return false;
+	end
+	
+	-- Safety check: ensure Layout table exists
+	if not RABui_Settings then
+		RABui_Settings = {};
+	end
+	if not RABui_Settings.Layout then
+		RABui_Settings.Layout = {};
+	end
+	
+	local profileKey = RAB_GetProfileKey(profileName);
+	RABui_Settings.Layout[profileKey] = {};
+	
+	-- Deep copy current bars
+	for i, bar in ipairs(RABui_Bars) do
+		RABui_Settings.Layout[profileKey][i] = {};
+		for key, val in pairs(bar) do
+			RABui_Settings.Layout[profileKey][i][key] = val;
+		end
+	end
+	
+	RAB_Print("Profile '" .. profileName .. "' saved");
+	return true;
+end
+
+function RAB_CreateNewProfile(profileName)
+	if not profileName or profileName == "" then
+		RAB_Print("Error: Profile name cannot be empty");
+		return false;
+	end
+	
+	-- Safety check: ensure Layout table exists
+	if not RABui_Settings then
+		RABui_Settings = {};
+	end
+	if not RABui_Settings.Layout then
+		RABui_Settings.Layout = {};
+	end
+	
+	local profileKey = RAB_GetProfileKey(profileName);
+	
+	-- Check if profile already exists
+	if RABui_Settings.Layout[profileKey] then
+		RAB_Print("Error: Profile '" .. profileName .. "' already exists");
+		return false;
+	end
+	
+	-- Create new profile with empty bars
+	RABui_Settings.Layout[profileKey] = {};
+	
+	-- Clear current bars and sync UI
+	RABui_Bars = {};
+	RABui_SyncBars();
+	if RABui_UpdateTitle then
+		RABui_UpdateTitle();
+	end
+	if RABui_Settings_Layout_SyncList then
+		RABui_Settings_Layout_SyncList();
+	end
+	
+	RAB_Print("New profile '" .. profileName .. "' created with empty bars");
+	return true;
+end
+
+function RAB_LoadProfile(profileName)
+	if not profileName or profileName == "" then
+		RAB_Print("Error: Profile name cannot be empty");
+		return false;
+	end
+	
+	-- Safety check: ensure Layout table exists
+	if not RABui_Settings or not RABui_Settings.Layout then
+		RAB_Print("Error: No profiles available");
+		return false;
+	end
+	
+	local profileKey = RAB_GetProfileKey(profileName);
+	if not RABui_Settings.Layout[profileKey] then
+		RAB_Print("Error: Profile '" .. profileName .. "' does not exist");
+		return false;
+	end
+	
+	-- Clear current bars
+	RABui_Bars = {};
+	
+	-- Deep copy profile bars
+	for i, bar in ipairs(RABui_Settings.Layout[profileKey]) do
+		RABui_Bars[i] = {};
+		for key, val in pairs(bar) do
+			RABui_Bars[i][key] = val;
+		end
+	end
+	
+	RABui_Settings.currentProfile = profileName;
+	RAB_Print("Profile '" .. profileName .. "' loaded");
+	
+	-- Refresh UI
+	RABui_SyncBars();
+	if RABui_UpdateTitle then
+		RABui_UpdateTitle();
+	end
+	if RAB_Settings_Frame and RAB_Settings_Frame:IsVisible() then
+		RABui_Settings_Refresh();
+	end
+	
+	return true;
+end
+
+function RAB_DeleteProfile(profileName)
+	if not profileName or profileName == "" then
+		RAB_Print("Error: Profile name cannot be empty");
+		return false;
+	end
+	
+	if profileName == "Default" then
+		RAB_Print("Error: Cannot delete the Default profile");
+		return false;
+	end
+	
+	-- Safety check: ensure Layout table exists
+	if not RABui_Settings or not RABui_Settings.Layout then
+		RAB_Print("Error: No profiles available");
+		return false;
+	end
+	
+	local profileKey = RAB_GetProfileKey(profileName);
+	if not RABui_Settings.Layout[profileKey] then
+		RAB_Print("Error: Profile '" .. profileName .. "' does not exist");
+		return false;
+	end
+	
+	RABui_Settings.Layout[profileKey] = nil;
+	
+	-- If we just deleted the current profile, switch to Default
+	if RABui_Settings.currentProfile == profileName then
+		RAB_LoadProfile("Default");
+	end
+	
+	RAB_Print("Profile '" .. profileName .. "' deleted");
+	return true;
+end
+
+function RAB_MigrateOldProfiles()
+	local playerPrefix = GetCVar("realmName") .. "." .. UnitName("player") .. ".";
+	local oldCurrentKey = playerPrefix .. "current";
+	local newDefaultKey = playerPrefix .. "Default";
+	
+	-- Migrate .current to Default if Default doesn't exist
+	if RABui_Settings.Layout[oldCurrentKey] and not RABui_Settings.Layout[newDefaultKey] then
+		RABui_Settings.Layout[newDefaultKey] = RABui_Settings.Layout[oldCurrentKey];
+		RABui_Settings.Layout[oldCurrentKey] = nil;
+		RAB_Print("Migrated existing profile to 'Default'");
+	end
+	
+	-- Set default current profile if not set
+	if not RABui_Settings.currentProfile then
+		RABui_Settings.currentProfile = "Default";
+	end
+end
 
 function RAB_SendMessage(st, target, prefix)
 	-- Chunk up at commas.

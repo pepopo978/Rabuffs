@@ -188,7 +188,7 @@ function RABui_SyncBars()
 		end
 	end
 
-	RABFrame:SetHeight(10 + shownBarCount * 12);
+	RABFrame:SetHeight(10 + shownBars * 12);
 	RABui_Settings_Layout_SyncList();
 end
 
@@ -295,8 +295,87 @@ function RABui_Menu_Initialize()
 			RABui_Settings_SelectTab(1);
 			ShowUIPanel(RAB_SettingsFrame);
 		end
-	})
-	UIDropDownMenu_SetWidth(75, RAB_Menu);
+	});
+	UIDropDownMenu_AddButton({ text = "", disabled = 1, notCheckable = 1 });
+	UIDropDownMenu_AddButton({
+		text = "Current Profile: " .. (RABui_Settings.currentProfile or "Default"),
+		isTitle = 1
+	});
+	UIDropDownMenu_AddButton({
+		text = "Create New Profile...",
+		notCheckable = 1,
+		func = function()
+			StaticPopup_Show("RAB_PROFILE_CREATE_PROMPT");
+		end
+	});
+	UIDropDownMenu_AddButton({
+		text = "Save New Profile...",
+		notCheckable = 1,
+		func = function()
+			StaticPopup_Show("RAB_PROFILE_SAVE_PROMPT");
+		end
+	});
+
+	-- Add delete current profile option
+	local profiles = RAB_GetAllProfiles();
+	local current = RABui_Settings.currentProfile or "Default";
+	local profileCount = table.getn(profiles);
+
+	-- Add default if not in list for counting
+	local hasDefault = false;
+	for i, profile in ipairs(profiles) do
+		if profile == "Default" then
+			hasDefault = true;
+			break ;
+		end
+	end
+	if not hasDefault then
+		profileCount = profileCount + 1;
+	end
+
+	-- Only show delete option if more than 1 profile exists and current profile is not Default
+	if profileCount > 1 and current ~= "Default" then
+		UIDropDownMenu_AddButton({
+			text = "Delete Current Profile (" .. current .. ")",
+			notCheckable = 1,
+			func = function()
+				RAB_ProfileToDelete = current;
+				StaticPopup_Show("RAB_PROFILE_DELETE_CONFIRM", current);
+			end
+		});
+	end
+
+	-- Add profile load options directly
+	profiles = RAB_GetAllProfiles();
+	current = RABui_Settings.currentProfile or "Default";
+
+	-- Always include Default
+	local hasDefault = false;
+	for i, profile in ipairs(profiles) do
+		if profile == "Default" then
+			hasDefault = true;
+			break ;
+		end
+	end
+	if not hasDefault then
+		table.insert(profiles, 1, "Default");
+	end
+
+	for i, profile in ipairs(profiles) do
+		local isChecked = (profile == current);
+		local profileName = profile; -- Capture the profile name for the closure
+		UIDropDownMenu_AddButton({
+			text = "Load: " .. profile .. (isChecked and " (current)" or ""),
+			checked = isChecked,
+			func = function()
+				if RAB_LoadProfile(profileName) then
+					CloseDropDownMenus();
+				end
+			end
+		});
+	end
+
+	UIDropDownMenu_SetWidth(150, RAB_Menu);
 end
 
 function RABui_MoveBar(barid, direction)
@@ -1157,7 +1236,7 @@ function RAB_Settings_BL_Update()
 	if (RAB_BL_Buffs == nil) then
 		RAB_Settings_BL_Init();
 	end
-	FauxScrollFrame_Update(RAB_Settings_BuffListScrollBar, table.getn(RAB_BL_Buffs), RAB_BL_Count, 16);
+	FauxScrollFrame_Update(RAB_Settings_BuffListScrollBar, table.getn(RAB_BL_Buffs), RAB_BL_Count, 14);
 	local offset, i = FauxScrollFrame_GetOffset(RAB_Settings_BuffListScrollBar), 0;
 
 	for i = offset + 1, offset + RAB_BL_Count do
@@ -1355,7 +1434,7 @@ function RABui_Settings_Layout_SetBar(ui, id)
 end
 
 function RABui_Settings_Layout_SyncList()
-	FauxScrollFrame_Update(RAB_Settings_LayoutScrollBar, table.getn(RABui_Bars) + 1, RAB_BarList_Count, 16);
+	FauxScrollFrame_Update(RAB_Settings_LayoutScrollBar, table.getn(RABui_Bars) + 1, RAB_BarList_Count, 14);
 	local offset, i = FauxScrollFrame_GetOffset(RAB_Settings_LayoutScrollBar), 0;
 
 	for i = offset + 1, offset + RAB_BarList_Count do
@@ -1383,6 +1462,20 @@ function RABui_BarDetail_RemoveBar()
 	tremove(RABui_Bars, RABui_MenuBar);
 	RABui_SyncBars();
 	RAB_BarDetailFrame:Hide();
+end
+
+function RABui_Settings_Layout_ClearAllBars()
+	local currentProfile = RABui_Settings.currentProfile or "Default";
+	StaticPopup_Show("RAB_CLEAR_ALL_BARS_CONFIRM", currentProfile);
+end
+
+function RABui_Settings_Layout_ClearAllBars_Confirmed()
+	RABui_Bars = {};
+	RABui_SyncBars();
+	RABui_Settings_Layout_SyncList();
+	if (RAB_BarDetailFrame:IsVisible()) then
+		RAB_BarDetailFrame:Hide();
+	end
 end
 
 function RABui_Settings_localizationSelector_OnLoad()
@@ -1442,6 +1535,11 @@ function RABui_Settings_localizationSelector_UpdateText()
 			RAB_Settings_localizationSelector);
 end
 
+function RABui_UpdateTitle()
+	local currentProfile = RABui_Settings.currentProfile or "Default";
+	RAB_Title:SetText(sRAB_Settings_UIHeader .. ": " .. currentProfile .. "");
+end
+
 function RABui_Localize()
 	RAB_Settings_BuffList0Name:SetText(sRAB_Settings_BuffList_Name);
 	RAB_Settings_BuffList0Query:SetText(sRAB_Settings_BuffList_Query);
@@ -1462,6 +1560,7 @@ function RABui_Localize()
 	RAB_Settings_TabFrame3Header:SetText(sRAB_Settings_Layout_Header);
 	RAB_Settings_TabFrame3Description:SetText(sRAB_Settings_Layout_Description);
 	RAB_Settings_BarLine20:SetText(sRAB_Settings_Layout_AddNewBar);
+	RAB_Settings_ClearAllBars:SetText(sRAB_Settings_Layout_ClearAllBars);
 	RAB_Settings_TabFrame4Header:SetText(sRAB_Settings_Settings_Header);
 	RAB_Settings_TabFrame4Description:SetText(sRAB_Settings_Settings_Description);
 	RAB_Settings_Buffing:SetText(sRAB_Settings_Settings_Buffing);
@@ -1478,7 +1577,7 @@ function RABui_Localize()
 	RAB_BarDetail_UseOnClickLabel:SetText(sRAB_Settings_BarDetail_UseOnClickLabel);
 	RAB_BarDetail_SelfLimitLabel:SetText(sRAB_Settings_BarDetail_SelfLimitLabel);
 
-	RAB_Title:SetText(sRAB_Settings_UIHeader);
+	RABui_UpdateTitle();
 	StaticPopupDialogs["RAB_BARDETAIL_OUT_WHISPERTARGET"].text = sRAB_Settings_BarDetail_WhisperPrompt;
 
 	PanelTemplates_UpdateTabs(RAB_Settings_TabFrame1);
