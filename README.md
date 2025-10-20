@@ -23,6 +23,8 @@ You can click on the panel to buff up, which saves space from your action bars.
 
 A lot of the functionality is also available in macros via the /rab and /rabq commands.
 
+There is also an addon based on Rabuffs that can log buffs to a file for tracking https://github.com/Loogosh/Rabuffs_Logger.
+
 ## Slash Commands
 
 ### Basic Commands (`/rab` or `/rabuffs`)
