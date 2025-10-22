@@ -2,7 +2,7 @@
 --  Non-code storage for various code/title strings. Do not localize this file.
 -- Version 0.10.3
 
-sRAB_DownloadURL = "https://github.com/Pepopo/Rabuffs/";
+sRAB_DownloadURL = "https://github.com/pepopo978/Rabuffs/";
 
 sRAB_Settings_UIHeader = "RAB";
 sRAB_Settings_ReleaseNotes = "<h2 align=\"left\">Release notes</h2><p>- Aug 12th 2025 - Added profile system.</p><br/><br/>";

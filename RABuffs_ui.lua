@@ -169,23 +169,8 @@ function RAB_Loaded()
 
     local cltemp = sRAB_Localization_UI .. " / " .. sRAB_Localization_Output .. " / " .. sRAB_Localization_SpellLayer;
 
-    if (RABui_Settings.newestVersion ~= nil and RABui_Settings.newestVersion > RABuffs_DeciVersion) then
-        RAB_Print(
-            string.format(sRAB_OutOfDate, RABui_Settings.newestVersionTitle, RABui_Settings.newestVersionPlayer,
-                RABui_Settings.newestVersionRealm), "warn");
-        RAB_Print(sRAB_DownloadLink, "warn");
-        StaticPopupDialogs["RAB_MSG"].text = string.format(sRAB_OutOfDate_Box, RABui_Settings.newestVersionTitle);
-        RAB_LoadShow = "versionwarn";
-        sRAB_Settings_Version = string.format(sRAB_Settings_Version,
-            RED_FONT_COLOR_CODE ..
-            RABuffs_Version ..
-            "|r" ..
-            string.format(sRAB_Settings_VersionOutdated, RABui_Settings.newestVersionTitle,
-                RABui_Settings.newestVersionPlayer, RABui_Settings.newestVersionRealm), cltemp, GetLocale());
-    else
-        sRAB_Settings_Version = string.format(sRAB_Settings_Version,
-            GREEN_FONT_COLOR_CODE .. RABuffs_Version .. "|r" .. sRAB_Settings_VersionNewest, cltemp, GetLocale());
-    end
+    sRAB_Settings_Version = string.format(sRAB_Settings_Version,
+        GREEN_FONT_COLOR_CODE .. RABuffs_Version .. "|r" .. sRAB_Settings_VersionNewest, cltemp, GetLocale());
 end
 
 SLASH_RABUFFSQ1 = "/rq";

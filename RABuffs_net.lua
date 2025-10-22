@@ -57,7 +57,7 @@ function RAB_gSync_Init()
     return "remove";
 end
 
-RAB_Core_Register("PLAYER_ENTERING_WORLD", "gSyncInit", RAB_gSync_Init);
+--RAB_Core_Register("PLAYER_ENTERING_WORLD", "gSyncInit", RAB_gSync_Init);
 
 --RAB_Core_Register("CHAT_MSG_ADDON","samtest", function () DEFAULT_CHAT_FRAME:AddMessage(string.format("[SAM-%s] [%s]: <%s> %s", arg3, arg4, arg1, arg2), 0.1,0.45,0.9); end);
 
@@ -91,9 +91,9 @@ function RAB_Chat_SendVersion()
     end
 end
 
-RAB_Core_Register("CHAT_MSG_ADDON", "nativeTimers", RAB_Chat_BuffData);
-RAB_Core_Register("CHAT_MSG_ADDON", "readvc", RAB_Chat_VersionEvent);
-RAB_Core_Register("RAB_GROUPSTATUS", "sendvc", RAB_Chat_SendVersion);
+--RAB_Core_Register("CHAT_MSG_ADDON", "nativeTimers", RAB_Chat_BuffData);
+--RAB_Core_Register("CHAT_MSG_ADDON", "readvc", RAB_Chat_VersionEvent);
+--RAB_Core_Register("RAB_GROUPSTATUS", "sendvc", RAB_Chat_SendVersion);
 
 function RAB_SendBuffData_Timer()
     if (RAB_Lock == 1) then
