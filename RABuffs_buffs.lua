@@ -170,7 +170,7 @@ RAB_Buffs = {
 	wisdom = { name = "Flask of Distilled Wisdom", identifiers = { { tooltip = "Distilled Wisdom", texture = "INV_Potion_97", spellId = 17627 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 13511 },
 	chromaticres = { name = "Flask of Chromatic Resistance", identifiers = { { tooltip = "Chromatic Resistance", texture = "INV_Potion_48", spellId = 17629 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 13513 },
 	giftarthas = { name = "Gift of Arthas", identifiers = { { tooltip = "Gift of Arthas", texture = "Spell_Shadow_FingerOfDeath", spellId = 11371 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 9088 },
-	selfdemonslaying = { name = "Elixir of Demonslaying", textures = {"SPELL_HOLY_RETRIBUTIONAURA"}, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 9224 },
+	selfdemonslaying = { name = "Elixir of Demonslaying", identifiers = { { tooltip = "Elixir of Demonslaying", texture = "SPELL_HOLY_RETRIBUTIONAURA", spellId = 11406 } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 9224 },
 	frozenrune = { name = "Frozen Rune", identifiers = { { tooltip = "Fire Protection", texture = "Spell_Fire_MasterOfElements", spellId = 29432 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 22682 },
 	magicresistancepotion = { name = "Magic Resistance Potion", identifiers = { { tooltip = "Resistance", texture = "INV_Potion_08", spellId = 11364 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 9036 },
 	restorativepotion = { name = "Restorative Potion", identifiers = { { tooltip = "Restoration", texture = "Spell_Holy_DispelMagic", spellId = 11359 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 9030 },
@@ -196,7 +196,6 @@ RAB_Buffs = {
 	greaternaturepower = { name = "Elixir of Greater Nature Power", identifiers = { { tooltip = "Greater Nature Power", texture = "Spell_Nature_SpiritArmor", spellId = 45988 } }, buffFunc = RAB_UseItem, itemId = 50237, grouping = "Spell" },
 	shadowpower = { name = "Elixir of Shadow Power", identifiers = { { tooltip = "Shadow Power", texture = "INV_Potion_46", spellId = 11474 } }, buffFunc = RAB_UseItem, itemId = 9264, grouping = "Spell" },
 	frostpower = { name = "Elixir of Frost Power", identifiers = { { tooltip = "Frost Power", texture = "INV_Potion_03", spellId = 21920 } }, buffFunc = RAB_UseItem, itemId = 17708, grouping = "Spell" },
-	demonslaying = { name = "Elixir of Demonslaying", textures = {"SPELL_HOLY_RETRIBUTIONAURA"}, castClass = "Item", type = "self" },
 	arcaneelixir = { name = "Arcane Elixir", identifiers = { { tooltip = "Arcane Elixir", texture = "INV_Potion_30", spellId = 11390 } }, buffFunc = RAB_UseItem, itemId = 9155, grouping = "Spell" },
 	firepowerelixir = { name = "Elixir of Firepower", identifiers = { { tooltip = "Fire Power", texture = "INV_Potion_60", spellId = 7844 } }, buffFunc = RAB_UseItem, itemId = 6373, grouping = "Spell" },
 	dreamshard = { name = "Dreamshard Elixir", identifiers = { { tooltip = "Dreamshard Elixir", texture = "INV_Potion_25", spellId = 45427 } }, buffFunc = RAB_UseItem, itemId = 61224, grouping = "Spell" },
@@ -207,6 +206,7 @@ RAB_Buffs = {
 
 	-- Melee Consumes --
 	giants = { name = "Elixir of Giants", identifiers = { { tooltip = "Elixir of the Giants", texture = "INV_Potion_61", spellId = 11405 } }, grouping = "Melee", buffFunc = RAB_UseItem, itemId = 9206 },
+	demonslaying = { name = "Elixir of Demonslaying", identifiers = { { tooltip = "Elixir of Demonslaying", texture = "SPELL_HOLY_RETRIBUTIONAURA", spellId = 11406 } }, grouping = "Melee", buffFunc = RAB_UseItem, itemId = 9224 },
 	mongoose = { name = "Elixir of the Mongoose", identifiers = { { tooltip = "Elixir of the Mongoose", texture = "INV_Potion_32", spellId = 17538 } }, grouping = "Melee", buffFunc = RAB_UseItem, itemId = 13452 },
 	agilityelixir = { name = "Elixir of Agility", identifiers = { { tooltip = "Agility", texture = "INV_Potion_93", spellId = 11328 } }, grouping = "Melee", buffFunc = RAB_UseItem, itemId = 8949 },
 	greateragilityelixir = { name = "Elixir of Greater Agility", identifiers = { { tooltip = "Greater Agility", texture = "INV_Potion_93", spellId = 11334 } }, grouping = "Melee", buffFunc = RAB_UseItem, itemId = 9187 },
@@ -288,9 +288,14 @@ RAB_Buffs = {
 	corrosivepoison = {grouping = "Poisons", name = "Corrosive Poison", identifiers = {}, type = "wepbuffonly", buffFunc = RAB_UseItem, itemId = 47409, useOn = 'weapon' },
 	corrosivepoisonoh = {grouping = "Poisons", name = "Corrosive Poison (offhand)", identifiers = {}, type = "wepbuffonly", buffFunc = RAB_UseItem, itemId = 47409, useOn = 'weaponOH' },
 
+	--Dissolvent Poison II 54010
+	dissolventpoison = {grouping = "Poisons", name = "Dissolvent Poison", identifiers = {}, type = "wepbuffonly", buffFunc = RAB_UseItem, itemId = 54010, useOn = 'weapon' },
+	dissolventpoisonoh = {grouping = "Poisons", name = "Dissolvent Poison (offhand)", identifiers = {}, type = "wepbuffonly", buffFunc = RAB_UseItem, itemId = 54010, useOn = 'weaponOH' },
+
+
 	-- Food/drink
 	blessedsunfruit = { name = "Blessed Sunfruit", identifiers = { { tooltip = "Blessed Sunfruit", texture = "Spell_Misc_Food", spellId = 18125 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 13810 },
-	selfsourmountainberry = { name = "Sour Mountain Berry", tooltipname = "Well Fed", textures = {"Spell_Misc_Food"}, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 51711 },
+	selfsourmountainberry = { name = "Sour Mountain Berry", identifiers = { { tooltip = "Increased Agility", texture = "INV_Gauntlets_19", spellId = 18192 } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 51711 },
 	blessedsunfruitjuice = { name = "Blessed Sunfruit Juice", identifiers = { { tooltip = "Blessed Sunfruit Juice", texture = "Spell_Holy_LayOnHands", spellId = 18141 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 13813 },
 	nightfinsoup = { name = "Nightfin Soup", identifiers = { { tooltip = "Mana Regeneration", texture = "Spell_Nature_ManaRegenTotem", spellId = 18194 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 13931 },
 	herbalsalad = { name = "Herbal Salad", identifiers = { { tooltip = "Increased Healing Bonus", texture = "Spell_Nature_HealingWay", spellId = 49553 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 83309 },
@@ -309,7 +314,7 @@ RAB_Buffs = {
 	tuber = { name = "Runn Tum Tuber Surprise", identifiers = { { tooltip = "Increased Intellect", texture = "INV_Misc_Organ_03", spellId = 22730 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 18254 },
 	juicystripedmelonint = { name = "Sweet Watermelon", identifiers = { { tooltip = "Increased Intellect", texture = "INV_Misc_Organ_03", spellId = 22730 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 51718 },
 	squid = { name = "Grilled Squid", identifiers = { { tooltip = "Increased Agility", texture = "INV_Gauntlets_19", spellId = 18192 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 13928 },
-	sourmountainberry = { name = "Sour Mountain Berry", textures = {"INV_Gauntlets_19"}, castClass = "Item", type = "self" },
+	sourmountainberry = { name = "Sour Mountain Berry", identifiers = { { tooltip = "Increased Agility", texture = "INV_Gauntlets_19", spellId = 18192 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 51711 },
 	dragonbreathchili = { name = "Dragonbreath Chili", identifiers = { { tooltip = "Dragonbreath Chili", texture = "Spell_Fire_Incinerate", spellId = 15852 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 12217 },
 	merlotblue = { name = "Medivh's Merlot Blue", identifiers = {
 		{ tooltip = "Increased Intellect", texture = "INV_Drink_04", spellId = 57107 },
