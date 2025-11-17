@@ -170,7 +170,6 @@ RAB_Buffs = {
 	wisdom = { name = "Flask of Distilled Wisdom", identifiers = { { tooltip = "Distilled Wisdom", texture = "INV_Potion_97", spellId = 17627 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 13511 },
 	chromaticres = { name = "Flask of Chromatic Resistance", identifiers = { { tooltip = "Chromatic Resistance", texture = "INV_Potion_48", spellId = 17629 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 13513 },
 	giftarthas = { name = "Gift of Arthas", identifiers = { { tooltip = "Gift of Arthas", texture = "Spell_Shadow_FingerOfDeath", spellId = 11371 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 9088 },
-	selfdemonslaying = { name = "Elixir of Demonslaying", identifiers = { { tooltip = "Elixir of Demonslaying", texture = "SPELL_HOLY_RETRIBUTIONAURA", spellId = 11406 } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 9224 },
 	frozenrune = { name = "Frozen Rune", identifiers = { { tooltip = "Fire Protection", texture = "Spell_Fire_MasterOfElements", spellId = 29432 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 22682 },
 	magicresistancepotion = { name = "Magic Resistance Potion", identifiers = { { tooltip = "Resistance", texture = "INV_Potion_08", spellId = 11364 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 9036 },
 	restorativepotion = { name = "Restorative Potion", identifiers = { { tooltip = "Restoration", texture = "Spell_Holy_DispelMagic", spellId = 11359 } }, grouping = "HP/Mana/Utility", buffFunc = RAB_UseItem, itemId = 9030 },
@@ -295,7 +294,6 @@ RAB_Buffs = {
 
 	-- Food/drink
 	blessedsunfruit = { name = "Blessed Sunfruit", identifiers = { { tooltip = "Blessed Sunfruit", texture = "Spell_Misc_Food", spellId = 18125 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 13810 },
-	selfsourmountainberry = { name = "Sour Mountain Berry", identifiers = { { tooltip = "Increased Agility", texture = "INV_Gauntlets_19", spellId = 18192 } }, type = "selfbuffonly", queryFunc = RAB_ConsumeQueryHandler, buffFunc = RAB_UseItem, itemId = 51711 },
 	blessedsunfruitjuice = { name = "Blessed Sunfruit Juice", identifiers = { { tooltip = "Blessed Sunfruit Juice", texture = "Spell_Holy_LayOnHands", spellId = 18141 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 13813 },
 	nightfinsoup = { name = "Nightfin Soup", identifiers = { { tooltip = "Mana Regeneration", texture = "Spell_Nature_ManaRegenTotem", spellId = 18194 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 13931 },
 	herbalsalad = { name = "Herbal Salad", identifiers = { { tooltip = "Increased Healing Bonus", texture = "Spell_Nature_HealingWay", spellId = 49553 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 83309 },
