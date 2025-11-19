@@ -315,6 +315,23 @@ function RABui_Menu_Initialize()
 			StaticPopup_Show("RAB_PROFILE_SAVE_PROMPT");
 		end
 	});
+	UIDropDownMenu_AddButton({
+		text = "Export Profile...",
+		notCheckable = 1,
+		func = function()
+			RAB_ExportedProfileData = RAB_ExportProfile();
+			if RAB_ExportedProfileData then
+				StaticPopup_Show("RAB_PROFILE_EXPORT");
+			end
+		end
+	});
+	UIDropDownMenu_AddButton({
+		text = "Import Profile...",
+		notCheckable = 1,
+		func = function()
+			StaticPopup_Show("RAB_PROFILE_IMPORT_DATA");
+		end
+	});
 
 	-- Add delete current profile option
 	local profiles = RAB_GetAllProfiles();
