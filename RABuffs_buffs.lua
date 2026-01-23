@@ -20,7 +20,7 @@ RAB_Buffs = {
 	pvp = { name = "PvP Enabled", sfunc = UnitIsPVP, havebuff = "PvP Enabled", missbuff = "Not PvP Enabled", invert = true, grouping = "Special" },
 
 	-- Buffs
-	ai = { name = "Arcane Intellect", identifiers = { { tooltip = "Arcane Intellect", texture = "Spell_Holy_MagicalSentry" }, { tooltip = "Arcane Brilliance", texture = "Spell_Holy_ArcaneIntellect", bigcast = "ab" } }, bigcast = "ab", bigsort = "group", bigthreshold = 3, ignoreClass = "wr", grouping = "Mage", priority = { priest = 0.5, druid = 0.5, paladin = 0.4, shaman = 0.4, warlock = 0.3 }, ctraid = 3, recast = 5 },
+	ai = { name = "Arcane Intellect", identifiers = { { tooltip = "Arcane Intellect", texture = "Spell_Holy_MagicalSentry" }, { tooltip = "Arcane Brilliance", texture = "Spell_Holy_ArcaneIntellect", bigcast = "ab" } }, bigcast = "ab", bigsort = "group", bigthreshold = 2, ignoreClass = "wr", grouping = "Mage", priority = { priest = 0.5, druid = 0.5, paladin = 0.4, shaman = 0.4, warlock = 0.3 }, ctraid = 3, recast = 5 },
 
 	dampen = { name = "Dampen Magic", identifiers = { { tooltip = "Dampen Magic", texture = "Spell_Nature_AbolishMagic" } }, grouping = "Mage", ctraid = 21, recast = 3 },
 	amplify = { name = "Amplify Magic", identifiers = { { tooltip = "Amplify Magic", texture = "Spell_Holy_FlashHeal" } }, grouping = "Mage", ctraid = 20, recast = 3 },
@@ -39,7 +39,7 @@ RAB_Buffs = {
 	pi = { name = "Power Infusion", identifiers = { { tooltip = "Power Infusion", texture = "Spell_Holy_PowerInfusion" } }, grouping = "Priest", ignoreClass = "wrh", priority = { priest = 0.2, druid = 0.2, mage = 0.5, warlock = 0.5 }, selfPriority = 0 },
 	priestres = { name = "Resurrection", identifiers = { { tooltip = "Resurrection", texture = "Spell_Holy_Resurrection" } }, grouping = "Priest", ctraid = 22, recast = 3 },
 
-	motw = { name = "Mark of the Wild", identifiers = { { tooltip = "Mark of the Wild", texture = "Spell_Nature_Regeneration" }, { tooltip = "Gift of the Wild", texture = "Spell_Nature_Regeneration", bigcast = "gotw" } }, bigcast = "gotw", bigsort = "group", bigthreshold = 3, grouping = "Druid", ctraid = 2, recast = 5 },
+	motw = { name = "Mark of the Wild", identifiers = { { tooltip = "Mark of the Wild", texture = "Spell_Nature_Regeneration" }, { tooltip = "Gift of the Wild", texture = "Spell_Nature_Regeneration", bigcast = "gotw" } }, bigcast = "gotw", bigsort = "group", bigthreshold = 2, grouping = "Druid", ctraid = 2, recast = 5 },
 	emeraldblessing = { name = "Emerald Blessing", identifiers = { { tooltip = "Emerald Blessing", texture = "Spell_Nature_ProtectionformNature", spellId = 57108 } }, grouping = "Druid", recast = 3 },
 	thorns = { name = "Thorns", identifiers = { { tooltip = "Thorns", texture = "Spell_Nature_Thorns" } }, grouping = "Druid", ctraid = 9, recast = 3 },
 	clarity = { name = "Omen of Clarity", identifiers = { { tooltip = "Omen of Clarity", texture = "Spell_Nature_CrystalBall" } }, type = "self", grouping = "Druid", class = "Druid", recast = 2 },
@@ -55,12 +55,12 @@ RAB_Buffs = {
 		type = "dummy"
 	},
 
-	bos = { name = "Blessing of Salvation", identifiers = { { tooltip = "Blessing of Salvation", texture = "Spell_Holy_SealOfSalvation" }, { tooltip = "Greater Blessing of Salvation", texture = "Spell_Holy_GreaterBlessingofSalvation", bigcast = "gbos" } }, bigcast = "gbos", bigsort = "class", bigthreshold = 3, grouping = "Paladin", ignoreMTs = true, priority = { priest = 0.5, druid = 0.5, mage = 0.4, warlock = 0.4, paladin = 0.4 }, sort = "class", ctraid = 14, recast = 3 },
-	bow = { name = "Blessing of Wisdom", identifiers = { { tooltip = "Blessing of Wisdom", texture = "Spell_Holy_SealOfWisdom" }, { tooltip = "Greater Blessing of Wisdom", texture = "Spell_Holy_GreaterBlessingofWisdom", bigcast = "gbow" } }, bigcast = "gbow", bigsort = "class", bigthreshold = 3, grouping = "Paladin", ignoreClass = "wr", priority = { priest = 0.5, druid = 0.5, mage = 0.4, warlock = 0.4, paladin = 0.4 }, sort = "class", ctraid = 12, recast = 3 },
-	bok = { name = "Blessing of Kings", identifiers = { { tooltip = "Blessing of Kings", texture = "Spell_Magic_MageArmor" }, { tooltip = "Greater Blessing of Kings", texture = "Spell_Magic_GreaterBlessingofKings" } }, bigcast = "gbok", bigsort = "class", bigthreshold = 3, grouping = "Paladin", sort = "class", ctraid = 13, recast = 3 },
-	bol = { name = "Blessing of Light", identifiers = { { tooltip = "Blessing of Light", texture = "Spell_Holy_PrayerOfHealing02" }, { tooltip = "Greater Blessing of Light", texture = "Spell_Holy_GreaterBlessingofLight" } }, bigcast = "gbol", bigsort = "class", bigthreshold = 3, grouping = "Paladin", sort = "class", ctraid = 15, recast = 3 },
-	bom = { name = "Blessing of Might", identifiers = { { tooltip = "Blessing of Might", texture = "Spell_Holy_FistOfJustice" }, { tooltip = "Greater Blessing of Might", texture = "Spell_Holy_GreaterBlessingofKings" } }, bigcast = "gbom", bigsort = "class", bigthreshold = 3, grouping = "Paladin", ignoreClass = "mplh", sort = "class", ctraid = 11, recast = 3 },
-	bosanc = { name = "Blessing of Sanctuary", identifiers = { { tooltip = "Blessing of Sanctuary", texture = "Spell_Nature_LightningShield" }, { tooltip = "Greater Blessing of Sanctuary", texture = "Spell_Holy_GreaterBlessingofSanctuary" } }, bigcast = "gbosanc", bigsort = "class", bigthreshold = 3, grouping = "Paladin", sort = "class", ctraid = 16, recast = 3 },
+	bos = { name = "Blessing of Salvation", identifiers = { { tooltip = "Blessing of Salvation", texture = "Spell_Holy_SealOfSalvation" }, { tooltip = "Greater Blessing of Salvation", texture = "Spell_Holy_GreaterBlessingofSalvation", bigcast = "gbos" } }, bigcast = "gbos", bigsort = "class", bigthreshold = 2, grouping = "Paladin", ignoreMTs = true, priority = { priest = 0.5, druid = 0.5, mage = 0.4, warlock = 0.4, paladin = 0.4 }, sort = "class", ctraid = 14, recast = 3 },
+	bow = { name = "Blessing of Wisdom", identifiers = { { tooltip = "Blessing of Wisdom", texture = "Spell_Holy_SealOfWisdom" }, { tooltip = "Greater Blessing of Wisdom", texture = "Spell_Holy_GreaterBlessingofWisdom", bigcast = "gbow" } }, bigcast = "gbow", bigsort = "class", bigthreshold = 2, grouping = "Paladin", ignoreClass = "wr", priority = { priest = 0.5, druid = 0.5, mage = 0.4, warlock = 0.4, paladin = 0.4 }, sort = "class", ctraid = 12, recast = 3 },
+	bok = { name = "Blessing of Kings", identifiers = { { tooltip = "Blessing of Kings", texture = "Spell_Magic_MageArmor" }, { tooltip = "Greater Blessing of Kings", texture = "Spell_Magic_GreaterBlessingofKings" } }, bigcast = "gbok", bigsort = "class", bigthreshold = 2, grouping = "Paladin", sort = "class", ctraid = 13, recast = 3 },
+	bol = { name = "Blessing of Light", identifiers = { { tooltip = "Blessing of Light", texture = "Spell_Holy_PrayerOfHealing02" }, { tooltip = "Greater Blessing of Light", texture = "Spell_Holy_GreaterBlessingofLight" } }, bigcast = "gbol", bigsort = "class", bigthreshold = 2, grouping = "Paladin", sort = "class", ctraid = 15, recast = 3 },
+	bom = { name = "Blessing of Might", identifiers = { { tooltip = "Blessing of Might", texture = "Spell_Holy_FistOfJustice" }, { tooltip = "Greater Blessing of Might", texture = "Spell_Holy_GreaterBlessingofKings" } }, bigcast = "gbom", bigsort = "class", bigthreshold = 2, grouping = "Paladin", ignoreClass = "mplh", sort = "class", ctraid = 11, recast = 3 },
+	bosanc = { name = "Blessing of Sanctuary", identifiers = { { tooltip = "Blessing of Sanctuary", texture = "Spell_Nature_LightningShield" }, { tooltip = "Greater Blessing of Sanctuary", texture = "Spell_Holy_GreaterBlessingofSanctuary" } }, bigcast = "gbosanc", bigsort = "class", bigthreshold = 2, grouping = "Paladin", sort = "class", ctraid = 16, recast = 3 },
 	bop = { name = "Blessing of Protection", identifiers = { { tooltip = "Blessing of Protection", texture = "Spell_Holy_SealOfProtection" } }, grouping = "Paladin", unique = true },
 	command = { name = "Seal of Command", identifiers = { { tooltip = "Seal of Command", texture = "Ability_Warrior_InnerRage" } }, type = "self", grouping = "Paladin", class = "Paladin" },
 	devotion = { name = "Devotion Aura", identifiers = { { tooltip = "Devotion Aura", texture = "Spell_Holy_DevotionAura" } }, grouping = "Paladin", type = "aura" },
@@ -205,6 +205,7 @@ RAB_Buffs = {
 
 	-- Melee Consumes --
 	giants = { name = "Elixir of Giants", identifiers = { { tooltip = "Elixir of the Giants", texture = "INV_Potion_61", spellId = 11405 } }, grouping = "Melee", buffFunc = RAB_UseItem, itemId = 9206 },
+	demonslaying = { name = "Elixir of Demonslaying", identifiers = { { tooltip = "Elixir of Demonslaying", texture = "SPELL_HOLY_RETRIBUTIONAURA", spellId = 11406 } }, grouping = "Melee", buffFunc = RAB_UseItem, itemId = 9224 },
 	mongoose = { name = "Elixir of the Mongoose", identifiers = { { tooltip = "Elixir of the Mongoose", texture = "INV_Potion_32", spellId = 17538 } }, grouping = "Melee", buffFunc = RAB_UseItem, itemId = 13452 },
 	agilityelixir = { name = "Elixir of Agility", identifiers = { { tooltip = "Agility", texture = "INV_Potion_93", spellId = 11328 } }, grouping = "Melee", buffFunc = RAB_UseItem, itemId = 8949 },
 	greateragilityelixir = { name = "Elixir of Greater Agility", identifiers = { { tooltip = "Greater Agility", texture = "INV_Potion_93", spellId = 11334 } }, grouping = "Melee", buffFunc = RAB_UseItem, itemId = 9187 },
@@ -286,6 +287,11 @@ RAB_Buffs = {
 	corrosivepoison = {grouping = "Poisons", name = "Corrosive Poison", identifiers = {}, type = "wepbuffonly", buffFunc = RAB_UseItem, itemId = 47409, useOn = 'weapon' },
 	corrosivepoisonoh = {grouping = "Poisons", name = "Corrosive Poison (offhand)", identifiers = {}, type = "wepbuffonly", buffFunc = RAB_UseItem, itemId = 47409, useOn = 'weaponOH' },
 
+	--Dissolvent Poison II 54010
+	dissolventpoison = {grouping = "Poisons", name = "Dissolvent Poison", identifiers = {}, type = "wepbuffonly", buffFunc = RAB_UseItem, itemId = 54010, useOn = 'weapon' },
+	dissolventpoisonoh = {grouping = "Poisons", name = "Dissolvent Poison (offhand)", identifiers = {}, type = "wepbuffonly", buffFunc = RAB_UseItem, itemId = 54010, useOn = 'weaponOH' },
+
+
 	-- Food/drink
 	blessedsunfruit = { name = "Blessed Sunfruit", identifiers = { { tooltip = "Blessed Sunfruit", texture = "Spell_Misc_Food", spellId = 18125 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 13810 },
 	blessedsunfruitjuice = { name = "Blessed Sunfruit Juice", identifiers = { { tooltip = "Blessed Sunfruit Juice", texture = "Spell_Holy_LayOnHands", spellId = 18141 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 13813 },
@@ -306,6 +312,7 @@ RAB_Buffs = {
 	tuber = { name = "Runn Tum Tuber Surprise", identifiers = { { tooltip = "Increased Intellect", texture = "INV_Misc_Organ_03", spellId = 22730 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 18254 },
 	juicystripedmelonint = { name = "Sweet Watermelon", identifiers = { { tooltip = "Increased Intellect", texture = "INV_Misc_Organ_03", spellId = 22730 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 51718 },
 	squid = { name = "Grilled Squid", identifiers = { { tooltip = "Increased Agility", texture = "INV_Gauntlets_19", spellId = 18192 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 13928 },
+	sourmountainberry = { name = "Sour Mountain Berry", identifiers = { { tooltip = "Increased Agility", texture = "INV_Gauntlets_19", spellId = 18192 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 51711 },
 	dragonbreathchili = { name = "Dragonbreath Chili", identifiers = { { tooltip = "Dragonbreath Chili", texture = "Spell_Fire_Incinerate", spellId = 15852 } }, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 12217 },
 	merlotblue = { name = "Medivh's Merlot Blue", identifiers = {
 		{ tooltip = "Increased Intellect", texture = "INV_Drink_04", spellId = 57107 },

@@ -493,18 +493,109 @@ function RAB_MigrateOldProfiles()
 	local playerPrefix = GetCVar("realmName") .. "." .. UnitName("player") .. ".";
 	local oldCurrentKey = playerPrefix .. "current";
 	local newDefaultKey = playerPrefix .. "Default";
-	
+
 	-- Migrate .current to Default if Default doesn't exist
 	if RABui_Settings.Layout[oldCurrentKey] and not RABui_Settings.Layout[newDefaultKey] then
 		RABui_Settings.Layout[newDefaultKey] = RABui_Settings.Layout[oldCurrentKey];
 		RABui_Settings.Layout[oldCurrentKey] = nil;
 		RAB_Print("Migrated existing profile to 'Default'");
 	end
-	
+
 	-- Set default current profile if not set
 	if not RABui_Settings.currentProfile then
 		RABui_Settings.currentProfile = "Default";
 	end
+end
+
+-- Helper function to serialize a value
+function RAB_SerializeValue(val)
+	local valType = type(val);
+	if valType == "string" then
+		return "\"" .. string.gsub(val, "([\"\\])", "\\%1") .. "\"";
+	elseif valType == "number" then
+		return tostring(val);
+	elseif valType == "boolean" then
+		return val and "true" or "false";
+	elseif valType == "table" then
+		local result = "{";
+		local first = true;
+		for k, v in pairs(val) do
+			if not first then
+				result = result .. ",";
+			end
+			first = false;
+			if type(k) == "number" then
+				result = result .. "[" .. k .. "]=" .. RAB_SerializeValue(v);
+			else
+				result = result .. "[" .. RAB_SerializeValue(k) .. "]=" .. RAB_SerializeValue(v);
+			end
+		end
+		return result .. "}";
+	else
+		return "nil";
+	end
+end
+
+-- Export current profile to a string
+function RAB_ExportProfile()
+	if not RABui_Bars or table.getn(RABui_Bars) == 0 then
+		RAB_Print("Error: No bars to export");
+		return nil;
+	end
+
+	local serialized = RAB_SerializeValue(RABui_Bars);
+	RAB_Print("Profile exported successfully", "ok");
+	return serialized;
+end
+
+-- Import profile from a string
+function RAB_ImportProfile(profileName, profileData)
+	if not profileName or profileName == "" then
+		RAB_Print("Error: Profile name cannot be empty");
+		return false;
+	end
+
+	if not profileData or profileData == "" then
+		RAB_Print("Error: Profile data cannot be empty");
+		return false;
+	end
+
+	-- Safety check: ensure Layout table exists
+	if not RABui_Settings then
+		RABui_Settings = {};
+	end
+	if not RABui_Settings.Layout then
+		RABui_Settings.Layout = {};
+	end
+
+	local profileKey = RAB_GetProfileKey(profileName);
+
+	-- Try to deserialize the profile data
+	local loadFunc, err = loadstring("return " .. profileData);
+	if not loadFunc then
+		RAB_Print("Error: Invalid profile data - " .. tostring(err));
+		return false;
+	end
+
+	local success, bars = pcall(loadFunc);
+	if not success or type(bars) ~= "table" then
+		RAB_Print("Error: Could not parse profile data");
+		return false;
+	end
+
+	-- Validate the bars
+	for i, bar in ipairs(bars) do
+		if not bar.buffKey or not RAB_Buffs[bar.buffKey] then
+			RAB_Print("Error: Bar " .. i .. " has invalid buff key: " .. tostring(bar.buffKey));
+			return false;
+		end
+	end
+
+	-- Save the imported profile
+	RABui_Settings.Layout[profileKey] = bars;
+
+	RAB_Print("Profile '" .. profileName .. "' imported successfully");
+	return true;
 end
 
 function RAB_SendMessage(st, target, prefix)

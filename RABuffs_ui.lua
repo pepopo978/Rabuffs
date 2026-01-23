@@ -143,6 +143,150 @@ StaticPopupDialogs["RAB_CLEAR_ALL_BARS_CONFIRM"] = {
     hideOnEscape = 1
 };
 
+RAB_ExportedProfileData = nil; -- Global to store exported profile data
+
+StaticPopupDialogs["RAB_PROFILE_EXPORT"] = {
+    text = "Profile exported! Copy the text below:",
+    button1 = TEXT(OKAY),
+    hasEditBox = 1,
+    maxLetters = 0,
+    OnShow = function()
+        local editBox = getglobal(this:GetName().."EditBox");
+        if editBox and RAB_ExportedProfileData then
+            editBox:SetText(RAB_ExportedProfileData);
+            editBox:HighlightText();
+            editBox:SetFocus();
+            -- Make edit box much wider
+            editBox:SetWidth(450);
+        end
+        -- Move button1 down
+        local button1 = getglobal(this:GetName().."Button1");
+        if button1 then
+            button1:ClearAllPoints();
+            button1:SetPoint("BOTTOM", this, "BOTTOM", 0, 16);
+        end
+        -- Adjust dialog dimensions
+        this:SetHeight(200);
+        this:SetWidth(500);
+    end,
+    EditBoxOnEscapePressed = function()
+        this:GetParent():Hide();
+    end,
+    whileDead = 1,
+    timeout = 0,
+    hideOnEscape = 1
+};
+
+RAB_ImportProfileData = nil; -- Global to store profile data for import
+
+StaticPopupDialogs["RAB_PROFILE_IMPORT_DATA"] = {
+    text = "Paste exported profile data below:",
+    button1 = TEXT(OKAY),
+    button2 = TEXT(CANCEL),
+    hasEditBox = 1,
+    maxLetters = 0,
+    OnAccept = function()
+        local editBox = getglobal(this:GetParent():GetName().."EditBox");
+        RAB_ImportProfileData = editBox:GetText();
+        if RAB_ImportProfileData and RAB_ImportProfileData ~= "" then
+            StaticPopup_Show("RAB_PROFILE_IMPORT_NAME");
+        else
+            RAB_Print("Error: No profile data provided");
+        end
+    end,
+    EditBoxOnEscapePressed = function()
+        this:GetParent():Hide();
+    end,
+    whileDead = 1,
+    timeout = 0,
+    hideOnEscape = 1
+};
+
+StaticPopupDialogs["RAB_PROFILE_IMPORT_NAME"] = {
+    text = "Enter a name for the imported profile:",
+    button1 = TEXT(OKAY),
+    button2 = TEXT(CANCEL),
+    hasEditBox = 1,
+    maxLetters = 20,
+    OnAccept = function()
+        local profileName = getglobal(this:GetParent():GetName().."EditBox"):GetText();
+        if profileName and profileName ~= "" and RAB_ImportProfileData then
+            -- Check if profile exists
+            local profileKey = RAB_GetProfileKey(profileName);
+            if RABui_Settings.Layout[profileKey] then
+                -- Profile exists, show warning
+                RAB_ProfileToImport = profileName;
+                StaticPopup_Show("RAB_PROFILE_IMPORT_CONFIRM", profileName);
+            else
+                -- Profile doesn't exist, import directly
+                if RAB_ImportProfile(profileName, RAB_ImportProfileData) then
+                    RABui_Settings.currentProfile = profileName;
+                    RAB_LoadProfile(profileName);
+                    if RAB_Settings_ProfileSelector_UpdateText then
+                        RAB_Settings_ProfileSelector_UpdateText();
+                    end
+                end
+                RAB_ImportProfileData = nil;
+            end
+        end
+    end,
+    EditBoxOnEnterPressed = function()
+        local profileName = this:GetText();
+        if profileName and profileName ~= "" and RAB_ImportProfileData then
+            local profileKey = RAB_GetProfileKey(profileName);
+            if RABui_Settings.Layout[profileKey] then
+                RAB_ProfileToImport = profileName;
+                StaticPopup_Show("RAB_PROFILE_IMPORT_CONFIRM", profileName);
+                this:GetParent():Hide();
+            else
+                if RAB_ImportProfile(profileName, RAB_ImportProfileData) then
+                    RABui_Settings.currentProfile = profileName;
+                    RAB_LoadProfile(profileName);
+                    if RAB_Settings_ProfileSelector_UpdateText then
+                        RAB_Settings_ProfileSelector_UpdateText();
+                    end
+                end
+                RAB_ImportProfileData = nil;
+                this:GetParent():Hide();
+            end
+        end
+    end,
+    EditBoxOnEscapePressed = function()
+        this:GetParent():Hide();
+    end,
+    whileDead = 1,
+    timeout = 0,
+    hideOnEscape = 1
+};
+
+RAB_ProfileToImport = nil; -- Global variable to store profile name for import
+
+StaticPopupDialogs["RAB_PROFILE_IMPORT_CONFIRM"] = {
+    text = "A profile named '%s' already exists. Overwrite it?",
+    button1 = TEXT(YES),
+    button2 = TEXT(NO),
+    OnAccept = function()
+        if RAB_ProfileToImport and RAB_ImportProfileData then
+            if RAB_ImportProfile(RAB_ProfileToImport, RAB_ImportProfileData) then
+                RABui_Settings.currentProfile = RAB_ProfileToImport;
+                RAB_LoadProfile(RAB_ProfileToImport);
+                if RAB_Settings_ProfileSelector_UpdateText then
+                    RAB_Settings_ProfileSelector_UpdateText();
+                end
+            end
+            RAB_ProfileToImport = nil;
+            RAB_ImportProfileData = nil;
+        end
+    end,
+    OnCancel = function()
+        -- Go back to name entry
+        StaticPopup_Show("RAB_PROFILE_IMPORT_NAME");
+    end,
+    whileDead = 1,
+    timeout = 0,
+    hideOnEscape = 1
+};
+
 function RAB_Print(text, type)
     local r, g, b = 0.3, 0.5, 1;
     if (type == "warn") then r, g, b = 1, 0.8, 0; end
