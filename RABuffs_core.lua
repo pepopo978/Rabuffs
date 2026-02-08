@@ -12,7 +12,7 @@ RABui_DefSettings = {
 	Layout = {},
 	updateInterval = 0.5,
 	firstRun = true,
-	currentProfile = "Default",
+	currentProfileByChar = {},
 	enableGreeting = true,
 	lastVersion = RABuffs_Version,
 	stoppvp = true,
@@ -315,11 +315,30 @@ RAB_Core_Register("VARIABLES_LOADED", "load", RAB_StartUp);
 RAB_Core_Register("PLAYER_LOGOUT", "unload", RAB_CleanUp);
 
 -- Profile Management Functions
+function RAB_GetCharKey()
+	return GetCVar("realmName") .. "." .. UnitName("player");
+end
+
+function RAB_GetCurrentProfile()
+	local charKey = RAB_GetCharKey();
+	if RABui_Settings.currentProfileByChar and RABui_Settings.currentProfileByChar[charKey] then
+		return RABui_Settings.currentProfileByChar[charKey];
+	end
+	return "Default";
+end
+
+function RAB_SetCurrentProfile(profileName)
+	if not RABui_Settings.currentProfileByChar then
+		RABui_Settings.currentProfileByChar = {};
+	end
+	RABui_Settings.currentProfileByChar[RAB_GetCharKey()] = profileName;
+end
+
 function RAB_GetProfileKey(profileName)
 	if not profileName then
-		profileName = RABui_Settings.currentProfile or "Default";
+		profileName = RAB_GetCurrentProfile();
 	end
-	return GetCVar("realmName") .. "." .. UnitName("player") .. "." .. profileName;
+	return RAB_GetCharKey() .. "." .. profileName;
 end
 
 function RAB_GetAllProfiles()
@@ -440,7 +459,7 @@ function RAB_LoadProfile(profileName)
 		end
 	end
 	
-	RABui_Settings.currentProfile = profileName;
+	RAB_SetCurrentProfile(profileName);
 	RAB_Print("Profile '" .. profileName .. "' loaded");
 	
 	-- Refresh UI
@@ -481,7 +500,7 @@ function RAB_DeleteProfile(profileName)
 	RABui_Settings.Layout[profileKey] = nil;
 	
 	-- If we just deleted the current profile, switch to Default
-	if RABui_Settings.currentProfile == profileName then
+	if RAB_GetCurrentProfile() == profileName then
 		RAB_LoadProfile("Default");
 	end
 	
@@ -490,7 +509,7 @@ function RAB_DeleteProfile(profileName)
 end
 
 function RAB_MigrateOldProfiles()
-	local playerPrefix = GetCVar("realmName") .. "." .. UnitName("player") .. ".";
+	local playerPrefix = RAB_GetCharKey() .. ".";
 	local oldCurrentKey = playerPrefix .. "current";
 	local newDefaultKey = playerPrefix .. "Default";
 
@@ -501,9 +520,16 @@ function RAB_MigrateOldProfiles()
 		RAB_Print("Migrated existing profile to 'Default'");
 	end
 
-	-- Set default current profile if not set
-	if not RABui_Settings.currentProfile then
-		RABui_Settings.currentProfile = "Default";
+	-- Migrate old global currentProfile to per-character
+	if RABui_Settings.currentProfile then
+		if not RABui_Settings.currentProfileByChar then
+			RABui_Settings.currentProfileByChar = {};
+		end
+		local charKey = RAB_GetCharKey();
+		if not RABui_Settings.currentProfileByChar[charKey] then
+			RABui_Settings.currentProfileByChar[charKey] = RABui_Settings.currentProfile;
+		end
+		RABui_Settings.currentProfile = nil;
 	end
 end
 

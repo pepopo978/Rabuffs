@@ -59,7 +59,7 @@ StaticPopupDialogs["RAB_PROFILE_CREATE_PROMPT"] = {
         local profileName = getglobal(this:GetParent():GetName().."EditBox"):GetText();
         if profileName and profileName ~= "" then
             if RAB_CreateNewProfile(profileName) then
-                RABui_Settings.currentProfile = profileName;
+                RAB_SetCurrentProfile(profileName);
                 if RABui_UpdateTitle then
                     RABui_UpdateTitle();
                 end
@@ -73,7 +73,7 @@ StaticPopupDialogs["RAB_PROFILE_CREATE_PROMPT"] = {
         local profileName = this:GetText();
         if profileName and profileName ~= "" then
             if RAB_CreateNewProfile(profileName) then
-                RABui_Settings.currentProfile = profileName;
+                RAB_SetCurrentProfile(profileName);
                 if RABui_UpdateTitle then
                     RABui_UpdateTitle();
                 end
@@ -102,7 +102,7 @@ StaticPopupDialogs["RAB_PROFILE_SAVE_PROMPT"] = {
         local profileName = getglobal(this:GetParent():GetName().."EditBox"):GetText();
         if profileName and profileName ~= "" then
             if RAB_SaveProfile(profileName) then
-                RABui_Settings.currentProfile = profileName;
+                RAB_SetCurrentProfile(profileName);
                 if RAB_Settings_ProfileSelector_UpdateText then
                     RAB_Settings_ProfileSelector_UpdateText();
                 end
@@ -115,7 +115,7 @@ StaticPopupDialogs["RAB_PROFILE_SAVE_PROMPT"] = {
         local profileName = this:GetText();
         if profileName and profileName ~= "" then
             if RAB_SaveProfile(profileName) then
-                RABui_Settings.currentProfile = profileName;
+                RAB_SetCurrentProfile(profileName);
                 if RAB_Settings_ProfileSelector_UpdateText then
                     RAB_Settings_ProfileSelector_UpdateText();
                 end
@@ -220,7 +220,7 @@ StaticPopupDialogs["RAB_PROFILE_IMPORT_NAME"] = {
             else
                 -- Profile doesn't exist, import directly
                 if RAB_ImportProfile(profileName, RAB_ImportProfileData) then
-                    RABui_Settings.currentProfile = profileName;
+                    RAB_SetCurrentProfile(profileName);
                     RAB_LoadProfile(profileName);
                     if RAB_Settings_ProfileSelector_UpdateText then
                         RAB_Settings_ProfileSelector_UpdateText();
@@ -240,7 +240,7 @@ StaticPopupDialogs["RAB_PROFILE_IMPORT_NAME"] = {
                 this:GetParent():Hide();
             else
                 if RAB_ImportProfile(profileName, RAB_ImportProfileData) then
-                    RABui_Settings.currentProfile = profileName;
+                    RAB_SetCurrentProfile(profileName);
                     RAB_LoadProfile(profileName);
                     if RAB_Settings_ProfileSelector_UpdateText then
                         RAB_Settings_ProfileSelector_UpdateText();
@@ -268,7 +268,7 @@ StaticPopupDialogs["RAB_PROFILE_IMPORT_CONFIRM"] = {
     OnAccept = function()
         if RAB_ProfileToImport and RAB_ImportProfileData then
             if RAB_ImportProfile(RAB_ProfileToImport, RAB_ImportProfileData) then
-                RABui_Settings.currentProfile = RAB_ProfileToImport;
+                RAB_SetCurrentProfile(RAB_ProfileToImport);
                 RAB_LoadProfile(RAB_ProfileToImport);
                 if RAB_Settings_ProfileSelector_UpdateText then
                     RAB_Settings_ProfileSelector_UpdateText();
@@ -521,7 +521,7 @@ SlashCmdList["RABUFFS"] = function(msg)
             
             if (subcmd == "list") then
                 local profiles = RAB_GetAllProfiles();
-                local current = RABui_Settings.currentProfile or "Default";
+                local current = RAB_GetCurrentProfile();
                 RAB_Print("Available profiles:");
                 for i, profile in ipairs(profiles) do
                     local marker = (profile == current) and " (current)" or "";
@@ -531,7 +531,7 @@ SlashCmdList["RABUFFS"] = function(msg)
                     RAB_Print("  Default (current)");
                 end
             elseif (subcmd == "current") then
-                local current = RABui_Settings.currentProfile or "Default";
+                local current = RAB_GetCurrentProfile();
                 RAB_Print("Current profile: " .. current);
             elseif (subcmd == "save" and profileName) then
                 RAB_SaveProfile(profileName);

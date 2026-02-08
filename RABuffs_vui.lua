@@ -298,7 +298,7 @@ function RABui_Menu_Initialize()
 	});
 	UIDropDownMenu_AddButton({ text = "", disabled = 1, notCheckable = 1 });
 	UIDropDownMenu_AddButton({
-		text = "Current Profile: " .. (RABui_Settings.currentProfile or "Default"),
+		text = "Current Profile: " .. (RAB_GetCurrentProfile()),
 		isTitle = 1
 	});
 	UIDropDownMenu_AddButton({
@@ -335,7 +335,7 @@ function RABui_Menu_Initialize()
 
 	-- Add delete current profile option
 	local profiles = RAB_GetAllProfiles();
-	local current = RABui_Settings.currentProfile or "Default";
+	local current = RAB_GetCurrentProfile();
 	local profileCount = table.getn(profiles);
 
 	-- Add default if not in list for counting
@@ -364,7 +364,7 @@ function RABui_Menu_Initialize()
 
 	-- Add profile load options directly
 	profiles = RAB_GetAllProfiles();
-	current = RABui_Settings.currentProfile or "Default";
+	current = RAB_GetCurrentProfile();
 
 	-- Always include Default
 	local hasDefault = false;
@@ -1482,7 +1482,7 @@ function RABui_BarDetail_RemoveBar()
 end
 
 function RABui_Settings_Layout_ClearAllBars()
-	local currentProfile = RABui_Settings.currentProfile or "Default";
+	local currentProfile = RAB_GetCurrentProfile();
 	StaticPopup_Show("RAB_CLEAR_ALL_BARS_CONFIRM", currentProfile);
 end
 
@@ -1553,7 +1553,7 @@ function RABui_Settings_localizationSelector_UpdateText()
 end
 
 function RABui_UpdateTitle()
-	local currentProfile = RABui_Settings.currentProfile or "Default";
+	local currentProfile = RAB_GetCurrentProfile();
 	RAB_Title:SetText(sRAB_Settings_UIHeader .. ": " .. currentProfile .. "");
 end
 
