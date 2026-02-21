@@ -74,16 +74,21 @@ RAB_Buffs = {
 
 	shamanres = { name = "Ancestral Spirit", identifiers = { { tooltip = "Ancestral Spirit", texture = "Spell_Nature_Regenerate" } }, grouping = "Shaman", ctraid = 24, recast = 3 },
 
-	ss = { name = "Soulstone", identifiers = { { tooltip = "Soulstone", texture = "Spell_Shadow_SoulGem" } }, grouping = "Warlock", buffFunc = RAB_CastSoulstone, priority = { priest = 2, paladin = 2, shaman = 2, druid = 1 }, selfPriority = 1.2, invert = true, unique = true, ctraid = 7, recast = 5 },
+	ss = { name = "Soulstone Resurrection", identifiers = { { tooltip = "Soulstone Resurrection", texture = "Spell_Shadow_SoulGem", spellId=20764 } }, grouping = "Warlock", buffFunc = RAB_CastSoulstone, priority = { priest = 2, shaman = 2, paladin = 1,  druid = 1 }, selfPriority = 0.8, invert = true, recast = 5 },
 	ub = { name = "Unending Breath", identifiers = { { tooltip = "Unending Breath", texture = "Spell_Shadow_DemonBreath" } }, grouping = "Warlock", recast = 3 },
 	detectinvisibility = { name = "Detect Invisibility", identifiers = { { tooltip = "Detect Invisibility", texture = "Spell_Shadow_DetectInvisibility" }, { tooltip = "Detect Lesser Invisibility", texture = "Spell_Shadow_DetectLesserInvisibility" } }, grouping = "Warlock", recast = 3 },
-	demonarmor = { name = "Demon Armor", identifiers = { { tooltip = "Demon Armor", texture = "Spell_Shadow_RagingScream" } }, type = "self", grouping = "Warlock", class = "Warlock", recast = 5 },
+	demonarmor = { name = "Demon Armor", identifiers = { { tooltip = "Demon Armor", texture = "Spell_Shadow_RagingScream", spellId=11735 } }, type = "self", grouping = "Warlock", class = "Warlock", recast = 5 },
 	bloodpact = { name = "Blood Pact", identifiers = { { tooltip = "Blood Pact", texture = "Spell_Shadow_BloodBoil" } }, grouping = "Warlock", type = "aura" },
 	paranoia = { name = "Paranoia", identifiers = { { tooltip = "Paranoia", texture = "Spell_Shadow_AuraOfDarkness" } }, grouping = "Warlock", invert = true, type = "aura" },
-	touchofshadow = { name = "Sacrifice: Succubus", identifiers = { { tooltip = "Touch of Shadow", texture = "Spell_Shadow_PsychicScream" } }, grouping = "Warlock", class = "Warlock", type = "aura" },
-	felenergy = { name = "Sacrifice: Felhunter", identifiers = { { tooltip = "Fel Energy", texture = "Spell_Shadow_PsychicScream" } }, grouping = "Warlock", class = "Warlock", type = "aura" },
-	felstamina = { name = "Sacrifice: Voidwalker", identifiers = { { tooltip = "Fel Stamina", texture = "Spell_Shadow_PsychicScream" } }, grouping = "Warlock", class = "Warlock", type = "aura" },
-	burningwish = { name = "Sacrifice: Imp", identifiers = { { tooltip = "Burning Wish", texture = "Spell_Shadow_PsychicScream" } }, grouping = "Warlock", class = "Warlock", type = "aura" },
+  touchofshadow = { name = "Sacrifice: Succubus", identifiers = { { tooltip = "Touch of Shadow", texture = "Spell_Shadow_PsychicScream", spellId = 18791 } }, grouping = "Warlock", class = "Warlock", type = "aura" },
+  felenergy = { name = "Sacrifice: Felhunter", identifiers = { { tooltip = "Fel Energy", texture = "Spell_Shadow_PsychicScream", spellId = 18792 } }, grouping = "Warlock", class = "Warlock", type = "aura" },
+  felstamina = { name = "Sacrifice: Voidwalker", identifiers = { { tooltip = "Fel Stamina", texture = "Spell_Shadow_PsychicScream", spellId = 18790 } }, grouping = "Warlock", class = "Warlock", type = "aura" },
+  burningwish = { name = "Sacrifice: Imp", identifiers = { { tooltip = "Burning Wish", texture = "Spell_Shadow_PsychicScream", spellId = 18789 } }, grouping = "Warlock", class = "Warlock", type = "aura" },
+  anysacrifice = { name = "Any Sacrifice", identifiers = {
+    { tooltip = "Touch of Shadow", texture = "Spell_Shadow_PsychicScream", spellId = 18791 },
+    { tooltip = "Fel Energy", texture = "Spell_Shadow_PsychicScream", spellId = 18792 },
+    { tooltip = "Fel Stamina", texture = "Spell_Shadow_PsychicScream", spellId = 18790 },
+    { tooltip = "Burning Wish", texture = "Spell_Shadow_PsychicScream", spellId = 18789 } }, grouping = "Warlock", class = "Warlock", type = "aura" },
 	spellstone = { name = "Spellstone", identifiers = { { tooltip = "Spellstone", texture = "INV_Misc_Gem_Sapphire_01", spellId = 51694 } }, grouping = "Warlock", class = "Warlock", buffFunc = RAB_UseItem, itemId = 51933 },
 	wrathstone = { name = "Wrathstone", identifiers = { { tooltip = "Wrathstone", texture = "INV_Misc_Gem_Bloodstone_02", spellId = 51700 } }, grouping = "Warlock", class = "Warlock", buffFunc = RAB_UseItem, itemId = 51935 },
 	firestone = { name = "Firestone", identifiers = { { tooltip = "Firestone", texture = "INV_Ammo_FireTar", spellId = 51690 } }, grouping = "Warlock", class = "Warlock", buffFunc = RAB_UseItem, itemId = 51932 },
@@ -317,13 +322,22 @@ RAB_Buffs = {
 	merlotblue = { name = "Medivh's Merlot Blue", identifiers = {
 		{ tooltip = "Increased Intellect", texture = "INV_Drink_04", spellId = 57107 },
 		{ tooltip = "Rumsey Rum Black Label", texture = "INV_Drink_04", spellId = 25804 }, -- doesn't stack with rum
+		{ tooltip = "Rumsey Rum Dark", texture = "inv_drink_33", spellId = 25722 }, -- doesn't stack with rum
 	}, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 61175 },
 	merlot = { name = "Medivh's Merlot", identifiers = {
 		{ tooltip = "Increased Stamina", texture = "INV_Drink_04", spellId = 57106 },
 		{ tooltip = "Rumsey Rum Black Label", texture = "INV_Drink_04", spellId = 25804 }, -- doesn't stack with rum
+		{ tooltip = "Rumsey Rum Dark", texture = "inv_drink_33", spellId = 25722 }, -- doesn't stack with rum
 	}, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 61174 },
+	rumseyrumdark = { name = "Rumsey Rum Dark", identifiers = {
+		{ tooltip = "Rumsey Rum Dark", texture = "inv_drink_33", spellId = 25722 },
+		{ tooltip = "Rumsey Rum Black Label", texture = "INV_Drink_04", spellId = 25804 }, -- doesn't stack with black label
+		{ tooltip = "Increased Stamina", texture = "INV_Drink_04", spellId = 57106 }, -- doesn't stack with merlot
+		{ tooltip = "Increased Intellect", texture = "INV_Drink_04", spellId = 57107 }, -- doesn't stack with merlot blue
+	}, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 21114 },
 	rumseyrum = { name = "Rumsey Rum Black Label", identifiers = {
 		{ tooltip = "Rumsey Rum Black Label", texture = "INV_Drink_04", spellId = 25804 },
+		{ tooltip = "Rumsey Rum Dark", texture = "inv_drink_33", spellId = 25722 }, -- doesn't stack with dark
 		{ tooltip = "Increased Stamina", texture = "INV_Drink_04", spellId = 57106 }, -- doesn't stack with merlot
 		{ tooltip = "Increased Intellect", texture = "INV_Drink_04", spellId = 57107 }, -- doesn't stack with merlot blue
 	}, grouping = "Food/Drink", buffFunc = RAB_UseItem, itemId = 21151 },
