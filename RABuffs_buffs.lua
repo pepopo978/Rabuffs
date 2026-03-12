@@ -104,7 +104,7 @@ RAB_Buffs = {
 	}, grouping = "Hunter", class = "Hunter", type = "aura", recast = 5 },
 	pack = { name = "Aspect of the Pack", identifiers = { { tooltip = "Aspect of the Pack", texture = "Ability_Mount_WhiteTiger" } }, grouping = "Hunter", class = "Hunter", type = "aura", recast = 5 },
 	monkey = { name = "Aspect of the Monkey", identifiers = { { tooltip = "Aspect of the Monkey", texture = "Ability_Hunter_AspectOfTheMonkey" } }, type = "self", grouping = "Hunter", class = "Hunter", recast = 5 },
-	trueshot = { name = "True Shot Aura", identifiers = { { tooltip = "True Shot Aura", texture = "Ability_TrueShot" } }, grouping = "Hunter", type = "aura", recast = 5 },
+	trueshot = { name = "True Shot Aura", identifiers = { { tooltip = "Trueshot Aura", texture = "Ability_TrueShot" } }, grouping = "Hunter", type = "aura", recast = 5 },
 
 	battleshout = { name = "Battle Shout", identifiers = { { tooltip = "Battle Shout", texture = "Ability_Warrior_BattleShout" } }, grouping = "Warrior", type = "aura", recast = 5 },
 
